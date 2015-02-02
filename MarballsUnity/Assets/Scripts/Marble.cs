@@ -16,7 +16,7 @@ using System.Collections;
 
 public class Marble : MonoBehaviour {
 	// Variables
-	// public float speedMultiplier = 1;	// How speedy the variety of marble should be.
+	public float speedMultiplier = 10000f;	// How speedy the variety of marble should be.
 	// public float weight;					// Weight may be nice for messing with gravity.
 
 
@@ -31,19 +31,19 @@ public class Marble : MonoBehaviour {
 		// These should soon be changed to be with respect to the camera. Yay vector math.
 
 		if (Input.GetKey (KeyCode.W)) {
-			this.gameObject.rigidbody.AddForce (Vector3.forward);
+			this.gameObject.rigidbody.AddTorque (Vector3.forward * speedMultiplier, ForceMode.Acceleration);
 		}
 
 		if (Input.GetKey (KeyCode.S)) {
-			this.gameObject.rigidbody.AddForce (Vector3.back);
+			this.gameObject.rigidbody.AddTorque (Vector3.back * speedMultiplier, ForceMode.Acceleration);
 		}
 
 		if (Input.GetKey (KeyCode.A)) {
-			this.gameObject.rigidbody.AddForce (Vector3.left);
+			this.gameObject.rigidbody.AddTorque (Vector3.left * speedMultiplier, ForceMode.Acceleration);
 		}
 
 		if (Input.GetKey (KeyCode.D)) {
-			this.gameObject.rigidbody.AddForce (Vector3.right);
+			this.gameObject.rigidbody.AddTorque (Vector3.right * speedMultiplier, ForceMode.Acceleration);
 		}
 
 		if (Input.GetKeyDown (KeyCode.Space)) {

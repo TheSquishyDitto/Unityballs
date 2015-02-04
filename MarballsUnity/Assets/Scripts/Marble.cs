@@ -59,12 +59,12 @@ public class Marble : MonoBehaviour {
 		inputDirection.y = 0; // Removes vertical component from camera vectors.
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
-		rigidbody.AddForce(inputDirection * speedMultiplier * Time.deltaTime); // Applies force.
+		rigidbody.AddForce(inputDirection * speedMultiplier * Time.deltaTime, ForceMode.Impulse); // Applies force.
 		//rigidbody.AddTorque(inputDirection * speedMultiplier * Time.deltaTime); // Can also try this, but I haven't.
 
 		// Jump.
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			rigidbody.AddForce (0, 200, 0);
+			rigidbody.AddForce (0, 500, 0);
 		}
 
 		// Very basic, extremely potent brake. Can currently pause ball midair for the most part.

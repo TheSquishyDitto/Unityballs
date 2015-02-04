@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour {
 	public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
 
 	public ControlMode mode;		 // Which control mode camera is using.
-	public float sensitivity = 0.2f; // Mouse sensitivity.
+	public float sensitivity = 0.05f; // Mouse sensitivity.
 
 	#endregion
 
@@ -54,19 +54,19 @@ public class CameraController : MonoBehaviour {
 		// Keyboard mode controls
 		if (mode == ControlMode.Keyboard) { 
 			if (Input.GetKey (KeyCode.UpArrow)) {
-				psy = Mathf.Clamp(psy + .01f, PSYMIN, PSYMAX);
+				psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
 			}
 
 			if (Input.GetKey (KeyCode.DownArrow)) {
-				psy = Mathf.Clamp(psy - .01f, PSYMIN, PSYMAX);
+				psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
 			}
 
 			if (Input.GetKey (KeyCode.LeftArrow)) {
-				theta -= .01f;
+				theta -= .03f;
 			}
 
 			if (Input.GetKey (KeyCode.RightArrow)) {
-				theta += .01f;	
+				theta += .03f;	
 			}
 
 		// Mouse mode controls

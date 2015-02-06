@@ -1,0 +1,19 @@
+====================================================================================================
+                                    ~ ~ ~ VERSION HISTORY ~ ~ ~
+====================================================================================================
+February 6, 2015
+	- Kyle and Charlie worked on finding normal vectors to the surface to modify jump behavior
+
+February 5, 2015
+	- Kyle added debugging tools and disabled jumping in the air
+
+February 4, 2015
+	- Charlie adjusted speed settings for the ball
+
+February 2, 2015:
+    	- Kyle adjusted camera and ball controls
+
+January 28, 2015:
+    	- Charlie created new Unity project and added git options that work with Unity
+	- Chris added project to GitHub
+	- Kyle created terrain, ball, and basic movement

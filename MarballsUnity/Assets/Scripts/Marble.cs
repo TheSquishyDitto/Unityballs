@@ -28,6 +28,11 @@ public class Marble : MonoBehaviour {
 	public float revSpeed;				// Determines how quickly the marble will rev up to max angular velocity.
 	public float maxAngVelocity;		// Maximum angular velocity.
 										// With a mass of 1, top speed currently limits itself to double the max angle velocity.
+	public int jumpHeight;				// Specify jump height
+																			
+	private Ray ray;					// Create a ray to detect collision
+	private RaycastHit hit;				// Saves hit
+	
 	#endregion
 
 	// Start - Use this for initialization.
@@ -88,7 +93,14 @@ public class Marble : MonoBehaviour {
 
 		// Jump. Can't jump in the air.
 		if (Input.GetKeyDown (KeyCode.Space) && grounded) {
-			rigidbody.AddForce (0, 2000, 0);
+			ray = new Ray(transform.position, Vector3.down);
+			Vector3 jump = Vector3.up;
+			
+			if(Physics.Raycast(ray, out hit)) {
+				 jump = hit.normal;
+			}
+			
+			rigidbody.AddForce (jumpHeight * jump);
 		}
 
 		// Very basic, extremely potent brake. Can currently pause marble midair for the most part.

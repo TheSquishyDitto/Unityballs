@@ -31,16 +31,18 @@ public class Marble : MonoBehaviour {
 	public int jumpHeight;				// Specify jump height
 																			
 	private RaycastHit hit;				// Saves hit
-	private RaycastHit hit45;			// Ray cast 45 degrees pointing down
 	
-	Vector3 tangent;
+	/*
+	public Vector3 tangent;				// Alternative movement
+	public Vector3 cross;
+	*/
 	
 	#endregion
 
 	// Start - Use this for initialization.
 	void Start () {
 		inputDirection = new Vector3();
-		tangent = new Vector3();
+		//tangent = new Vector3();
 		cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
 		gauge = GameObject.FindGameObjectWithTag("Text"); // DEBUG
 		rigidbody.maxAngularVelocity = maxAngVelocity;
@@ -50,7 +52,7 @@ public class Marble : MonoBehaviour {
 	void FixedUpdate () {
 
 		inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
-		tangent = Vector3.zero; // See above
+		//tangent = Vector3.zero; // See above
 
 		// Forward.
 		if (Input.GetKey (KeyCode.W)) {
@@ -72,12 +74,7 @@ public class Marble : MonoBehaviour {
 			inputDirection += cam.right;
 		}
 
-		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground.
-		
-		if(Physics.Raycast(transform.position, inputDirection + Vector3.down, out hit45, 1f)) {
-			tangent = hit.point + hit45.point;	// Adding point vector plus 45 degree vector
-			tangent = tangent.normalized;
-		}
+		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground		
 
 		inputDirection.y = 0; // Removes vertical component from camera vectors.
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
@@ -87,9 +84,19 @@ public class Marble : MonoBehaviour {
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
+			/* Alternative method of movement
+			cross = Vector3.Cross(inputDirection, hit.normal);
+			float angle = Vector3.Angle(cross, inputDirection);
+			tangent = Quaternion.AngleAxis(angle, hit.normal) * cross;
+			tangent *= inputDirection.magnitude;
+			*/
+			
+			
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			// NOTE: Currently produces skidding when abrupting turning.
-			rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			
 
 			// Marble lights up and turns red on the ground.
 			//gameObject.renderer.material.color = Color.red;

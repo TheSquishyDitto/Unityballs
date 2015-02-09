@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb.  4, 2015
+/// Last Revision: Feb.  9, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -31,11 +31,10 @@ public class Marble : MonoBehaviour {
 	public int jumpHeight;				// Specify jump height
 																			
 	private RaycastHit hit;				// Saves hit
-	
-	/*
-	public Vector3 tangent;				// Alternative movement
-	public Vector3 cross;
-	*/
+
+	//public Vector3 tangent;			// Tangent vector to terrain.
+	//public Vector3 cross;				// Holds cross products temporarily.
+
 	
 	#endregion
 
@@ -88,10 +87,8 @@ public class Marble : MonoBehaviour {
 			cross = Vector3.Cross(inputDirection, hit.normal);
 			float angle = Vector3.Angle(cross, inputDirection);
 			tangent = Quaternion.AngleAxis(angle, hit.normal) * cross;
-			tangent *= inputDirection.magnitude;
-			*/
-			
-			
+			tangent *= inputDirection.magnitude;			*/
+
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			// NOTE: Currently produces skidding when abrupting turning.
 			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.

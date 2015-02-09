@@ -30,14 +30,19 @@ public class Marble : MonoBehaviour {
 										// With a mass of 1, top speed currently limits itself to double the max angle velocity.
 	public int jumpHeight;				// Specify jump height
 																			
-	private Ray ray;					// Create a ray to detect collision
 	private RaycastHit hit;				// Saves hit
+	
+	/*
+	public Vector3 tangent;				// Alternative movement
+	public Vector3 cross;
+	*/
 	
 	#endregion
 
 	// Start - Use this for initialization.
 	void Start () {
 		inputDirection = new Vector3();
+		//tangent = new Vector3();
 		cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
 		gauge = GameObject.FindGameObjectWithTag("Text"); // DEBUG
 		rigidbody.maxAngularVelocity = maxAngVelocity;
@@ -47,6 +52,7 @@ public class Marble : MonoBehaviour {
 	void FixedUpdate () {
 
 		inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
+		//tangent = Vector3.zero; // See above
 
 		// Forward.
 		if (Input.GetKey (KeyCode.W)) {
@@ -68,7 +74,7 @@ public class Marble : MonoBehaviour {
 			inputDirection += cam.right;
 		}
 
-		grounded = Physics.Raycast(transform.position, Vector3.down, 0.8f);	// Checks if marble is reasonably close to the ground.
+		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground		
 
 		inputDirection.y = 0; // Removes vertical component from camera vectors.
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
@@ -78,27 +84,33 @@ public class Marble : MonoBehaviour {
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
+			/* Alternative method of movement
+			cross = Vector3.Cross(inputDirection, hit.normal);
+			float angle = Vector3.Angle(cross, inputDirection);
+			tangent = Quaternion.AngleAxis(angle, hit.normal) * cross;
+			tangent *= inputDirection.magnitude;
+			*/
+			
+			
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			// NOTE: Currently produces skidding when abrupting turning.
+			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
 			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			
 
 			// Marble lights up and turns red on the ground.
-			gameObject.renderer.material.color = Color.red;
+			//gameObject.renderer.material.color = Color.red;
 			gameObject.light.enabled = true;
 		} else {
 			// Marble dims and turns blue in air.
-			gameObject.renderer.material.color = Color.blue;
+			//gameObject.renderer.material.color = Color.blue;
 			gameObject.light.enabled = false;
 		}
 
 		// Jump. Can't jump in the air.
 		if (Input.GetKeyDown (KeyCode.Space) && grounded) {
-			ray = new Ray(transform.position, Vector3.down);
 			Vector3 jump = Vector3.up;
-			
-			if(Physics.Raycast(ray, out hit)) {
-				 jump = hit.normal;
-			}
+			jump = hit.normal;
 			
 			rigidbody.AddForce (jumpHeight * jump);
 		}

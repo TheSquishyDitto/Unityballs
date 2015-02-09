@@ -1,6 +1,10 @@
 ====================================================================================================
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
+
+February 8, 2015
+	- Jacob added the initial marble texture/model as well as basic ramp models to assets/test level
+
 February 6, 2015
 	- Kyle and Charlie worked on finding normal vectors to the surface to modify jump behavior
 
@@ -11,9 +15,9 @@ February 4, 2015
 	- Charlie adjusted speed settings for the ball
 
 February 2, 2015:
-    	- Kyle adjusted camera and ball controls
+    - Kyle adjusted camera and ball controls
 
 January 28, 2015:
-    	- Charlie created new Unity project and added git options that work with Unity
+    - Charlie created new Unity project and added git options that work with Unity
 	- Chris added project to GitHub
 	- Kyle created terrain, ball, and basic movement

@@ -2,6 +2,9 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 9, 2015
+	- Kyle added booster panels to provide short bursts of speed to marble.
+	
 February 8, 2015
 	- Jacob added the initial marble texture/model as well as basic ramp models to assets/test level
 

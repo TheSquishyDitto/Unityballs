@@ -29,6 +29,7 @@ public class Marble : MonoBehaviour {
 	public float maxAngVelocity;		// Maximum angular velocity.
 										// With a mass of 1, top speed currently limits itself to double the max angle velocity.
 	public int jumpHeight;				// Specify jump height
+	public bool hasJumped = false;				// Check if a jump has occured
 																			
 	private RaycastHit hit;				// Saves hit
 
@@ -50,13 +51,8 @@ public class Marble : MonoBehaviour {
 	// Ball movement
 	void Update () {
 		// Jump. Can't jump in the air.
-		if (Input.GetKeyDown (KeyCode.Space) && grounded) {
-			Debug.Log("Jump");
-			
-			Vector3 jump = Vector3.up;
-			jump = hit.normal;
-			
-			rigidbody.AddForce (jumpHeight * jump);
+		if (Input.GetKeyDown (KeyCode.Space) && grounded && !hasJumped) {
+			hasJumped = true;
 		}
 	}
 	
@@ -115,6 +111,16 @@ public class Marble : MonoBehaviour {
 			//gameObject.renderer.material.color = Color.blue;
 			rigidbody.drag = 0.1f;			
 			gameObject.light.enabled = false;
+		}
+
+		if (hasJumped) {
+			Debug.Log("Jump");
+			
+			Vector3 jump = Vector3.up;
+			jump = hit.normal;
+			
+			rigidbody.AddForce (jumpHeight * jump);
+			hasJumped = false;
 		}
 
 

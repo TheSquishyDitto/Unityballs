@@ -2,7 +2,7 @@
 /// Booster.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan.  9, 2015
-/// Last Revision: Feb.  9, 2015
+/// Last Revision: Feb. 11, 2015
 /// 
 /// Class that handles booster panel properties.
 /// 
@@ -40,7 +40,7 @@ public class Booster : MonoBehaviour {
 		// If the other object has a rigidbody, boost it along.
 		// Currently always boosts based on transform of physical panel.
 		if (other.attachedRigidbody)
-			other.attachedRigidbody.AddForce(-transform.right * boostPower);
+			other.attachedRigidbody.AddForce(-transform.right * boostPower * Time.timeScale);
 		
 	}
 }

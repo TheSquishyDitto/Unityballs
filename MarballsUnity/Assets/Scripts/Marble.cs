@@ -47,20 +47,33 @@ public class Marble : MonoBehaviour {
 		rigidbody.maxAngularVelocity = maxAngVelocity;
 	}
 	
+	// Ball movement
+	void Update () {
+		// Jump. Can't jump in the air.
+		if (Input.GetKeyDown (KeyCode.Space) && grounded) {
+			Debug.Log("Jump");
+			
+			Vector3 jump = Vector3.up;
+			jump = hit.normal;
+			
+			rigidbody.AddForce (jumpHeight * jump);
+		}
+	}
+	
 	// FixedUpdate - Called once per physics calculation.
 	void FixedUpdate () {
-
-		inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 		//tangent = Vector3.zero; // See above
 
 		// Forward.
-		if (Input.GetKey (KeyCode.W)) {
+		if (Input.GetKey (KeyCode.W)) {		
 			inputDirection += cam.forward;
+			inputDirection.y = 0; // Removes vertical component from camera vectors.
 		}
 
 		// Backward.
 		if (Input.GetKey (KeyCode.S)) {
 			inputDirection -= cam.forward;
+			inputDirection.y = 0; // Removes vertical component from camera vectors.
 		}
 
 		// Left.
@@ -74,8 +87,6 @@ public class Marble : MonoBehaviour {
 		}
 
 		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground		
-
-		inputDirection.y = 0; // Removes vertical component from camera vectors.
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
 		// Spins marble to appropriate amount of spin speed.
@@ -92,25 +103,20 @@ public class Marble : MonoBehaviour {
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			// NOTE: Currently produces skidding when abrupting turning.
 			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			rigidbody.drag = 0.5f;
 			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 			
-
 			// Marble lights up and turns red on the ground.
 			//gameObject.renderer.material.color = Color.red;
 			gameObject.light.enabled = true;
 		} else {
 			// Marble dims and turns blue in air.
 			//gameObject.renderer.material.color = Color.blue;
+			rigidbody.drag = 0.1f;			
 			gameObject.light.enabled = false;
 		}
 
-		// Jump. Can't jump in the air.
-		if (Input.GetKeyDown (KeyCode.Space) && grounded) {
-			Vector3 jump = Vector3.up;
-			jump = hit.normal;
-			
-			rigidbody.AddForce (jumpHeight * jump);
-		}
 
 		// Very basic, extremely potent brake. Can currently pause marble midair for the most part.
 		if (Input.GetKey (KeyCode.B)) {

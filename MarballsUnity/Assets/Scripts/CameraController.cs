@@ -2,13 +2,14 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb.  2, 2015
+/// Last Revision: Feb. 11, 2015
 /// 
 /// Class that controls camera movement.
 /// 
 /// NOTES: - Current camera controls are C, and either arrow keys or mouse depending on mode.
 /// 
 /// TO DO: - Tweak movement until desired.
+/// 	   - Make cursor lock work properly with pause screen.
 /// 
 /// </summary>
 
@@ -26,25 +27,35 @@ public class CameraController : MonoBehaviour {
 	// Variables
 	// (Regions don't do anything functionally, they just help organize code and can be collapsed)
 	#region Variables
-	public Transform ball; // Reference to coordinates of marble
+	public GameMaster gm;	// Reference to Game Master.
+	public Transform ball; 	// Reference to coordinates of marble
 
-	public float theta;  // Radians around y-axis (horizontal).
-	public float psy;	 // Radians around x-axis (vertical).
-	public float radius; // Distance from marble.
+	public float theta;  	// Radians around y-axis (horizontal).
+	public float psy;	 	// Radians around x-axis (vertical).
+	public float radius; 	// Distance from marble.
 
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
 
-	public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
+	//public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
 
-	public ControlMode mode;		 // Which control mode camera is using.
-	public float sensitivity = 0.05f; // Mouse sensitivity.
+	public ControlMode mode;		 	// Which control mode camera is using.
+	public float sensitivity = 0.05f; 	// Mouse sensitivity.
+	public bool invertX;				// Whether horizontal mouse controls should be inverted.
+	public bool invertY;				// Whether vertical mouse controls should be inverted.
 
 	#endregion
 
+	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
+	void Awake () {
+		gm = GameMaster.CreateGM();
+		gm.cam = this.transform;
+	}
+
 	// Start - Use this for initialization
 	void Start () {
-		ball = GameObject.FindGameObjectWithTag("Marble").transform;
+
+		ball = gm.marble;//GameObject.FindGameObjectWithTag("Marble").transform;
 		radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
 	}
@@ -53,51 +64,28 @@ public class CameraController : MonoBehaviour {
 	void Update () {
 		// Keyboard mode controls
 		if (mode == ControlMode.Keyboard) { 
-			if (Input.GetKey (KeyCode.UpArrow)) {
-				psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
-			}
-
-			if (Input.GetKey (KeyCode.DownArrow)) {
-				psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
-			}
-
-			if (Input.GetKey (KeyCode.LeftArrow)) {
-				theta -= .03f;
-			}
-
-			if (Input.GetKey (KeyCode.RightArrow)) {
-				theta += .03f;	
-			}
+			// Moved to control functions, handled by input manager.
 
 		// Mouse mode controls
 		} else if (mode == ControlMode.Mouse) {
-			if (Input.GetMouseButton(0)) { // 0 is left mouse button.
-				Screen.lockCursor = true; // While true, cursor is hidden and constantly put in middle of screen.
-				psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * sensitivity), PSYMIN, PSYMAX);
-				theta += Input.GetAxis("Mouse X") * sensitivity;
-			}
+			// Moving the mouse moves the camera.
+			psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * sensitivity), PSYMIN, PSYMAX);
+			theta -= Input.GetAxis("Mouse X") * sensitivity;
 
-			if (Input.GetMouseButtonUp(0)) { // 0 is left mouse button.
-				Screen.lockCursor = false;
-			}
-
-			radius -= Input.GetAxis("Mouse ScrollWheel");
 		
 		// Unspecified case controls
 		} else {
 				Debug.LogWarning("(CameraController.cs) Control mode not specified!");
 		}
 
-		if (Input.GetKeyDown(KeyCode.C)) {
-			ToggleControlMode();
-		}
+		// Allows zooming in and out.
+		radius -= Input.GetAxis("Mouse ScrollWheel");
 
 	}
 
 	// LateUpdate - Called directly after everything updates
 	void LateUpdate () {
-		// Attempted to use Lerp to fix mild jitter, but couldn't get it to work.
-		//gameObject.transform.position = Vector3.Lerp(transform.position, GetSphericalPosition(), Time.deltaTime * smooth);
+		// Consider attempting to Lerp again if there's any jitter.
 		gameObject.transform.position = GetSphericalPosition();
 		gameObject.transform.LookAt(ball.position);
 	}
@@ -107,7 +95,7 @@ public class CameraController : MonoBehaviour {
 	Vector3 GetSphericalPosition() {
 		Vector3 retPos = new Vector3();
 
-		// Turns out radians were needed after all.
+		// These are all using radians.
 		retPos.x = radius * Mathf.Cos (psy) * Mathf.Cos (theta) + ball.position.x;
 		retPos.y = radius * Mathf.Sin (psy) + ball.position.y;
 		retPos.z = radius * Mathf.Cos (psy) * Mathf.Sin (theta) + ball.position.z;
@@ -115,11 +103,38 @@ public class CameraController : MonoBehaviour {
 		return retPos;
 	}
 
-	// ToggleControlMode - Changes camera control style.
-	void ToggleControlMode() {
-		if (mode == ControlMode.Keyboard)
-			mode = ControlMode.Mouse;
-		else if (mode == ControlMode.Mouse)
-			mode = ControlMode.Keyboard;
+	// Control Functions
+	#region Control Functions
+	// Moves camera up.
+	public void MoveUp() {
+		psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
 	}
+
+	// Moves camera down.
+	public void MoveDown() {
+		psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
+	}
+
+	// Moves camera left.
+	public void MoveLeft() {
+		theta -= .03f;
+	}
+
+	// Moves camera right.
+	public void MoveRight() {
+		theta += .03f;	
+	}
+
+	// ToggleControlMode - Changes camera control style.
+	public void ToggleControlMode() {
+		if (mode == ControlMode.Keyboard) {
+			mode = ControlMode.Mouse;
+			Screen.lockCursor = true;	// When true, cursor is hidden and constantly centered.
+		} else if (mode == ControlMode.Mouse) {
+			mode = ControlMode.Keyboard;
+			Screen.lockCursor = false;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
+		}
+	}
+
+	#endregion
 }

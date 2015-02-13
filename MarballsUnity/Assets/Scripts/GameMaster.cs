@@ -104,4 +104,10 @@ public class GameMaster : MonoBehaviour {
 			state = GameState.Playing;
 		}
 	}
+	
+	public void OnWin() {
+		state = GameState.Win;
+		Time.timeScale = 0.5f;
+		//marble.GetComponent<Marble>().Brake();
+	}
 }

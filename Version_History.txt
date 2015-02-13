@@ -2,6 +2,20 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 11, 2015:
+	- Charlie, Chris, and Kyle modified/patched jumping mechanics slightly.
+		+ Charlie and Kyle fixed double application of jumping force.
+		+ Chris added a jump check to accommodate new control handling.
+	- Brenton added the finish/starting line model.
+	- Charlie updated the GameMaster and added GUI object to scene.
+	- Kyle set up input, GameMaster, and GUI for future ease of use:
+		+ Revamped input so that most input is handled by the InputManager script.
+		+ Added two scenes: Main Menu and Level 1 (currently empty).
+		+ Hooked GameMaster into most scripts and gave it some control over the game.
+		+ Added rudimentary GUIs for the main menu, in-game pausing, and the HUD.
+		+ Added a debug non-spinning, base particle effect. Can be toggled off in the inspector.
+		+ Various small tweaks, including some files being reorganized again.
+
 February 9, 2015
 	- Kyle added booster panels to provide short bursts of speed to marble.
 	

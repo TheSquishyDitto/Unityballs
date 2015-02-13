@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb.  9, 2015
+/// Last Revision: Feb. 11, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -19,19 +19,20 @@ public class Marble : MonoBehaviour {
 
 	// Variables
 	#region Variables
+	public GameMaster gm;				// Reference to the Game Master.
 	public Transform cam;				// Reference to the main camera.
-	public GameObject gauge;			// DEBUG REFERENCE TO GUI TEXT
 
 	Vector3 inputDirection;				// Holds desired direction of input before applying it.
 	bool grounded;						// True if marble is on the ground, false otherwise.
 	public float speedMultiplier;		// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed;				// Determines how quickly the marble will rev up to max angular velocity.
 	public float maxAngVelocity;		// Maximum angular velocity.
-										// With a mass of 1, top speed currently limits itself to double the max angle velocity.
+	float shackle = 0.01f;				// Limiter for velocity.
+
 	public int jumpHeight;				// Specify jump height
-	public bool hasJumped = false;				// Check if a jump has occured
+	bool hasJumped = false;				// Check if a jump has occured
 																			
-	private RaycastHit hit;				// Saves hit
+	private RaycastHit hit;				// Saves raycast hit.
 
 	//public Vector3 tangent;			// Tangent vector to terrain.
 	//public Vector3 cross;				// Holds cross products temporarily.
@@ -39,54 +40,35 @@ public class Marble : MonoBehaviour {
 	
 	#endregion
 
-	// Start - Use this for initialization.
+	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
+	void Awake () {
+		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
+		gm.marble = this.transform;	// Tells the Game Master that this is the currently controlled marble.
+	}
+
+	// Start - Use this for initialization. If a reference from the Game Master is needed, make it here.
 	void Start () {
 		inputDirection = new Vector3();
 		//tangent = new Vector3();
-		cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
-		gauge = GameObject.FindGameObjectWithTag("Text"); // DEBUG
+		cam = gm.cam;
 		rigidbody.maxAngularVelocity = maxAngVelocity;
 	}
 	
-	// Ball movement
+	// Update - Called once per frame.
 	void Update () {
-		// Jump. Can't jump in the air.
-		if (Input.GetKeyDown (KeyCode.Space) && grounded && !hasJumped) {
-			hasJumped = true;
-		}
+
 	}
 	
-	// FixedUpdate - Called once per physics calculation.
+	// FixedUpdate - Called once per physics calculation. This happens independently of frames.
+	// NOTE: Time.deltaTime is unnecessary in FixedUpdate because it is integrated in physics calculations.
 	void FixedUpdate () {
 		//tangent = Vector3.zero; // See above
-
-		// Forward.
-		if (Input.GetKey (KeyCode.W)) {		
-			inputDirection += cam.forward;
-			inputDirection.y = 0; // Removes vertical component from camera vectors.
-		}
-
-		// Backward.
-		if (Input.GetKey (KeyCode.S)) {
-			inputDirection -= cam.forward;
-			inputDirection.y = 0; // Removes vertical component from camera vectors.
-		}
-
-		// Left.
-		if (Input.GetKey (KeyCode.A)) {
-			inputDirection -= cam.right;
-		}
-
-		// Right.
-		if (Input.GetKey (KeyCode.D)) {
-			inputDirection += cam.right;
-		}
 
 		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground		
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
 		// Spins marble to appropriate amount of spin speed.
-		rigidbody.AddTorque(Vector3.Cross(Vector3.up, inputDirection) * speedMultiplier * revSpeed * Time.deltaTime);
+		rigidbody.AddTorque(Vector3.Cross(Vector3.up, inputDirection) * speedMultiplier * revSpeed * shackle/* * Time.deltaTime*/);
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
@@ -97,10 +79,9 @@ public class Marble : MonoBehaviour {
 			tangent *= inputDirection.magnitude;			*/
 
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
-			// NOTE: Currently produces skidding when abrupting turning.
 			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
 			rigidbody.drag = 0.5f;
-			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * shackle/* * Time.deltaTime*/, ForceMode.Impulse); // Applies force.
 			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 			
 			// Marble lights up and turns red on the ground.
@@ -113,30 +94,62 @@ public class Marble : MonoBehaviour {
 			gameObject.light.enabled = false;
 		}
 
+		// Handles jumping.
 		if (hasJumped) {
 			Debug.Log("Jump");
 			
-			Vector3 jump = Vector3.up;
+			Vector3 jump;
 			jump = hit.normal;
 			
 			rigidbody.AddForce (jumpHeight * jump);
 			hasJumped = false;
 		}
 
-
-		// Very basic, extremely potent brake. Can currently pause marble midair for the most part.
-		if (Input.GetKey (KeyCode.B)) {
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.angularVelocity = Vector3.zero;
-		}
-
-		// Respawns marble to roughly its starting position.
-		if (Input.GetKeyDown (KeyCode.R)) {
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.angularVelocity = Vector3.zero;
-			transform.position = new Vector3(0, 5, 0);
-		}
-
-		gauge.GetComponent<GUIText>().text = "Speed: " + Mathf.Round(rigidbody.velocity.magnitude); // DEBUG
 	}
+
+	// Control Functions - Functions that allow the player to manipulate the marble.
+	#region Control Functions
+	// Forward.
+	public void Forward() {
+		inputDirection += cam.forward;
+		inputDirection.y = 0; // Removes vertical component from camera vectors.
+	}
+
+	// Backward.
+	public void Backward() {
+		inputDirection -= cam.forward;
+		inputDirection.y = 0; // Removes vertical component from camera vectors.
+	}
+	
+	// Left.
+	public void Left() {
+		inputDirection -= cam.right;
+	}
+	
+	// Right.
+	public void Right() {
+		inputDirection += cam.right;
+	}
+	
+	// Jump. Can't jump in the air.
+	public void Jump() {
+		if (grounded && !hasJumped) {
+			hasJumped = true;
+		}
+	}
+	
+	// Very basic, extremely potent brake. Can currently pause marble midair for the most part.
+	public void Brake() {
+		rigidbody.velocity = Vector3.zero;
+		rigidbody.angularVelocity = Vector3.zero;
+	}
+	
+	// Respawns marble to roughly its starting position.
+	public void Respawn() {
+		rigidbody.velocity = Vector3.zero;
+		rigidbody.angularVelocity = Vector3.zero;
+		transform.position = new Vector3(0, 5, 0);
+	}
+	
+	#endregion
 }

@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Feb. 16, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -27,12 +27,12 @@ public class CameraController : MonoBehaviour {
 	// Variables
 	// (Regions don't do anything functionally, they just help organize code and can be collapsed)
 	#region Variables
-	public GameMaster gm;	// Reference to Game Master.
-	public Transform ball; 	// Reference to coordinates of marble
+	public GameMaster gm;					// Reference to Game Master.
+	public Transform ball; 					// Reference to coordinates of marble
 
-	public float theta;  	// Radians around y-axis (horizontal).
-	public float psy;	 	// Radians around x-axis (vertical).
-	public float radius; 	// Distance from marble.
+	public float theta = Mathf.PI / 2;  	// Radians around y-axis (horizontal).
+	public float psy = 0.5f;	 			// Radians around x-axis (vertical).
+	public float radius = 15; 				// Distance from marble.
 
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
@@ -41,8 +41,8 @@ public class CameraController : MonoBehaviour {
 
 	public ControlMode mode;		 	// Which control mode camera is using.
 	public float sensitivity = 0.05f; 	// Mouse sensitivity.
-	public bool invertX;				// Whether horizontal mouse controls should be inverted.
-	public bool invertY;				// Whether vertical mouse controls should be inverted.
+	//public bool invertX;				// Whether horizontal mouse controls should be inverted.
+	//public bool invertY;				// Whether vertical mouse controls should be inverted.
 
 	#endregion
 
@@ -56,7 +56,7 @@ public class CameraController : MonoBehaviour {
 	void Start () {
 
 		ball = gm.marble;//GameObject.FindGameObjectWithTag("Marble").transform;
-		radius = Vector3.Distance(transform.position, ball.position);
+		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
 	}
 	

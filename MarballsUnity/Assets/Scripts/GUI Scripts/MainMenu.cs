@@ -65,7 +65,7 @@ public class MainMenu : MonoBehaviour {
 		} else if (state == MenuState.LevelSelect) {
 			if (GUI.Button(new Rect(Screen.width / 2 - 40, Screen.height / 2 - 40, 100, 30), "Level 1")) {
 				state = MenuState.Loading;
-				gm.LoadLevel(1);
+				gm.LoadLevel("Level1");
 			}
 
 			if (GUI.Button(new Rect(Screen.width / 2 - 40, Screen.height / 2 - 10, 100, 30), "Test Level")) {

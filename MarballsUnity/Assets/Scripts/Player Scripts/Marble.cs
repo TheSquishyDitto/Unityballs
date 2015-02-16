@@ -146,9 +146,12 @@ public class Marble : MonoBehaviour {
 	
 	// Respawns marble to roughly its starting position.
 	public void Respawn() {
+		Transform respawn = GameObject.FindGameObjectWithTag("Respawn").transform;
+		
 		rigidbody.velocity = Vector3.zero;
 		rigidbody.angularVelocity = Vector3.zero;
-		transform.position = new Vector3(0, 5, 0);
+		//transform.position = new Vector3(0, 5, 0);
+		transform.position = respawn.position + new Vector3(0,5,0);
 	}
 	
 	#endregion

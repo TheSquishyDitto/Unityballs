@@ -2,6 +2,15 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 16, 2015:
+	- Jacob added:
+		+ Preliminary level 3 platform model
+		+ Updated level 2 to include central obstacle
+		+ Added updated marble model
+
+February 13, 2015:
+	- Jacob added platform models for levels 1 and 2
+
 February 11, 2015:
 	- Charlie, Chris, and Kyle modified/patched jumping mechanics slightly.
 		+ Charlie and Kyle fixed double application of jumping force.

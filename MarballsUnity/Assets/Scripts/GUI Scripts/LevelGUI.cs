@@ -2,15 +2,14 @@
 /// LevelGUI.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Feb. 16, 2015
 /// 
 /// Class that handles the GUI when a gameplay level scene is loaded.
 /// 
-/// NOTES: - Shows up individually per level.
+/// NOTES: - With Unity UI this will be phased out before it even becomes very relevant.
+/// 	   - Currently only used for pause menu and debug things.
 /// 
-/// TO DO: - Create Heads Up Display (HUD).
-/// 	   - Textures for labels and such.
-///        - etc.
+/// TO DO: - Phase out in favor of Unity UI canvases and such.
 /// 
 /// </summary>
 
@@ -36,10 +35,28 @@ public class LevelGUI : MonoBehaviour {
 	// OnGUI - Used for GUIs. This is a draw call so order, presence, or absence of code can be fairly important.
 	// NOTE: Currently using a whole lotta magic numbers, feel free to change those to constants or public variables and experiment.
 	void OnGUI() {
+
+		// Debug menus, buttons, and info.
+		if (gm.debug) {
+			if (!gm.paused)
+				GUI.Label (new Rect(Screen.width / 2 - 25, 10, 100, 25), "Timer: " + (Mathf.Round(gm.timer * 10) / 10.0) + " s");
+
+			// Puts game into start state.
+			if (GUI.Button(new Rect(10, 20, 80, 30), "Start")) {
+				gm.OnStart();
+			}
+
+			// Puts game into playing state.
+			if (GUI.Button(new Rect(10, 50, 80, 30), "Playing")) {
+				gm.OnPlay();
+			}
+		}
+
 		if (marble != null) {
 			// Speed gauge.
 			GUI.Label (new Rect(10, Screen.height - 25, 150, 25), "Speed: " + Mathf.Round(marble.rigidbody.velocity.magnitude) + " m/s");
 		}
+
 
 		// Pause screen
 		if (gm.paused) {
@@ -58,6 +75,6 @@ public class LevelGUI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		marble = gm.marble;	// Placed here in case there is a gameplay reason to switch between marbles.
+
 	}
 }

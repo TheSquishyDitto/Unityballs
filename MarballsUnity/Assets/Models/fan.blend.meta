@@ -1,0 +1,133 @@
+fileFormatVersion: 2
+guid: b05eb71f70056b7418b8846e548b5215
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: Cone
+    100002: Cone_001
+    100004: Cylinder
+    100006: Cylinder_001
+    100008: Cylinder_002
+    100010: Cylinder_003
+    100012: //RootNode
+    100014: Torus_000
+    100016: Torus_001
+    100018: Torus_002
+    100020: Torus_003
+    100022: Torus_004
+    100024: Torus_005
+    100026: Torus_006
+    100028: Torus_007
+    400000: Cone
+    400002: Cone_001
+    400004: Cylinder
+    400006: Cylinder_001
+    400008: Cylinder_002
+    400010: Cylinder_003
+    400012: //RootNode
+    400014: Torus_000
+    400016: Torus_001
+    400018: Torus_002
+    400020: Torus_003
+    400022: Torus_004
+    400024: Torus_005
+    400026: Torus_006
+    400028: Torus_007
+    2300000: Cone
+    2300002: Cone_001
+    2300004: Cylinder
+    2300006: Cylinder_001
+    2300008: Cylinder_002
+    2300010: Cylinder_003
+    2300012: Torus_000
+    2300014: Torus_001
+    2300016: Torus_002
+    2300018: Torus_003
+    2300020: Torus_004
+    2300022: Torus_005
+    2300024: Torus_006
+    2300026: Torus_007
+    3300000: Cone
+    3300002: Cone_001
+    3300004: Cylinder
+    3300006: Cylinder_001
+    3300008: Cylinder_002
+    3300010: Cylinder_003
+    3300012: Torus_000
+    3300014: Torus_001
+    3300016: Torus_002
+    3300018: Torus_003
+    3300020: Torus_004
+    3300022: Torus_005
+    3300024: Torus_006
+    3300026: Torus_007
+    4300000: Cylinder_003
+    4300002: Cylinder_002
+    4300004: Cylinder_001
+    4300006: Torus_007
+    4300008: Torus_005
+    4300010: Torus_004
+    4300012: Torus_006
+    4300014: Torus_000
+    4300016: Cone_001
+    4300018: Cone
+    4300020: Torus_003
+    4300022: Torus_002
+    4300024: Torus_001
+    4300026: Cylinder
+    7400000: Default Take
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 

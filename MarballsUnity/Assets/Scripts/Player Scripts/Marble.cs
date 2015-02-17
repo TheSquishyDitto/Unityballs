@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Feb. 16, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -34,6 +34,8 @@ public class Marble : MonoBehaviour {
 																			
 	private RaycastHit hit;				// Saves raycast hit.
 
+	public bool debugLights = true;		// Whether marble should light up under certain scenarios.
+
 	//public Vector3 tangent;			// Tangent vector to terrain.
 	//public Vector3 cross;				// Holds cross products temporarily.
 
@@ -52,6 +54,10 @@ public class Marble : MonoBehaviour {
 		//tangent = new Vector3();
 		cam = gm.cam;
 		rigidbody.maxAngularVelocity = maxAngVelocity;
+
+		// Allows the GameMaster to begin properly in the starting phase regardless of which scene we're in.
+		if (gm.debug)
+			gm.OnStart();	// DEBUG
 	}
 	
 	// Update - Called once per frame.
@@ -86,17 +92,17 @@ public class Marble : MonoBehaviour {
 			
 			// Marble lights up and turns red on the ground.
 			//gameObject.renderer.material.color = Color.red;
-			gameObject.light.enabled = true;
+			if (debugLights) gameObject.light.enabled = true;
 		} else {
 			// Marble dims and turns blue in air.
 			//gameObject.renderer.material.color = Color.blue;
 			rigidbody.drag = 0.1f;			
-			gameObject.light.enabled = false;
+			if (debugLights) gameObject.light.enabled = false;
 		}
 
 		// Handles jumping.
 		if (hasJumped) {
-			Debug.Log("Jump");
+			//Debug.Log("Jump");
 			
 			Vector3 jump;
 			jump = hit.normal;
@@ -146,12 +152,18 @@ public class Marble : MonoBehaviour {
 	
 	// Respawns marble to roughly its starting position.
 	public void Respawn() {
-		Transform respawn = GameObject.FindGameObjectWithTag("Respawn").transform;
+		//Transform respawn = GameObject.FindGameObjectWithTag("Respawn").transform;
 		
 		rigidbody.velocity = Vector3.zero;
 		rigidbody.angularVelocity = Vector3.zero;
-		//transform.position = new Vector3(0, 5, 0);
-		transform.position = respawn.position + new Vector3(0,5,0);
+
+		if (gm.respawn) {
+			transform.position = gm.respawn.position + new Vector3(0,5,0);
+		} else {
+			Debug.LogWarning("(Marble.cs) No spawn point available! Placing in default location..."); // DEBUG
+			transform.position = new Vector3(0, 5, 0);
+		}
+
 	}
 	
 	#endregion

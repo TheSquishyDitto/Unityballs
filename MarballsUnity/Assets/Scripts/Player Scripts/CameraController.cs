@@ -36,6 +36,7 @@ public class CameraController : MonoBehaviour {
 
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
+	public const float RADMIN = 3;						// Minimum distance from marble
 
 	//public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
 
@@ -71,8 +72,8 @@ public class CameraController : MonoBehaviour {
 			// Moving the mouse moves the camera.
 			psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * sensitivity), PSYMIN, PSYMAX);
 			theta -= Input.GetAxis("Mouse X") * sensitivity;
+			
 
-		
 		// Unspecified case controls
 		} else {
 				Debug.LogWarning("(CameraController.cs) Control mode not specified!");
@@ -80,6 +81,9 @@ public class CameraController : MonoBehaviour {
 
 		// Allows zooming in and out.
 		radius -= Input.GetAxis("Mouse ScrollWheel");
+		if (radius < RADMIN) {
+			radius = RADMIN;
+		}
 
 	}
 
@@ -107,22 +111,33 @@ public class CameraController : MonoBehaviour {
 	#region Control Functions
 	// Moves camera up.
 	public void MoveUp() {
-		psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
+		if(!Physics.Raycast(transform.position, transform.up, 0.8f)){	// Checks if camera is close to another object
+			psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
+		}
 	}
 
 	// Moves camera down.
 	public void MoveDown() {
-		psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
+		if(!Physics.Raycast(transform.position, -transform.up, 0.8f)){	// Checks if camera is close to another object
+			psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
+		}
+		
 	}
 
 	// Moves camera left.
 	public void MoveLeft() {
-		theta -= .03f;
+		if(!Physics.Raycast(transform.position, -transform.right, 0.8f)){	// Checks if camera is close to another object
+			theta -= .03f;
+		}
+		
 	}
 
 	// Moves camera right.
 	public void MoveRight() {
-		theta += .03f;	
+		if(!Physics.Raycast(transform.position, transform.right, 0.8f)){	// Checks if camera is close to another object
+			theta += .03f;
+		}
+		
 	}
 
 	// ToggleControlMode - Changes camera control style.
@@ -134,6 +149,10 @@ public class CameraController : MonoBehaviour {
 			mode = ControlMode.Keyboard;
 			Screen.lockCursor = false;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
 		}
+	}
+	
+	public void checkCollision() {
+		Debug.Log("Hit");
 	}
 
 	#endregion

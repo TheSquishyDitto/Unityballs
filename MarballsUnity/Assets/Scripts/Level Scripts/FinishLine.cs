@@ -18,14 +18,17 @@ using System.Collections;
 public class FinishLine : MonoBehaviour {
 
 	public GameMaster gm;
-
+	public ParticleSystem flame1;
+	public ParticleSystem flame2;
+	
 	void Awake () {
 		gm = GameMaster.CreateGM ();
+		gm.finishLine = this.transform;
 	}
 
 	// Use this for initialization
 	void Start () {
-	
+
 	}
 	
 	// Update is called once per frame
@@ -35,7 +38,8 @@ public class FinishLine : MonoBehaviour {
 	
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
-		if (other.CompareTag("Marble"))
+		if (other.CompareTag("Marble")) {
 			gm.OnWin(); // When player gets to finish they win!
+		}	
 	}
 }

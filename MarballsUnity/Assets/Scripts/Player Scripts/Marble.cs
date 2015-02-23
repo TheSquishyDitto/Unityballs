@@ -17,6 +17,16 @@ using System.Collections;
 
 public class Marble : MonoBehaviour {
 
+	public enum MarbleState {
+		Normal,		// Normal Marble State.
+		SpeedBoost,	// Quick boost of speed
+		MultiJump,	// Ball can jump multiple times
+		SuperJump,  // Ball jumps very high
+		Ghost,		// Transparent ball can clip through certain objects
+		BigBall, 	// Increase the radius by some factor
+		HeliBall 	// Make the ball a helicopter (OPTIONAL)
+	}
+
 	// Variables
 	#region Variables
 	public GameMaster gm;				// Reference to the Game Master.
@@ -62,7 +72,9 @@ public class Marble : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-
+		if(Physics.Raycast(cam.position, rigidbody.velocity.normalized, 0.8f)) { // If camera hits a wall
+			cam.GetComponent<CameraController>().radius -= 1;
+		}
 	}
 	
 	// FixedUpdate - Called once per physics calculation. This happens independently of frames.

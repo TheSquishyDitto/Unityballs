@@ -33,6 +33,7 @@ public class GameMaster : MonoBehaviour {
 	public Transform cam;			// Reference to camera.
 	public Transform respawn;		// Reference to level's respawn point.
 	public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
+	public Transform finishLine;	// Reference to finish line.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -133,6 +134,9 @@ public class GameMaster : MonoBehaviour {
 		if (respawn) { // Possibly debug
 			respawn.light.enabled = true;
 		}
+		
+		finishLine.GetComponent<FinishLine>().flame1.Stop ();
+		finishLine.GetComponent<FinishLine>().flame2.Stop ();
 	}
 
 	// OnPlay - Called when the player is to actually play the level.
@@ -144,6 +148,9 @@ public class GameMaster : MonoBehaviour {
 		if (respawn) { // Possibly debug
 			respawn.light.enabled = false;
 		}
+		
+		finishLine.GetComponent<FinishLine>().flame1.Stop ();
+		finishLine.GetComponent<FinishLine>().flame2.Stop ();
 	}
 
 	// OnWin - Called when a level is won.
@@ -152,5 +159,8 @@ public class GameMaster : MonoBehaviour {
 		Debug.Log("(GameMaster.cs) You win!");
 		Time.timeScale = 0.5f; // Slowmo victory!
 		//marble.GetComponent<Marble>().Brake();
+		
+		finishLine.GetComponent<FinishLine>().flame1.Play ();
+		finishLine.GetComponent<FinishLine>().flame2.Play ();
 	}
 }

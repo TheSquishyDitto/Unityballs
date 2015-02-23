@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Feb. 23, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -41,5 +41,17 @@ public class FinishLine : MonoBehaviour {
 		if (other.CompareTag("Marble")) {
 			gm.OnWin(); // When player gets to finish they win!
 		}	
+	}
+
+	// FlameOn - Spews flames.
+	public void FlameOn() {
+		flame1.Play();
+		flame2.Play();
+	}
+
+	// FlameOff - Ceases spewing flames.
+	public void FlameOff() {
+		flame1.Stop();
+		flame2.Stop();
 	}
 }

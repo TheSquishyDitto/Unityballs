@@ -2,6 +2,13 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 23, 2015:
+	- Jacob revised level 2 and added guardrails.
+	- Charlie, Chris, and Kyle added victory flames to finish line and began power up implementation.
+		+ Current possible power ups are: Speedboost, Multijump, Superjump, Shrink/Grow, Ghost, Heliball
+	- Kyle roughly implemented power up functions and sources with temporary particle effects.
+		+ Testing level now has power up sources to play and test with. Also has a sky box because why not.
+
 February 16, 2015:
 	- Jacob added:
 		+ Preliminary level 3 platform model

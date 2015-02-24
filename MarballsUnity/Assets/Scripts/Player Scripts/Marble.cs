@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Feb. 23, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -17,32 +17,44 @@ using System.Collections;
 
 public class Marble : MonoBehaviour {
 
-	public enum MarbleState {
-		Normal,		// Normal Marble State.
-		SpeedBoost,	// Quick boost of speed
-		MultiJump,	// Ball can jump multiple times
-		SuperJump,  // Ball jumps very high
-		Ghost,		// Transparent ball can clip through certain objects
-		BigBall, 	// Increase the radius by some factor
-		HeliBall 	// Make the ball a helicopter (OPTIONAL)
+	// Enum for what powerup the marble has.
+	public enum PowerUp {
+		None,		// Normal marble state.
+		SpeedBoost,	// Marble is faster
+		MultiJump,	// Marble can jump multiple times
+		SuperJump,  // Marble jumps very high
+		Ghost,		// Transparent marble can clip through certain objects
+		SizeChange, // Changes marble size
+		HeliBall 	// Make the marble a helicopter (OPTIONAL)
 	}
 
 	// Variables
 	#region Variables
 	public GameMaster gm;				// Reference to the Game Master.
 	public Transform cam;				// Reference to the main camera.
+	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
+
+	public float defSpeedMultiplier;	// Default speed multiplier.
+	public float defRevSpeed;			// Default rev speed.
+	public float defMaxAngVelocity;		// Default maximum angular velocity.
+	public float defJumpHeight;			// Default jump height.
+	public float defSize;				// Default marble size.
 
 	Vector3 inputDirection;				// Holds desired direction of input before applying it.
 	bool grounded;						// True if marble is on the ground, false otherwise.
+	float shackle = 0.01f;				// Limiter constant for velocity.
 	public float speedMultiplier;		// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed;				// Determines how quickly the marble will rev up to max angular velocity.
-	public float maxAngVelocity;		// Maximum angular velocity.
-	float shackle = 0.01f;				// Limiter for velocity.
 
-	public int jumpHeight;				// Specify jump height
 	bool hasJumped = false;				// Check if a jump has occured
+	public float jumpHeight;			// How powerful the marble's jump is.
+	public int maxJumps = 1;			// How many jumps marble can have.
+	public int jumpsLeft = 1;			// How many jumps the marble has remaining.
 																			
 	private RaycastHit hit;				// Saves raycast hit.
+
+	public PowerUp buff = PowerUp.None;	// What buff the marble currently has.
+	public float buffTimer;				// How much time until a buff expires.
 
 	public bool debugLights = true;		// Whether marble should light up under certain scenarios.
 
@@ -52,6 +64,8 @@ public class Marble : MonoBehaviour {
 	
 	#endregion
 
+	// Monobehaviour Functions - Typical Unity-provided functions.
+	#region Monobehaviour Functions
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
@@ -63,7 +77,8 @@ public class Marble : MonoBehaviour {
 		inputDirection = new Vector3();
 		//tangent = new Vector3();
 		cam = gm.cam;
-		rigidbody.maxAngularVelocity = maxAngVelocity;
+		ClearBuffs();	// Resets marble's properties to default.
+		//rigidbody.maxAngularVelocity = defMaxAngVelocity;
 
 		// Allows the GameMaster to begin properly in the starting phase regardless of which scene we're in.
 		if (gm.debug)
@@ -75,6 +90,16 @@ public class Marble : MonoBehaviour {
 		if(Physics.Raycast(cam.position, rigidbody.velocity.normalized, 0.8f)) { // If camera hits a wall
 			cam.GetComponent<CameraController>().radius -= 1;
 		}
+
+		// Counts down until a buff runs out.
+		if (buffTimer > 0 && !gm.paused) {
+			buffTimer -= Time.deltaTime;
+
+			if (buffTimer <= 0) {
+				buffTimer = 0;
+				ClearBuffs();
+			}
+		}
 	}
 	
 	// FixedUpdate - Called once per physics calculation. This happens independently of frames.
@@ -82,7 +107,9 @@ public class Marble : MonoBehaviour {
 	void FixedUpdate () {
 		//tangent = Vector3.zero; // See above
 
-		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f);	// Checks if marble is reasonably close to the ground		
+		bool touchdown = !grounded;	// Boolean used to see if the marble landed since the previous frame.
+		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f * transform.localScale.x);	// Checks if marble is reasonably close to the ground		
+
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
 		// Spins marble to appropriate amount of spin speed.
@@ -98,6 +125,9 @@ public class Marble : MonoBehaviour {
 
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+
+			if (touchdown) jumpsLeft = maxJumps; // If marble has just hit the ground, refresh jumps.
+
 			rigidbody.drag = 0.5f;
 			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * shackle/* * Time.deltaTime*/, ForceMode.Impulse); // Applies force.
 			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
@@ -113,17 +143,88 @@ public class Marble : MonoBehaviour {
 		}
 
 		// Handles jumping.
-		if (hasJumped) {
-			//Debug.Log("Jump");
-			
-			Vector3 jump;
-			jump = hit.normal;
-			
-			rigidbody.AddForce (jumpHeight * jump);
+		if (hasJumped) {	
+			Vector3 jumpDir = (grounded)? hit.normal : Vector3.up; // Jumps off of surface's normal if there is one,
+																   // otherwise jumps straight up.
+			rigidbody.AddForce (jumpHeight * jumpDir);
+			jumpsLeft--;
+			if (jumpsLeft == 0 && (buff == PowerUp.MultiJump || buff == PowerUp.SuperJump))
+				ClearBuffs();	// If ball has used up its extra/special jumps, clears powerup state.
+
+			//Debug.Log("(Marble.cs) Jumped! Jumps remaining: " + jumpsLeft); // DEBUG
+
 			hasJumped = false;
 		}
 
 	}
+
+	#endregion
+
+	// PowerUp Functions - Functions that (de)buff the marble's behavior.
+	#region PowerUp Functions
+	// ClearBuffs - Returns marble to its default state.
+	public void ClearBuffs() {
+		rigidbody.maxAngularVelocity = defMaxAngVelocity;
+		speedMultiplier = defSpeedMultiplier;
+		revSpeed = defRevSpeed;
+		jumpHeight = defJumpHeight;
+		maxJumps = 1;
+		jumpsLeft = (grounded)? 1 : 0;
+		transform.localScale = new Vector3(defSize, defSize, defSize);
+
+		if (buffParticles) GameObject.Destroy(buffParticles.gameObject);
+
+		buffTimer = 0;
+		buff = PowerUp.None;
+	}
+
+	// SpeedBoost - Modifies the marble's speed for a while.
+	public void SpeedBoost(float intensity, float duration) {
+		ClearBuffs();
+		buff = PowerUp.SpeedBoost;
+
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Speedboost"))).particleSystem;
+
+		speedMultiplier = intensity;
+		buffTimer = duration;
+	}
+
+	// MultiJump - Grants the marble the ability to jump multiple times, even in midair. By default does not expire by time.
+	public void MultiJump(int jumpCount, float duration = Mathf.Infinity) {
+		ClearBuffs();
+		buff = PowerUp.MultiJump;
+
+		maxJumps = jumpCount;
+		if (grounded) jumpsLeft = maxJumps;
+	}
+
+	// SuperJump - Modifies marble's jumping height.
+	public void SuperJump(float intensity, float duration = Mathf.Infinity) {
+		ClearBuffs();
+		buff = PowerUp.SuperJump;
+
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Superjump"))).particleSystem;
+
+		jumpHeight = intensity;
+		buffTimer = duration;
+	}
+
+	// Ghost - Makes the marble ethereal, able to move through some objects.
+
+	// SizeChange - Modifies marble's size.
+	public void SizeChange(float newSize, float duration) {
+		ClearBuffs();
+		buff = PowerUp.SizeChange;
+
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Sizechange"))).particleSystem;
+
+		transform.localScale = new Vector3(newSize, newSize, newSize);
+		buffTimer = duration;
+	}
+
+	// HeliBall - Turns the marble into a helicopter or allows it to levitate.
+
+	#endregion
 
 	// Control Functions - Functions that allow the player to manipulate the marble.
 	#region Control Functions
@@ -151,7 +252,7 @@ public class Marble : MonoBehaviour {
 	
 	// Jump. Can't jump in the air.
 	public void Jump() {
-		if (grounded && !hasJumped) {
+		if ((grounded || buff == PowerUp.MultiJump) && jumpsLeft > 0 /*!hasJumped*/) {
 			hasJumped = true;
 		}
 	}

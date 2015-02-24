@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  ???    , 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Feb. 23, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -102,6 +102,7 @@ public class GameMaster : MonoBehaviour {
 		cam = null;
 		respawn = null;
 		gui = null;
+		finishLine = null;
 	}
 
 	// LoadLevel - Loads another level using that level's index.
@@ -131,12 +132,9 @@ public class GameMaster : MonoBehaviour {
 		state = GameState.Start;
 		marble.GetComponent<Marble>().Respawn();
 
-		if (respawn) { // Possibly debug
-			respawn.light.enabled = true;
-		}
+		if (respawn) respawn.light.enabled = true; // Possibly debug
 		
-		finishLine.GetComponent<FinishLine>().flame1.Stop ();
-		finishLine.GetComponent<FinishLine>().flame2.Stop ();
+		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}
 
 	// OnPlay - Called when the player is to actually play the level.
@@ -145,12 +143,9 @@ public class GameMaster : MonoBehaviour {
 		timer = 0;
 		state = GameState.Playing;
 
-		if (respawn) { // Possibly debug
-			respawn.light.enabled = false;
-		}
-		
-		finishLine.GetComponent<FinishLine>().flame1.Stop ();
-		finishLine.GetComponent<FinishLine>().flame2.Stop ();
+		if (respawn) respawn.light.enabled = false; // Possibly debug
+
+		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}
 
 	// OnWin - Called when a level is won.
@@ -160,7 +155,6 @@ public class GameMaster : MonoBehaviour {
 		Time.timeScale = 0.5f; // Slowmo victory!
 		//marble.GetComponent<Marble>().Brake();
 		
-		finishLine.GetComponent<FinishLine>().flame1.Play ();
-		finishLine.GetComponent<FinishLine>().flame2.Play ();
+		if (finishLine) finishLine.GetComponent<FinishLine>().FlameOn();
 	}
 }

@@ -87,10 +87,15 @@ public class Marble : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-		if(Physics.Raycast(cam.position, rigidbody.velocity.normalized, 0.8f)) { // If camera hits a wall
-			cam.GetComponent<CameraController>().radius -= 1;
+		if(Physics.Raycast(transform.position, rigidbody.velocity.normalized, cam.GetComponent<CameraController>().radius)) { // If camera hits a wall
+			//cam.GetComponent<CameraController>().radius -= 1;
 		}
-
+/*
+				else
+		{
+			cam.GetComponent<CameraController>().radius = cam.GetComponent<CameraController>().playerRadius;
+		}
+*/
 		// Counts down until a buff runs out.
 		if (buffTimer > 0 && !gm.paused) {
 			buffTimer -= Time.deltaTime;
@@ -164,13 +169,14 @@ public class Marble : MonoBehaviour {
 	#region PowerUp Functions
 	// ClearBuffs - Returns marble to its default state.
 	public void ClearBuffs() {
+		transform.localScale = new Vector3(defSize, defSize, defSize);
 		rigidbody.maxAngularVelocity = defMaxAngVelocity;
 		speedMultiplier = defSpeedMultiplier;
 		revSpeed = defRevSpeed;
 		jumpHeight = defJumpHeight;
 		maxJumps = 1;
 		jumpsLeft = (grounded)? 1 : 0;
-		transform.localScale = new Vector3(defSize, defSize, defSize);
+		
 
 		if (buffParticles) GameObject.Destroy(buffParticles.gameObject);
 

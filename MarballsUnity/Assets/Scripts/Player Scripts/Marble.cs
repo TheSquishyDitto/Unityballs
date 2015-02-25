@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb. 23, 2015
+/// Last Revision: Feb. 25, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -87,15 +87,13 @@ public class Marble : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-		if(Physics.Raycast(transform.position, rigidbody.velocity.normalized, cam.GetComponent<CameraController>().radius)) { // If camera hits a wall
-			//cam.GetComponent<CameraController>().radius -= 1;
-		}
-/*
-				else
-		{
+		/*// Camera shenanigans
+		 if(Physics.Raycast(transform.position, rigidbody.velocity.normalized, cam.GetComponent<CameraController>().radius)) { // If camera hits a wall
+			cam.GetComponent<CameraController>().radius -= 1;
+		} else {
 			cam.GetComponent<CameraController>().radius = cam.GetComponent<CameraController>().playerRadius;
-		}
-*/
+		}*/
+
 		// Counts down until a buff runs out.
 		if (buffTimer > 0 && !gm.paused) {
 			buffTimer -= Time.deltaTime;

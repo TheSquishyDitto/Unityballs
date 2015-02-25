@@ -2,6 +2,10 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 25, 2015:
+	- Charlie, Chris, and Kyle tweaked camera behavior.
+		+ Kyle found general case solution to solve camera problems and implemented it.
+
 February 23, 2015:
 	- Jacob revised level 2 and added guardrails.
 	- Charlie, Chris, and Kyle added victory flames to finish line and began power up implementation.

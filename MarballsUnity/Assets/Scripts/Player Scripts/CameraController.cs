@@ -95,7 +95,7 @@ public class CameraController : MonoBehaviour {
 		RaycastHit hit;
 		// If marble cannot "see" the camera, moves the camera to a point on the radius that it CAN be seen.
 		if (Physics.Raycast(marble.position, (transform.position - marble.position).normalized, out hit, radius)) {
-			transform.position = hit.point;
+			transform.position = hit.point - (transform.position - marble.position).normalized;
 			radius = Vector3.Distance(transform.position, marble.position); // Currently ignores minimum radius.
 		}
 	}

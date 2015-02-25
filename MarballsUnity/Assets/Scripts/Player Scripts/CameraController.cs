@@ -33,6 +33,7 @@ public class CameraController : MonoBehaviour {
 	public float theta = Mathf.PI / 2;  	// Radians around y-axis (horizontal).
 	public float psy = 0.5f;	 			// Radians around x-axis (vertical).
 	public float radius = 15; 				// Distance from marble.
+	public float playerRadius;
 	
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
@@ -55,7 +56,7 @@ public class CameraController : MonoBehaviour {
 	
 	// Start - Use this for initialization
 	void Start () {
-		
+		playerRadius = radius;
 		ball = gm.marble;//GameObject.FindGameObjectWithTag("Marble").transform;
 		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
@@ -80,11 +81,14 @@ public class CameraController : MonoBehaviour {
 		}
 		
 		// Allows zooming in and out.
-		radius -= Input.GetAxis("Mouse ScrollWheel");
+		if(Input.GetAxis("Mouse ScrollWheel") != 0) {
+			radius -= Input.GetAxis("Mouse ScrollWheel");
+			playerRadius = radius;
+		} 
+		
 		if (radius < RADMIN) {
 			radius = RADMIN;
 		}
-		
 	}
 	
 	// LateUpdate - Called directly after everything updates

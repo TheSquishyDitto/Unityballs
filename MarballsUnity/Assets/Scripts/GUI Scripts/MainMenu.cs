@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// MainMenu.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Mar. 2, 2015
 /// 
 /// Class that displays the main menu and gives it function.
 /// 
@@ -16,7 +16,25 @@ using UnityEngine;
 using System.Collections;
 
 public class MainMenu : MonoBehaviour {
+	
+	public GameMaster gm;	// Reference to Game Master.
 
+	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
+	void Awake () {
+		gm = GameMaster.CreateGM();
+	}
+	
+	public void LoadLevel(string name)
+	{
+		gm.LoadLevel(name);
+	}
+	
+	public void QuitRequest()
+	{
+		Application.Quit ();
+	}
+	
+	/*
 	// Enum for main menu state.
 	public enum MenuState {
 		Start,			// Typical title screen state.
@@ -24,19 +42,8 @@ public class MainMenu : MonoBehaviour {
 		LevelSelect,	// Menu for choosing level to go to.
 		Loading			// Loading screen.
 	}
-
-	public GameMaster gm;	// Reference to Game Master.
+	
 	public MenuState state;	// What state the main menu is in.
-
-	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
-	void Awake () {
-		gm = GameMaster.CreateGM();
-	}
-
-	// Start - Use this for initialization.
-	void Start () {
-		state = MenuState.Start;
-	}
 
 	// OnGUI - Used for GUIs. This is a draw call so order, presence, or absence of code can be fairly important.
 	// NOTE: Currently using a whole lotta magic numbers, feel free to change those to constants or public variables and experiment.
@@ -89,4 +96,6 @@ public class MainMenu : MonoBehaviour {
 			state = MenuState.MainMenu;
 		}
 	}
+	
+	*/
 }

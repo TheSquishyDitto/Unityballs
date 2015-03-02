@@ -119,7 +119,7 @@ public class GameMaster : MonoBehaviour {
 
 	// OnLevelWasLoaded - Triggers every time a level loads.
 	void OnLevelWasLoaded(int level) {
-		if (level != 0) {
+		if (level != 0 && level != 1) {
 			//state = GameState.OnStart();
 			OnStart();
 		}

@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// CameraController.cs
-/// Authors: Kyle Dawson, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
 /// Last Revision: Feb. 25, 2015
 /// 

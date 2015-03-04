@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
-/// Date Created:  ???    , 2015
-/// Last Revision: Feb. 23, 2015
+/// Date Created:  Feb. 11, 2015
+/// Last Revision: Mar.  3, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -94,7 +94,10 @@ public class GameMaster : MonoBehaviour {
 	public void TogglePause() {
 		paused = !paused;
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
-		pauseMenu.gameObject.SetActive(paused);
+		if (pauseMenu)
+			pauseMenu.gameObject.SetActive(paused);
+		else
+			Debug.LogWarning("(GameMaster.cs) No pause menu found!");
 	}
 	
 	// ResetVariables - Clears and sets variables to their initial states.
@@ -109,6 +112,7 @@ public class GameMaster : MonoBehaviour {
 		respawn = null;
 		gui = null;
 		finishLine = null;
+		pauseMenu = null;
 	}
 
 	// LoadLevel - Loads another level using that level's index.
@@ -138,7 +142,7 @@ public class GameMaster : MonoBehaviour {
 		state = GameState.Start;
 		marble.GetComponent<Marble>().Respawn();
 
-		if (respawn) respawn.light.enabled = true; // Possibly debug
+		if (respawn) respawn.GetComponent<Light>().enabled = true; // Possibly debug
 		
 		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}
@@ -149,7 +153,7 @@ public class GameMaster : MonoBehaviour {
 		timer = 0;
 		state = GameState.Playing;
 
-		if (respawn) respawn.light.enabled = false; // Possibly debug
+		if (respawn) respawn.GetComponent<Light>().enabled = false; // Possibly debug
 
 		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}

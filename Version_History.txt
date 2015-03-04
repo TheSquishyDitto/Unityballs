@@ -2,6 +2,21 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 4, 2015:
+	- Charlie and Kyle transitioned the pause menu to use the Unity UI canvas.
+	- Updated project to Unity 5. Tons of new changes result.
+		+ Bugfixes: 
+			* Spidercreep up certain steep walls.
+			* Residual slowness after shrinking.
+		+ New issues:
+			* Ball very slowly moves after stopping on a flat surface.
+			* Ball catches nonconvex floor mesh edges/vertices. Similar to http://answers.unity3d.com/questions/568974/sphere-collider-catching-edges-of-aligned-cubes.html but in 3D.
+			* Quarter pipe mesh behaves mildly oddly in conjunction with booster panel, as if ramming it.
+			* If shadows are enabled on level 2, the railing shadows aren't connected to the ground.
+
+March 2, 2015:
+	- Brenton and Charlie added Unity UI canvases to phase out old OnGUI scripts.
+
 February 25, 2015:
 	- Charlie, Chris, and Kyle tweaked camera behavior.
 		+ Kyle found general case solution to solve camera problems and implemented it.

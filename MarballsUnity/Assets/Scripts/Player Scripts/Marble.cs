@@ -116,7 +116,7 @@ public class Marble : MonoBehaviour {
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
 		// Spins marble to appropriate amount of spin speed.
-		rigidbody.AddTorque(Vector3.Cross(Vector3.up, inputDirection) * speedMultiplier * revSpeed * shackle/* * Time.deltaTime*/);
+		GetComponent<Rigidbody>().AddTorque(Vector3.Cross(Vector3.up, inputDirection) * speedMultiplier * revSpeed * shackle/* * Time.deltaTime*/);
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
@@ -131,25 +131,25 @@ public class Marble : MonoBehaviour {
 
 			if (touchdown) jumpsLeft = maxJumps; // If marble has just hit the ground, refresh jumps.
 
-			rigidbody.drag = 0.5f;
-			rigidbody.AddForce(inputDirection * speedMultiplier * rigidbody.angularVelocity.magnitude * shackle/* * Time.deltaTime*/, ForceMode.Impulse); // Applies force.
+			GetComponent<Rigidbody>().drag = 0.5f;
+			GetComponent<Rigidbody>().AddForce(inputDirection * speedMultiplier * GetComponent<Rigidbody>().angularVelocity.magnitude * shackle/* * Time.deltaTime*/, ForceMode.Impulse); // Applies force.
 			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 			
 			// Marble lights up and turns red on the ground.
 			//gameObject.renderer.material.color = Color.red;
-			if (debugLights) gameObject.light.enabled = true;
+			if (debugLights) gameObject.GetComponent<Light>().enabled = true;
 		} else {
 			// Marble dims and turns blue in air.
 			//gameObject.renderer.material.color = Color.blue;
-			rigidbody.drag = 0.1f;			
-			if (debugLights) gameObject.light.enabled = false;
+			GetComponent<Rigidbody>().drag = 0.1f;			
+			if (debugLights) gameObject.GetComponent<Light>().enabled = false;
 		}
 
 		// Handles jumping.
 		if (hasJumped) {	
 			Vector3 jumpDir = (grounded)? hit.normal : Vector3.up; // Jumps off of surface's normal if there is one,
 																   // otherwise jumps straight up.
-			rigidbody.AddForce (jumpHeight * jumpDir);
+			GetComponent<Rigidbody>().AddForce (jumpHeight * jumpDir);
 			jumpsLeft--;
 			if (jumpsLeft == 0 && (buff == PowerUp.MultiJump || buff == PowerUp.SuperJump))
 				ClearBuffs();	// If ball has used up its extra/special jumps, clears powerup state.
@@ -168,7 +168,7 @@ public class Marble : MonoBehaviour {
 	// ClearBuffs - Returns marble to its default state.
 	public void ClearBuffs() {
 		transform.localScale = new Vector3(defSize, defSize, defSize);
-		rigidbody.maxAngularVelocity = defMaxAngVelocity;
+		GetComponent<Rigidbody>().maxAngularVelocity = defMaxAngVelocity;
 		speedMultiplier = defSpeedMultiplier;
 		revSpeed = defRevSpeed;
 		jumpHeight = defJumpHeight;
@@ -187,7 +187,7 @@ public class Marble : MonoBehaviour {
 		ClearBuffs();
 		buff = PowerUp.SpeedBoost;
 
-		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Speedboost"))).particleSystem;
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Speedboost"))).GetComponent<ParticleSystem>();
 
 		speedMultiplier = intensity;
 		buffTimer = duration;
@@ -207,7 +207,7 @@ public class Marble : MonoBehaviour {
 		ClearBuffs();
 		buff = PowerUp.SuperJump;
 
-		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Superjump"))).particleSystem;
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Superjump"))).GetComponent<ParticleSystem>();
 
 		jumpHeight = intensity;
 		buffTimer = duration;
@@ -220,7 +220,7 @@ public class Marble : MonoBehaviour {
 		ClearBuffs();
 		buff = PowerUp.SizeChange;
 
-		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Sizechange"))).particleSystem;
+		buffParticles = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Sizechange"))).GetComponent<ParticleSystem>();
 
 		transform.localScale = new Vector3(newSize, newSize, newSize);
 		buffTimer = duration;
@@ -263,16 +263,16 @@ public class Marble : MonoBehaviour {
 	
 	// Very basic, extremely potent brake. Can currently pause marble midair for the most part.
 	public void Brake() {
-		rigidbody.velocity = Vector3.zero;
-		rigidbody.angularVelocity = Vector3.zero;
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
+		GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 	}
 	
 	// Respawns marble to roughly its starting position.
 	public void Respawn() {
 		//Transform respawn = GameObject.FindGameObjectWithTag("Respawn").transform;
 		
-		rigidbody.velocity = Vector3.zero;
-		rigidbody.angularVelocity = Vector3.zero;
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
+		GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
 		if (gm.respawn) {
 			transform.position = gm.respawn.position + new Vector3(0,5,0);

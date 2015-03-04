@@ -54,7 +54,7 @@ public class LevelGUI : MonoBehaviour {
 
 		if (marble != null) {
 			// Speed gauge.
-			GUI.Label (new Rect(10, Screen.height - 25, 150, 25), "Speed: " + Mathf.Round(marble.rigidbody.velocity.magnitude) + " m/s");
+			GUI.Label (new Rect(10, Screen.height - 25, 150, 25), "Speed: " + Mathf.Round(marble.GetComponent<Rigidbody>().velocity.magnitude) + " m/s");
 		}
 
 /*

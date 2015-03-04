@@ -27,13 +27,14 @@ public class GameMaster : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public static GameMaster GM;	// Reference to singleton.
+	public static GameMaster GM = null;	// Reference to singleton.
 
 	public Transform marble;		// Reference to currently active marble.
 	public Transform cam;			// Reference to camera.
 	public Transform respawn;		// Reference to level's respawn point.
 	public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
 	public Transform finishLine;	// Reference to finish line.
+	public PauseMenu pauseMenu; 	// Reference to pause menu.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -52,14 +53,18 @@ public class GameMaster : MonoBehaviour {
 			if (GM == null)
 				Debug.LogWarning("(GameMaster.cs) Failed to create Game Master!");
 		}
-
 		return GM;
 	}
 
 	// Awake - Called before anything else.
 	void Awake () {
-		DontDestroyOnLoad(this); // GameMaster should exist forever.
-		GM = this; // Failsafe in case there was a condition in which the GM was not already set to be this.
+		if (GM != null) {
+			Destroy (gameObject);
+		}
+		else{
+			GM = this;  // Failsafe in case there was a condition in which the GM was not already set to be this.
+			DontDestroyOnLoad(this); // GameMaster should exist forever.
+		}
 	}
 
 	// Use this for initialization
@@ -89,6 +94,7 @@ public class GameMaster : MonoBehaviour {
 	public void TogglePause() {
 		paused = !paused;
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
+		pauseMenu.gameObject.SetActive(paused);
 	}
 	
 	// ResetVariables - Clears and sets variables to their initial states.

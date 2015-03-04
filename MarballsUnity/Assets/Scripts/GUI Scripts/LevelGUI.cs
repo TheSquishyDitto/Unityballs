@@ -57,7 +57,7 @@ public class LevelGUI : MonoBehaviour {
 			GUI.Label (new Rect(10, Screen.height - 25, 150, 25), "Speed: " + Mathf.Round(marble.rigidbody.velocity.magnitude) + " m/s");
 		}
 
-
+/*
 		// Pause screen
 		if (gm.paused) {
 			GUI.Box(new Rect(-10, -10, Screen.width + 10, Screen.height + 10), "");
@@ -71,6 +71,7 @@ public class LevelGUI : MonoBehaviour {
 				gm.LoadLevel("MainMenu");
 			}
 		}
+		*/
 	}
 
 	// Update is called once per frame

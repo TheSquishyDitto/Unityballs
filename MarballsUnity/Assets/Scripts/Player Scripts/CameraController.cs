@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Feb. 25, 2015
+/// Last Revision: Mar.  4, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -157,10 +157,10 @@ public class CameraController : MonoBehaviour {
 	public void ToggleControlMode() {
 		if (mode == ControlMode.Keyboard) {
 			mode = ControlMode.Mouse;
-			Screen.lockCursor = true;	// When true, cursor is hidden and constantly centered.
+			//Screen.lockCursor = true;	// When true, cursor is hidden and constantly centered.
 		} else if (mode == ControlMode.Mouse) {
 			mode = ControlMode.Keyboard;
-			Screen.lockCursor = false;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
+			//Screen.lockCursor = false;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
 		}
 	}
 	

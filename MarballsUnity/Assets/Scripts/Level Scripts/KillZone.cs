@@ -27,8 +27,8 @@ public class KillZone : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (renderer)
-			renderer.enabled = false;	// Kill zone should only be rendered in scene view, not in gameplay.
+		if (GetComponent<Renderer>())
+			GetComponent<Renderer>().enabled = false;	// Kill zone should only be rendered in scene view, not in gameplay.
 	}
 	
 	// Update is called once per frame

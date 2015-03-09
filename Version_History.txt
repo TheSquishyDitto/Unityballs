@@ -2,14 +2,37 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+February 25, 2015:
+	- Charlie, Chris, and Kyle tweaked camera behavior.
+		+ Kyle found general case solution to solve camera problems and implemented it.
+
+February 23, 2015:
+	- Jacob revised level 2 and added guardrails.
+	- Charlie, Chris, and Kyle added victory flames to finish line and began power up implementation.
+		+ Current possible power ups are: Speedboost, Multijump, Superjump, Shrink/Grow, Ghost, Heliball
+	- Kyle roughly implemented power up functions and sources with temporary particle effects.
+		+ Testing level now has power up sources to play and test with. Also has a sky box because why not.
+
 February 16, 2015:
 	- Jacob added:
 		+ Preliminary level 3 platform model
 		+ Updated level 2 to include central obstacle
 		+ Added updated marble model
+	- Charlie, Chris, and Kyle continued work on level 1:
+		+ Added kill zone boundary.
+		+ Added spawn point.
+		+ Spawn point keeps marble in place during level starting phase.
+	- Kyle tweaked some things to make level creation and debugging easier:
+		+ Created prefabs for kill zone, spawning pad, and finish line to easily drag them into new levels.
+		+ Kill zone boundary is now visible in scene view (purposefully disappears when playing).
+		+ Spawning pad now referred to by the GameMaster and locks the marble more neatly.
+		+ GameMaster's game states now cooperate more and are easy to change via debug GUI.
+		+ InputManager made neater, and now allows for adding debug controls for, well, debugging.
+		+ Added decent default values to camera's orientation and positioning.
 
 February 13, 2015:
 	- Jacob added platform models for levels 1 and 2
+	- Charlie, Chris, and Kyle put together a prototype of the level 1 scene.
 
 February 11, 2015:
 	- Charlie, Chris, and Kyle modified/patched jumping mechanics slightly.

@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Feb. 16, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -65,8 +65,61 @@ public class InputManager : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
+
+		CameraControls();
+
 		// These controls are active during gameplay.
-		if (gm.state == GameMaster.GameState.Playing) {
+		if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
+		
+			MenuControls();
+
+			// As long as the game isn't paused, these controls handle marble movement and positioning.
+			if (!gm.paused) {
+				MarbleControls();
+			}
+		}
+
+		// These controls are suited to experimentation and have their own conditions.
+		DebugControls();
+	}
+
+	// MarbleControls - Controls for the marble.
+	void MarbleControls() {
+		if (gm.marble) {
+			// Forward movement.
+			if (Input.GetKey(forward)) {
+				gm.marble.GetComponent<Marble>().Forward();
+			}
+			// Backward movement.
+			if (Input.GetKey(backward)) {
+				gm.marble.GetComponent<Marble>().Backward();
+			}
+			// Leftwards movement.
+			if (Input.GetKey(left)) {
+				gm.marble.GetComponent<Marble>().Left();
+			}
+			// Rightwards movement.
+			if (Input.GetKey(right)) {
+				gm.marble.GetComponent<Marble>().Right();
+			}
+			// Jumping.
+			if (Input.GetKeyDown(jump)) {
+				gm.marble.GetComponent<Marble>().Jump();
+			}
+			// Braking.
+			if (Input.GetKey(brake)) {
+				gm.marble.GetComponent<Marble>().Brake();
+			}
+			// Respawning. May be better to consider it a debug control instead.
+			if (Input.GetKeyDown (respawn)) {
+				gm.marble.GetComponent<Marble>().Respawn();
+			}
+		}
+	}
+
+	// CameraControls - Controls for the camera.
+	void CameraControls() {
+		if (gm.cam) {
 			// These controls are relevant to moving the camera when the camera is in keyboard mode.
 			if (gm.cam.GetComponent<CameraController>().mode == CameraController.ControlMode.Keyboard) {
 				// Move up.
@@ -90,43 +143,21 @@ public class InputManager : MonoBehaviour {
 			if (Input.GetKeyDown(camToggle)) {
 				gm.cam.GetComponent<CameraController>().ToggleControlMode();
 			}
+		}
+	}
 
-			// Toggles the game being paused.
-			if (Input.GetKeyDown(pause)) {
-				gm.TogglePause();
-			}
+	// MenuControls - Controls for bringing up or closing menus (namely pausing right now).
+	void MenuControls() {
+		// Toggles the game being paused.
+		if (Input.GetKeyDown(pause)) {
+			gm.TogglePause();
+		}
+	}
 
-			// As long as the game isn't paused, these controls handle marble movement and positioning.
-			if (!gm.paused) {
-				// Forward movement.
-				if (Input.GetKey(forward)) {
-					gm.marble.GetComponent<Marble>().Forward();
-				}
-				// Backward movement.
-				if (Input.GetKey(backward)) {
-					gm.marble.GetComponent<Marble>().Backward();
-				}
-				// Leftwards movement.
-				if (Input.GetKey(left)) {
-					gm.marble.GetComponent<Marble>().Left();
-				}
-				// Rightwards movement.
-				if (Input.GetKey(right)) {
-					gm.marble.GetComponent<Marble>().Right();
-				}
-				// Jumping.
-				if (Input.GetKeyDown(jump)) {
-					gm.marble.GetComponent<Marble>().Jump();
-				}
-				// Braking.
-				if (Input.GetKey(brake)) {
-					gm.marble.GetComponent<Marble>().Brake();
-				}
-				// Respawning.
-				if (Input.GetKeyDown (respawn)) {
-					gm.marble.GetComponent<Marble>().Respawn();
-				}
-			}
+	// DebugControls - Controls that are only active in debug mode.
+	void DebugControls() {
+		if (gm.debug) {
+			// Any button presses that you want to use for experimentation can go here.
 		}
 	}
 }

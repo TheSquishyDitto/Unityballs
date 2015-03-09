@@ -34,6 +34,7 @@ public class GameMaster : MonoBehaviour {
 	public Transform respawn;		// Reference to level's respawn point.
 	public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
 	public Transform finishLine;	// Reference to finish line.
+	public InputManager input;		// Reference to input manager.
 	public PauseMenu pauseMenu; 	// Reference to pause menu.
 
 	public GameState state;			// Current state of game.

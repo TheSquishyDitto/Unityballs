@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar.  4, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Class that controls the pause menu canvas.
 /// 
@@ -15,9 +15,10 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
-	public GameMaster gm;		// Reference to Game Master.
-	public GameObject pauseSet;	// Reference to pause button menu set.
+	public GameMaster gm;			// Reference to Game Master.
+	public GameObject pauseSet;		// Reference to pause button menu set.
 	public GameObject optionSet;	// Reference to option button submenu.
+	public GameObject controlSet;	// Reference to controls submenu.
 
 	// Awake - Called before anything else.
 	void Awake () {

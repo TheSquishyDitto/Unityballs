@@ -32,7 +32,7 @@ public class FinishLine : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		marble = gm.marble;
-		pointMass = pointMass.transform.position.sqrMagnitude;
+		//pointMass = pointMass.transform.position.sqrMagnitude;
 	}
 
 	// Update is called once per frame

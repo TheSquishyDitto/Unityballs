@@ -33,4 +33,13 @@ public class PauseMenu : MonoBehaviour {
 	public void Resume(){
 		gm.TogglePause();
 	}
+	
+	public void MainMenu(){
+		gm.LoadLevel(0);
+	}
+	
+	public void QuitRequest()
+	{
+		Application.Quit ();
+	}
 }

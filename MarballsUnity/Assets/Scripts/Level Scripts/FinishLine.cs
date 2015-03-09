@@ -20,6 +20,9 @@ public class FinishLine : MonoBehaviour {
 	public GameMaster gm;
 	public ParticleSystem flame1;
 	public ParticleSystem flame2;
+	public const float GRAV_CONST = .00667f;
+	public Transform marble;
+	public Transform pointMass;
 	
 	void Awake () {
 		gm = GameMaster.CreateGM ();
@@ -28,9 +31,10 @@ public class FinishLine : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		marble = gm.marble;
+		pointMass = pointMass.transform.position.sqrMagnitude;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		
@@ -53,5 +57,11 @@ public class FinishLine : MonoBehaviour {
 	public void FlameOff() {
 		flame1.Stop();
 		flame2.Stop();
+	}
+
+	// SwirlFinish - makes the marble swirl near the finish line upon crossing
+	public void SwirlFinish () {
+		float sqMag = marble.transform.position.sqrMagnitude;
+		//float gravEq = ((GRAV_CONST * 
 	}
 }

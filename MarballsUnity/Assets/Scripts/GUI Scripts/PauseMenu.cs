@@ -15,7 +15,9 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
-	public GameMaster gm;
+	public GameMaster gm;		// Reference to Game Master.
+	public GameObject pauseSet;	// Reference to pause button menu set.
+	public GameObject optionSet;	// Reference to option button submenu.
 
 	// Awake - Called before anything else.
 	void Awake () {
@@ -36,6 +38,12 @@ public class PauseMenu : MonoBehaviour {
 	
 	public void MainMenu(){
 		gm.LoadLevel(0);
+	}
+
+	// ToggleOptions - Goes to the option submenu and back.
+	public void ToggleOptions() {
+		pauseSet.SetActive (!pauseSet.activeSelf);
+		optionSet.SetActive (!optionSet.activeSelf);
 	}
 	
 	public void QuitRequest()

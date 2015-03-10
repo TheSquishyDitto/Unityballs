@@ -18,7 +18,9 @@ using System.Collections;
 public class MainMenu : MonoBehaviour {
 	
 	public GameMaster gm;	// Reference to Game Master.
-
+	public GameObject mainSet;
+	public GameObject optionSet;
+	public GameObject levelSet;
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
@@ -28,7 +30,18 @@ public class MainMenu : MonoBehaviour {
 	{
 		gm.LoadLevel(name);
 	}
-	
+
+	public void ToggleOptions()
+	{
+		mainSet.SetActive (!mainSet.activeSelf);
+		optionSet.SetActive (!optionSet.activeSelf);
+	}
+	public void ToggleSelectLevel()
+	{
+		mainSet.SetActive (!mainSet.activeSelf);
+		levelSet.SetActive (!levelSet.activeSelf);
+	}
+
 	public void QuitRequest()
 	{
 		Application.Quit ();

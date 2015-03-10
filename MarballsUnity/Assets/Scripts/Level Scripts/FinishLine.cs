@@ -20,10 +20,9 @@ public class FinishLine : MonoBehaviour {
 	public GameMaster gm;
 	public ParticleSystem flame1;
 	public ParticleSystem flame2;
-	public const float GRAV_CONST = .00667f;
 	public Transform marble;
-	int blah = 100;
-	int posUpdate = 0;
+	public Transform rotPlaceHolder;
+	public Vector3 finishPos; // The position of the marble once it crosses the finish line
 	
 	void Awake () {
 		gm = GameMaster.CreateGM ();
@@ -37,22 +36,7 @@ public class FinishLine : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (blah);
-		if (gm.state == GameMaster.GameState.Win) {
-			blah--;
-			if(blah == 0){
-				blah = 100;
-				float theta = Mathf.PI / 50.0f;
-				
-				// Spickler Magic
-				marble.transform.position = new Vector3 (transform.position.x + (theta * posUpdate / 20) * Mathf.Cos (5 * theta * posUpdate),
-				                                         transform.position.y + (((2 * Mathf.PI - theta * posUpdate) / 2.0f) + (1 / 10.0f)),
-				                                         transform.position.x + (theta * posUpdate / 20) * Mathf.Sin (5 * theta * posUpdate));
-			
-				posUpdate++;
-				//SwirlFinish ();
-			}
-		}
+
 	}
 
 	// FixedUpdate is called every physics frame
@@ -65,6 +49,7 @@ public class FinishLine : MonoBehaviour {
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble")) {
 			marble.GetComponent<Rigidbody> ().isKinematic = true;
+			finishPos = marble.position;
 			gm.OnWin(); // When player gets to finish they win!
 		}	
 	}
@@ -82,14 +67,15 @@ public class FinishLine : MonoBehaviour {
 	}
 
 	// SwirlFinish - make the marble spiral after crossing the finish line
-	//public void SwirlFinish () {
-		/*float theta = Mathf.PI / 50.0f;
+	/*public void SwirlFinish () {
+		float theta = Mathf.PI / 50.0f;
 
 		// Spickler Magic
-		marble.transform.position = new Vector3 (transform.position.x + (theta * posUpdate / 20) * Mathf.Cos (5 * theta * posUpdate),
-		                                        transform.position.y + (((2 * Mathf.PI - theta * posUpdate) / 2.0f) + (1 / 10.0f)),
-		                                        transform.position.x + (theta * posUpdate / 20) * Mathf.Sin (5 * theta * posUpdate));
+		marble.transform.position = new Vector3 (finishPos.x + (theta * Time.deltaTime / 20) * Mathf.Cos (5 * theta * Time.deltaTime),
+		                                        finishPos.y + (((2 * Mathf.PI - theta * Time.deltaTime) / 2.0f) + (1 / 10.0f)),
+		                                        finishPos.z + (theta * Time.deltaTime / 20) * Mathf.Sin (5 * theta * Time.deltaTime));
 	}*/
+
 	// SwirlFinish - makes the marble swirl near the finish line upon crossing
 	/*public void SwirlFinish () {
 		float sqMag = marble.transform.position.sqrMagnitude;	// radius of marble from the point mass

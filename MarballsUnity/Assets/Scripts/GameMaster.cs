@@ -174,6 +174,6 @@ public class GameMaster : MonoBehaviour {
 		Time.timeScale = 0.5f; // Slowmo victory!
 		//marble.GetComponent<Marble>().Brake();
 		
-		if (finishLine) finishLine.GetComponent<FinishLine>().FlameOn();
+		if (finishLine) finishLine.GetComponent<FinishLine> ().FlameOn ();
 	}
 }

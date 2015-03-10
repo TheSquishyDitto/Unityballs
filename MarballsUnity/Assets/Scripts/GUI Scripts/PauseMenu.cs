@@ -36,7 +36,8 @@ public class PauseMenu : MonoBehaviour {
 	public void Resume(){
 		gm.TogglePause();
 	}
-	
+
+	// MainMenu - Goes to the main menu.
 	public void MainMenu(){
 		gm.LoadLevel(0);
 	}
@@ -46,7 +47,8 @@ public class PauseMenu : MonoBehaviour {
 		pauseSet.SetActive (!pauseSet.activeSelf);
 		optionSet.SetActive (!optionSet.activeSelf);
 	}
-	
+
+	// QuitRequest - Quits the game.
 	public void QuitRequest()
 	{
 		Application.Quit ();

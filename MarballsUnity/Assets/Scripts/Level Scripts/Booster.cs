@@ -32,11 +32,7 @@ public class Booster : MonoBehaviour {
 	}
 
 	// OnTriggerEnter - What happens when another object enters this collider.
-<<<<<<< HEAD
 	void OnTriggerEnter(Collider other) {
-=======
-	void OnTriggerEnter() {
->>>>>>> 646579061aaf4323906bfee14b256a360ba1dd70
 		GetComponent<Light>().intensity = 7.5f;
 		// [insert cool sound effect here]
 		if (other.attachedRigidbody)
@@ -44,14 +40,9 @@ public class Booster : MonoBehaviour {
 	}
 
 	// OnTriggerExit - What happens when another object exits this collider.
-<<<<<<< HEAD
 	void OnTriggerExit(Collider other) {
 		GetComponent<Light>().intensity = 1;
 		boostee = null;
-=======
-	void OnTriggerExit() {
-		GetComponent<Light>().intensity = 1;
->>>>>>> 646579061aaf4323906bfee14b256a360ba1dd70
 	}
 
 	/*// OnTriggerStay - As long as another object is within the collision zone.

@@ -2,6 +2,13 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 9, 2015:
+	- Chris added a work-in-progress fancy finish line animation. Kyle got it sorta functional afterwards.
+	- Brenton added fancy buttons and completely reworked the main menu.
+	- Charlie added more functionality to the in-game pause menu GUI.
+		+ Due to git merge shenanigans, the minor work on the controls submenu was lost.
+	- Kyle added submenus to the pause menu GUI and cleaned up some other things.
+
 March 4, 2015:
 	- Charlie and Kyle transitioned the pause menu to use the Unity UI canvas.
 	- Updated project to Unity 5. Tons of new changes result.

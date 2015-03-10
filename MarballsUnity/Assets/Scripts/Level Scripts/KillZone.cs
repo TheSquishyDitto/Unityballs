@@ -2,7 +2,7 @@
 /// KillZone.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Class that handles behavior of killzone boundaries.
 /// 
@@ -42,5 +42,11 @@ public class KillZone : MonoBehaviour {
 		if (other.CompareTag("Marble") && gm.state == GameMaster.GameState.Playing) {
 			gm.marble.GetComponent<Marble>().Respawn();
 		}
+	}
+
+	// OnDrawGizmosSelected - Used to draw things when selected in scene view exclusively: does not affect gameplay.
+	void OnDrawGizmosSelected() {
+		Gizmos.color = Color.red;
+		Gizmos.DrawCube(transform.position, transform.localScale);	// Shows kill zone when the kill zone is selected.
 	}
 }

@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar.  3, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -80,8 +80,15 @@ public class GameMaster : MonoBehaviour {
 			if (!paused) {	// and the game isn't paused,
 				if (state == GameState.Start && timer > 0) { // in the starting phase,
 					timer -= Time.deltaTime;	// the timer counts down to 0,
-					if (timer <= 0)	
-						OnPlay();	// and begins the actual gameplay.
+
+					// [ CODE TO MAKE THE GIANT NUMBERS SHOW UP SHOULD GO HERE PROBABLY ]
+
+					if (timer <= 0)	{ // and when it reaches 0, the gameplay begins.
+
+						// [ CODE TO MAKE GIANT "GO" DISPLAY SHOULD GO HERE PROBABLY ]
+
+						OnPlay();
+					}
 
 				} else if(state == GameState.Playing) { // Here the timer serves a different purpose,
 					timer += Time.deltaTime;	// tracking the player's time since starting.
@@ -141,6 +148,7 @@ public class GameMaster : MonoBehaviour {
 		timer = countdownLength;
 		state = GameState.Start;
 		marble.GetComponent<Marble>().Respawn();
+		marble.GetComponent<Rigidbody>().isKinematic = false;
 
 		if (respawn) respawn.GetComponent<Light>().enabled = true; // Possibly debug
 		
@@ -151,6 +159,7 @@ public class GameMaster : MonoBehaviour {
 	public void OnPlay() {
 		Time.timeScale = 1;
 		timer = 0;
+		marble.GetComponent<Rigidbody>().isKinematic = false;
 		state = GameState.Playing;
 
 		if (respawn) respawn.GetComponent<Light>().enabled = false; // Possibly debug

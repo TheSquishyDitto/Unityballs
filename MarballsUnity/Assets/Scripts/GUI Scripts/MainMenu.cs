@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// MainMenu.cs
-/// Authors: Kyle Dawson, Charlie Sun [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun, Brenton Brown [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 2, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Class that displays the main menu and gives it function.
 /// 
@@ -17,31 +17,38 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour {
 	
-	public GameMaster gm;	// Reference to Game Master.
-	public GameObject mainSet;
-	public GameObject optionSet;
-	public GameObject levelSet;
+	public GameMaster gm;			// Reference to Game Master.
+	public GameObject mainSet;		// Reference to main set of buttons.
+	public GameObject optionSet;	// Reference to option submenu buttons.
+	public GameObject levelSet;		// Reference to select level submenu buttons.
+
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
 	}
-	
+
+	// LoadLevel - Tells the GameMaster to load a level.
 	public void LoadLevel(string name)
 	{
+		// [ If we wanna add loading text we should do that here. ]
 		gm.LoadLevel(name);
 	}
 
+	// ToggleOptions - Toggles the option submenu.
 	public void ToggleOptions()
 	{
 		mainSet.SetActive (!mainSet.activeSelf);
 		optionSet.SetActive (!optionSet.activeSelf);
 	}
+
+	// ToggleSelectLevel - Toggles the level selection submenu.
 	public void ToggleSelectLevel()
 	{
 		mainSet.SetActive (!mainSet.activeSelf);
 		levelSet.SetActive (!levelSet.activeSelf);
 	}
 
+	// QuitRequest - Quits the game.
 	public void QuitRequest()
 	{
 		Application.Quit ();

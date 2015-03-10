@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar.  4, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Class that controls the pause menu canvas.
 /// 
@@ -15,8 +15,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
-	public GameMaster gm;		// Reference to Game Master.
-	public GameObject pauseSet;	// Reference to pause button menu set.
+	public GameMaster gm;			// Reference to Game Master.
+	public GameObject pauseSet;		// Reference to pause button menu set.
 	public GameObject optionSet;	// Reference to option button submenu.
 
 	// Awake - Called before anything else.
@@ -35,7 +35,8 @@ public class PauseMenu : MonoBehaviour {
 	public void Resume(){
 		gm.TogglePause();
 	}
-	
+
+	// MainMenu - Goes to the main menu.
 	public void MainMenu(){
 		gm.LoadLevel(0);
 	}
@@ -45,7 +46,8 @@ public class PauseMenu : MonoBehaviour {
 		pauseSet.SetActive (!pauseSet.activeSelf);
 		optionSet.SetActive (!optionSet.activeSelf);
 	}
-	
+
+	// QuitRequest - Quits the game.
 	public void QuitRequest()
 	{
 		Application.Quit ();

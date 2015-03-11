@@ -41,10 +41,8 @@ public class FinishLine : MonoBehaviour {
 	// Start - Use this for initialization
 	void Start () {
 		marble = gm.marble;
-<<<<<<< HEAD
 		//pointMass = pointMass.transform.position.sqrMagnitude;
-=======
->>>>>>> upstream/master
+
 	}
 
 	// Update is called once per frame
@@ -128,8 +126,8 @@ public class FinishLine : MonoBehaviour {
 
 	// OnDrawGizmos - Used to draw things in scene view exclusively: does not affect gameplay.
 	void OnDrawGizmos() {
-		Gizmos.color = Color.cyan;
-		Gizmos.DrawCube(swirlPoint.position, new Vector3(1, 1, 1));	// Allows the swirl epicenter to be seen.
+		//Gizmos.color = Color.cyan;
+		//Gizmos.DrawCube(swirlPoint.position, new Vector3(1, 1, 1));	// Allows the swirl epicenter to be seen.
 	}
 
 	// SwirlFinish - makes the marble swirl near the finish line upon crossing

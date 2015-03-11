@@ -79,10 +79,6 @@ public class Marble : MonoBehaviour {
 		cam = gm.cam;
 		ClearBuffs();	// Resets marble's properties to default.
 		//rigidbody.maxAngularVelocity = defMaxAngVelocity;
-
-		// Allows the GameMaster to begin properly in the starting phase regardless of which scene we're in.
-		if (gm.debug)
-			gm.OnStart();	// DEBUG
 	}
 	
 	// Update - Called once per frame.

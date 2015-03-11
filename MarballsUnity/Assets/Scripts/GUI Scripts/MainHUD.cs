@@ -24,20 +24,29 @@ public class MainHUD : MonoBehaviour {
 	public Text timer;			// Reference to timer text.
 	public Text speed;			// Reference to speed gauge text.
 	public Image countdown;		// Reference to countdown image container.
+	public Image powerup;		// Reference to powerup picture.
+	public Image deathScreen;	// Reference to death tint.
+	public Text deathMessage;	// Reference to death message text.
 	public GameObject debugSet;	// Reference to debug buttons and info display.
 
 	public Sprite[] nums;		// Easy holder of number textures.
 	float remainder;			// Decimal portion of timer.
+	public float goLength;		// Desired duration of "GO!" Should be between 0 and 1.
 	#endregion
 	
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		gm.hud = this;
 	}
 	
 	// Use this for initialization
 	void Start () {
 		marble = gm.marble;
+
+		goLength = Mathf.Clamp(goLength, 0.01f, 0.999f);
+
+		gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
 
 		debugSet.SetActive(gm.debug);
 	}
@@ -47,23 +56,20 @@ public class MainHUD : MonoBehaviour {
 		if (!gm.paused) {
 
 			if (gm.state == GameMaster.GameState.Start) {
-				// 3 2 1 Countdown
-				countdown.gameObject.SetActive(true);	// Should be moved to GM's OnStart function.
-				timer.gameObject.SetActive(false);		// Should be moved to GM's OnStart function.
+				timer.text = "0.0 s";
 
+				// 3 2 1 GO! Countdown
 				// Changes number based on current integer portion of the timer.
-				countdown.sprite = (gm.timer <= nums.Length)? nums[Mathf.FloorToInt(gm.timer)] : nums[nums.Length - 1]; // If timer is longer than the number of sprites, defaults to last.
+				countdown.sprite = (gm.timer <= nums.Length)? nums[(int)(gm.timer + (1 - goLength))] : nums[nums.Length - 1]; // If timer is longer than the number of sprites, defaults to last.
 				// [sound effect for timer changing should go here]
 
-				// Makes number shrink as the timer goes down to the next number.
-				remainder = gm.timer % 1;
-				countdown.rectTransform.localScale = (gm.timer >= 1) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(2, 2, 2);
+				// Makes number shrink as the timer goes down to the next number, with special conditions for "GO!".
+				remainder = (gm.timer % 1) + (1 - goLength);
+				if (remainder >= 1) remainder = remainder % 1;
+				countdown.rectTransform.localScale = (gm.timer >= goLength) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(3, 3, 3);
 
 			} else {
-				timer.gameObject.SetActive(true);		// Should be moved to GM's OnPlay function.
-				countdown.gameObject.SetActive(false);	// Should be moved to GM's OnPlay function.
-
-				timer.text = (Mathf.Round(gm.timer * 10) / 10.0) + " s"; // Timer
+				timer.text = gm.timer.ToString("F1") + " s";	// Displays timer to one decimal place.
 			}
 		
 			if (marble != null) {
@@ -82,5 +88,29 @@ public class MainHUD : MonoBehaviour {
 	
 	public void PlayButton (){
 		gm.OnPlay();
+	}
+
+	// OnDeath - Called when player falls off the stage or otherwise is killed.
+	public IEnumerator OnDeath() {
+
+		// Makes the red screen visible.
+		for (int i = 0; i < 25; i++) {
+			deathScreen.color = new Color(1, 0, 0, i/50.0f);
+			yield return new WaitForSeconds(0.05f);
+		}
+
+		// Makes the death text visible.
+		for (int i = 0; i < 10; i++) {
+			deathMessage.color = new Color(1, 1, 1, i/10.0f);
+			yield return new WaitForSeconds(0.05f);
+		}
+
+		yield return new WaitForSeconds(2); // Punishment waiting.
+
+		// Clears death screens.
+		deathScreen.color = new Color(1, 0, 0, 0);
+		deathMessage.color = new Color(1, 1, 1, 0);
+
+		gm.marble.GetComponent<Marble>().Respawn(); // Finally respawns player.
 	}
 }

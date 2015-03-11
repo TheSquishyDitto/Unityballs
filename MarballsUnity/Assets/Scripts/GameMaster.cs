@@ -32,10 +32,11 @@ public class GameMaster : MonoBehaviour {
 	public Transform marble;		// Reference to currently active marble.
 	public Transform cam;			// Reference to camera.
 	public Transform respawn;		// Reference to level's respawn point.
-	public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
+	//public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
 	public Transform finishLine;	// Reference to finish line.
 	public InputManager input;		// Reference to input manager.
 	public PauseMenu pauseMenu; 	// Reference to pause menu.
+	public MainHUD hud;				// Reference to HUD.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -82,12 +83,7 @@ public class GameMaster : MonoBehaviour {
 				if (state == GameState.Start && timer > 0) { // in the starting phase,
 					timer -= Time.deltaTime;	// the timer counts down to 0,
 
-					// [ CODE TO MAKE THE GIANT NUMBERS SHOW UP SHOULD GO HERE PROBABLY ]
-
 					if (timer <= 0)	{ // and when it reaches 0, the gameplay begins.
-
-						// [ CODE TO MAKE GIANT "GO" DISPLAY SHOULD GO HERE PROBABLY ]
-
 						OnPlay();
 					}
 
@@ -109,7 +105,8 @@ public class GameMaster : MonoBehaviour {
 	}
 	
 	// ResetVariables - Clears and sets variables to their initial states.
-	// NOTE: Should typically only be called when loading a level.
+	// NOTES: - Should typically only be called when loading a level.
+	// 		  - For references, objects that aren't destroyed should not be nulled out!
 	void ResetVariables() {
 		Time.timeScale = 1;
 		state = GameState.Menu;
@@ -118,9 +115,10 @@ public class GameMaster : MonoBehaviour {
 		marble = null;
 		cam = null;
 		respawn = null;
-		gui = null;
+		//gui = null;
 		finishLine = null;
 		pauseMenu = null;
+		hud = null;
 	}
 
 	// LoadLevel - Loads another level using that level's index.
@@ -137,22 +135,26 @@ public class GameMaster : MonoBehaviour {
 
 	// OnLevelWasLoaded - Triggers every time a level loads.
 	void OnLevelWasLoaded(int level) {
-		if (level != 0 && level != 1) {
+		//if (level != 0 && level != 1) {
 			//state = GameState.OnStart();
-			OnStart();
-		}
+			//OnStart();
+		//}
 	}
 
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
 		Time.timeScale = 1;
-		timer = countdownLength;
+		timer = countdownLength + hud.goLength;
 		state = GameState.Start;
 		marble.GetComponent<Marble>().Respawn();
 		marble.GetComponent<Rigidbody>().isKinematic = false;
 
-		if (respawn) respawn.GetComponent<Light>().enabled = true; // Possibly debug
-		
+		if (respawn) {
+			respawn.GetComponent<SpawnArea>().sfx.SetActive(true);
+		}
+
+		hud.countdown.gameObject.SetActive(true);
+
 		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}
 
@@ -163,7 +165,11 @@ public class GameMaster : MonoBehaviour {
 		marble.GetComponent<Rigidbody>().isKinematic = false;
 		state = GameState.Playing;
 
-		if (respawn) respawn.GetComponent<Light>().enabled = false; // Possibly debug
+		if (respawn) {
+			respawn.GetComponent<SpawnArea>().sfx.SetActive(false);
+		}
+
+		hud.countdown.gameObject.SetActive(false);
 
 		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
 	}

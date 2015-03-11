@@ -2,7 +2,7 @@
 /// KillZone.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Class that handles behavior of killzone boundaries.
 /// 
@@ -40,7 +40,10 @@ public class KillZone : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		// Check if what fell into the killzone was a marble, since you wouldn't want a falling box to reset the player.
 		if (other.CompareTag("Marble") && gm.state == GameMaster.GameState.Playing) {
-			gm.marble.GetComponent<Marble>().Respawn();
+			//gm.marble.GetComponent<Marble>().Respawn();
+
+			//Time.timeScale = 0.5f; // Slowmo death!
+			gm.hud.StartCoroutine("OnDeath");
 		}
 	}
 

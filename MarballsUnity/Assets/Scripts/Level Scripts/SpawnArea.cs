@@ -2,7 +2,7 @@
 /// SpawnArea.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Class that dictates how spawning pads should function.
 /// 
@@ -18,7 +18,8 @@ using System.Collections;
 
 public class SpawnArea : MonoBehaviour {
 
-	public GameMaster gm;	// Reference to the game master.
+	public GameMaster gm;			// Reference to the game master.
+	public GameObject sfx;			// Reference to attached aesthetic effects.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {

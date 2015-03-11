@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 

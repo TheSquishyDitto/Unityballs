@@ -83,7 +83,7 @@ public class FinishLine : MonoBehaviour {
 	
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
-		if (other.CompareTag("Marble")) {
+		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
 			marble.GetComponent<Rigidbody> ().isKinematic = true;	// Hands total control of marble position to scripts.
 			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
 			gm.OnWin(); // When player gets to finish they win!
@@ -109,10 +109,10 @@ public class FinishLine : MonoBehaviour {
 
 		// Spickler Magic
 		float theta = Mathf.PI / 50.0f;	// Some random constant that Spickler came up with.
-		for (int i = 500; i > 0; i -= 1) {
-			marble.transform.position = new Vector3 ((theta * i / 4) * Mathf.Cos (5 * theta * i),	// The smaller the number being divided by, the bigger the circle.
-			                                         (((1 * Mathf.PI - theta * i) / 2.0f) + (1 / 10.0f)), // The greater the number multiplied by pi, the higher the marble goes.
-			                                         (theta * i / 4) * Mathf.Sin (5 * theta * i))   // The smaller the number being divided by, the bigger the circle.
+		for (int i = 400; i > 0; i -= 1) {
+			marble.transform.position = new Vector3 ((theta * i / 8) * Mathf.Cos (2 * theta * i),	// The smaller the number being divided by, the bigger the circle.
+			                                         (((.6f * Mathf.PI - theta * i) / 2.0f) + (1 / 10.0f)), // The greater the number multiplied by pi, the higher the marble goes.
+			                                         (theta * i / 8) * Mathf.Sin (2 * theta * i))   // The smaller the number being divided by, the bigger the circle.
 													  + swirlPoint.transform.position;	// Makes this all happen around a given point.
 
 			yield return new WaitForSeconds(0.005f);	// How long in seconds before calling the next loop iteration.

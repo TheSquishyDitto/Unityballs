@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -25,11 +25,6 @@ public class FinishLine : MonoBehaviour {
 	public Transform marble;		// Reference to the marble.
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
 
-	//int blah = 5;	// Overly cheap counter to call something only every few frames. Should be replaced.
-	//int posUpdate = 600;	// One attempt at getting swirl to work.
-	//float timeSinceWin = 500; 	// Modified time since player won. Currently counts backwards.
-	//public const float GRAV_CONST = .00667f;	// A gravitational constant. May not be needed now.
-
 	#endregion
 
 	// Awake - Called before anything else.
@@ -41,38 +36,12 @@ public class FinishLine : MonoBehaviour {
 	// Start - Use this for initialization
 	void Start () {
 		marble = gm.marble;
-		//pointMass = pointMass.transform.position.sqrMagnitude;
 
 	}
 
 	// Update is called once per frame
 	void Update () {
 
-		// CHRIS, I was messing with this a bit and figured out that Spickler's code creates the Christmas tree
-		// from top to bottom, rather than vice versa. I changed where we started from to make it do what we want.
-		// I made a coroutine and moved it into its own function. We can tweak it how we want it from there.
-
-		//Debug.Log (blah);
-		//if (gm.state == GameMaster.GameState.Win) {
-			//if (timeSinceWin > 0)
-				//timeSinceWin -= Time.deltaTime * 100;
-
-			/*blah--;
-			if(blah == 0){
-				blah = 5;
-				float theta = Mathf.PI / 50.0f;
-				
-				// Spickler Magic
-				marble.transform.position = new Vector3 ((theta * timeSinceWin / 5) * Mathf.Cos (5 * theta * timeSinceWin),
-				                                        (((2 * Mathf.PI - theta * timeSinceWin) / 2.0f) + (1 / 10.0f)),
-				                                        (theta * timeSinceWin / 5) * Mathf.Sin (5 * theta * timeSinceWin)) + swirlPoint.transform.position;
-
-				//Debug.Log("TimeSinceWin: " + timeSinceWin);
-				//posUpdate -= 1;
-				//Debug.Log ("PosUpdate: " + posUpdate);
-				//SwirlFinish ();
-			}*/
-		//}
 	}
 
 	// FixedUpdate is called every physics frame
@@ -105,29 +74,51 @@ public class FinishLine : MonoBehaviour {
 	// SwirlFinish - Coroutine that makes the marble spiral after crossing the finish line.
 	public IEnumerator SwirlFinish () {
 
-		// [insert code to smoothly get the marble into the starting position of swirl without teleporting]
+		// NOTE: TO CHANGE WHERE THE MARBLE SWIRLS AROUND, MOVE THE "SWIRLPOINT"
+
+		// [insert code to smoothly get the timer into position without teleporting, maybe separate coroutine? ]
+		// [insert code to smoothly get the marble into the starting position of swirl without teleporting, maybe separate coroutine? ]
 
 		// Spickler Magic
 		float theta = Mathf.PI / 50.0f;	// Some random constant that Spickler came up with.
-		for (int i = 400; i > 0; i -= 1) {
-			marble.transform.position = new Vector3 ((theta * i / 8) * Mathf.Cos (2 * theta * i),	// The smaller the number being divided by, the bigger the circle.
-			                                         (((.6f * Mathf.PI - theta * i) / 2.0f) + (1 / 10.0f)), // The greater the number multiplied by pi, the higher the marble goes.
-			                                         (theta * i / 8) * Mathf.Sin (2 * theta * i))   // The smaller the number being divided by, the bigger the circle.
-													  + swirlPoint.transform.position;	// Makes this all happen around a given point.
+		float spiconstant = 0.1f;		// Another random constant Spickler came up with.
+
+		int swirls = 200;	// Factors into how many full revolutions/swirls the marble does. Bigger number means more swirling.
+		int width = 4;		// Factors into radius of swirls. The smaller this number, the bigger the radius.
+		int height = 4;		// Factors into how high the marble travels. The bigger this number, the less height.
+		int speed = 2;		// Factors into how fast the marble swirls. Bigger numbers = faster. Double digits = Earthquake.
+		float gap = 0;		// Factors into the gap between bottom cone and top cone. The bigger the number the bigger the gap.
+
+		// Inverse Christmas Tree Swirl
+		for (int i = 0; i < swirls; i++) {
+			marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * i),	// The smaller the number being divided by, the bigger the circle.
+			                                         (((gap * Mathf.PI + theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
+			                                         (theta * i / width) * Mathf.Sin (speed * theta * i))   // The smaller the number being divided by, the bigger the circle.
+													+ swirlPoint.transform.position - new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
+			
+			yield return new WaitForSeconds(0.005f);	// How long in seconds before calling the next loop iteration.
+		}
+
+		// Christmas Tree Swirl
+		for (int i = swirls; i > 0; i--) {
+			marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * -i),	// The smaller the number being divided by, the bigger the circle.
+			                                         (((gap * Mathf.PI - theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
+			                                         (theta * i / width) * Mathf.Sin (speed * theta * -i))   // The smaller the number being divided by, the bigger the circle.
+													+ swirlPoint.transform.position + new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
 
 			yield return new WaitForSeconds(0.005f);	// How long in seconds before calling the next loop iteration.
 		}
 
 		// [insert pop animation]
 		// yield return new WaitForSeconds(/*length of pop animation*/);
-		// [load next level or go back to main menu]
+		// [show menu for loading next level or go back to main menu]
 
 	}
 
 	// OnDrawGizmos - Used to draw things in scene view exclusively: does not affect gameplay.
 	void OnDrawGizmos() {
-		//Gizmos.color = Color.cyan;
-		//Gizmos.DrawCube(swirlPoint.position, new Vector3(1, 1, 1));	// Allows the swirl epicenter to be seen.
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawCube(swirlPoint.position, new Vector3(1, 1, 1));	// Allows the swirl epicenter to be seen.
 	}
 
 	// SwirlFinish - makes the marble swirl near the finish line upon crossing

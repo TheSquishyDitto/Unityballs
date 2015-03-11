@@ -2,14 +2,13 @@
 /// LevelGUI.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Class that handles the GUI when a gameplay level scene is loaded.
 /// 
-/// NOTES: - With Unity UI this will be phased out before it even becomes very relevant.
-/// 	   - Currently only used for pause menu and debug things.
+/// NOTES: - All previous functionality of this is now handled by Unity UI stuff.
 /// 
-/// TO DO: - Phase out in favor of Unity UI canvases and such.
+/// TO DO: - Fully deprecate and delete.
 /// 
 /// </summary>
 
@@ -17,7 +16,7 @@ using UnityEngine;
 using System.Collections;
 
 public class LevelGUI : MonoBehaviour {
-
+	/*
 	public GameMaster gm;		// Reference to Game Master.
 	public Transform marble;	// Reference to currently active marble.
 
@@ -57,7 +56,7 @@ public class LevelGUI : MonoBehaviour {
 			GUI.Label (new Rect(10, Screen.height - 25, 150, 25), "Speed: " + Mathf.Round(marble.GetComponent<Rigidbody>().velocity.magnitude) + " m/s");
 		}
 
-/*
+
 		// Pause screen
 		if (gm.paused) {
 			GUI.Box(new Rect(-10, -10, Screen.width + 10, Screen.height + 10), "");
@@ -71,11 +70,11 @@ public class LevelGUI : MonoBehaviour {
 				gm.LoadLevel("MainMenu");
 			}
 		}
-		*/
+
 	}
 
 	// Update is called once per frame
 	void Update () {
 
-	}
+	}*/
 }

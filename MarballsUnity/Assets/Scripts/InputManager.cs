@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Mar. 11, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -44,6 +44,7 @@ public class InputManager : MonoBehaviour {
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		gm.input = this;
 	}
 
 	// Start - Use this for initialization

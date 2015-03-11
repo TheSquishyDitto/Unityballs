@@ -2,6 +2,19 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 10, 2015:
+	-Jacob added:
+		+ Modified Stage 1 to be an arrow rather than tear drop
+		+ Modified Stage 2 to be more detailed:
+			* Added borders around the edge of the stage
+			* Added more detail to guardrails
+			* Added "hidden" corridor inside central block
+		+ Fixed and modified stage textures
+			* Fixed the missing grass texture error
+			* Re-mapped stages to optimize tiling
+		+ Converted file format of stages (blend -> 3ds) to fix collision bugs
+		+ Reorganized some model/texture assets
+
 March 9, 2015:
 	- Chris added a work-in-progress fancy finish line animation. Kyle got it sorta functional afterwards.
 	- Brenton added fancy buttons and completely reworked the main menu.

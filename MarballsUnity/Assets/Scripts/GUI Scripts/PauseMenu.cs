@@ -18,6 +18,7 @@ public class PauseMenu : MonoBehaviour {
 	public GameMaster gm;			// Reference to Game Master.
 	public GameObject pauseSet;		// Reference to pause button menu set.
 	public GameObject optionSet;	// Reference to option button submenu.
+	public GameObject controlSet;	// Reference to controls submenu.
 
 	// Awake - Called before anything else.
 	void Awake () {

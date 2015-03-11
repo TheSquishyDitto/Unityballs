@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 16, 2015
+/// Last Revision: Mar.  9, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -20,6 +20,8 @@ public class InputManager : MonoBehaviour {
 	// Variables
 	#region Variables
 	public GameMaster gm;		// Reference to Game Master.
+	
+	public bool allowInput;		// Whether the game is currently accepting input for standard purposes.
 
 	public KeyCode forward;		// Which key moves the marble forward.
 	public KeyCode backward;	// Which key moves the marble backward.
@@ -47,6 +49,8 @@ public class InputManager : MonoBehaviour {
 	// Start - Use this for initialization
 	void Start () {
 
+		allowInput = true;
+
 		// DEFAULT CONTROLS - SHOULD BE READ EXTERNALLY OR SOMETHING LATER
 		forward = KeyCode.W;
 		backward = KeyCode.S;
@@ -65,22 +69,23 @@ public class InputManager : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-
-		CameraControls();
-
-		// These controls are active during gameplay.
-		if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
-		
-			MenuControls();
-
-			// As long as the game isn't paused, these controls handle marble movement and positioning.
-			if (!gm.paused) {
-				MarbleControls();
+		if (allowInput) {
+			CameraControls();
+	
+			// These controls are active during gameplay.
+			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
+			
+				MenuControls();
+	
+				// As long as the game isn't paused, these controls handle marble movement and positioning.
+				if (!gm.paused) {
+					MarbleControls();
+				}
 			}
+	
+			// These controls are suited to experimentation and have their own conditions.
+			DebugControls();
 		}
-
-		// These controls are suited to experimentation and have their own conditions.
-		DebugControls();
 	}
 
 	// MarbleControls - Controls for the marble.

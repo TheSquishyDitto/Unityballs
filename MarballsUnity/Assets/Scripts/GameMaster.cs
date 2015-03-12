@@ -36,6 +36,7 @@ public class GameMaster : MonoBehaviour {
 	public Transform finishLine;	// Reference to finish line.
 	public InputManager input;		// Reference to input manager.
 	public PauseMenu pauseMenu; 	// Reference to pause menu.
+	public MainMenu mainMenu;		// Reference to main menu.
 	public MainHUD hud;				// Reference to HUD.
 
 	public GameState state;			// Current state of game.
@@ -45,6 +46,8 @@ public class GameMaster : MonoBehaviour {
 
 	public bool debug = true;		// If true, game is currently in general debug mode. DEBUG
 	public bool freezeTimer = false;// If true, timer will not change.
+	
+	public bool levelSelect = false;// Done for win screen
 
 	#endregion
 
@@ -135,6 +138,14 @@ public class GameMaster : MonoBehaviour {
 
 	// OnLevelWasLoaded - Triggers every time a level loads.
 	void OnLevelWasLoaded(int level) {
+		if(level == 0)	{
+			if(levelSelect)
+			{
+				mainMenu.ToggleSelectLevel();
+				levelSelect = !levelSelect;
+			}	
+		}
+		
 		//if (level != 0 && level != 1) {
 			//state = GameState.OnStart();
 			//OnStart();

@@ -42,7 +42,8 @@ public class CameraController : MonoBehaviour {
 	//public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
 	
 	public ControlMode mode;		 	// Which control mode camera is using.
-	public float sensitivity = 0.05f; 	// Mouse sensitivity.
+	public float mouseSensitivity; 		// Mouse sensitivity.
+	public float keyboardSensitivity; 	// Keyboard sensitivity.
 	//public bool invertX;				// Whether horizontal mouse controls should be inverted.
 	//public bool invertY;				// Whether vertical mouse controls should be inverted.
 
@@ -71,8 +72,8 @@ public class CameraController : MonoBehaviour {
 		// Mouse mode controls
 		} else if (mode == ControlMode.Mouse) {
 			// Moving the mouse moves the camera.
-			psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * sensitivity), PSYMIN, PSYMAX);
-			theta -= Input.GetAxis("Mouse X") * sensitivity;
+			psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * mouseSensitivity), PSYMIN, PSYMAX);
+			theta -= Input.GetAxis("Mouse X") * mouseSensitivity;
 			
 			
 		// Unspecified case controls
@@ -125,14 +126,14 @@ public class CameraController : MonoBehaviour {
 	// Moves camera up.
 	public void MoveUp() {
 		//if(!Physics.Raycast(transform.position, transform.up, 0.8f)){	// Checks if camera is close to another object
-			psy = Mathf.Clamp(psy + .03f, PSYMIN, PSYMAX);
+			psy = Mathf.Clamp(psy + (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
 		//}
 	}
 	
 	// Moves camera down.
 	public void MoveDown() {
 		//if(!Physics.Raycast(transform.position, -transform.up, 0.8f)){	// Checks if camera is close to another object
-			psy = Mathf.Clamp(psy - .03f, PSYMIN, PSYMAX);
+		psy = Mathf.Clamp(psy - (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
 		//}
 		
 	}
@@ -140,7 +141,7 @@ public class CameraController : MonoBehaviour {
 	// Moves camera left.
 	public void MoveLeft() {
 		//if(!Physics.Raycast(transform.position, -transform.right, 0.8f)){	// Checks if camera is close to another object
-			theta -= .03f;
+		theta -= keyboardSensitivity * Time.deltaTime;
 		//}
 		
 	}
@@ -148,7 +149,7 @@ public class CameraController : MonoBehaviour {
 	// Moves camera right.
 	public void MoveRight() {
 		//if(!Physics.Raycast(transform.position, transform.right, 0.8f)){	// Checks if camera is close to another object
-			theta += .03f;
+		theta += keyboardSensitivity * Time.deltaTime;
 		//}
 		
 	}

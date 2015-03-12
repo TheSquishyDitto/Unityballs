@@ -108,6 +108,20 @@ public class FinishLine : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.005f);	// How long in seconds before calling the next loop iteration.
 		}
+		
+		int shrinks = 25;
+		for (int i = 0; i < shrinks; i++) {
+			marble.localScale -= new Vector3(1.0f/shrinks, 1.0f/shrinks, 1.0f/shrinks);
+			yield return new WaitForSeconds(0.005f);
+		}
+		
+		ParticleSystem explosion;
+		explosion = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Explosion"))).GetComponent<ParticleSystem>();
+		yield return new WaitForSeconds(2f);
+
+		gm.hud.StartCoroutine("OnVictory");
+		yield return new WaitForSeconds(5f);
+		Destroy(explosion.gameObject);
 
 		// [insert pop animation]
 		// yield return new WaitForSeconds(/*length of pop animation*/);

@@ -25,6 +25,7 @@ public class MainMenu : MonoBehaviour {
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		gm.mainMenu = this;
 	}
 
 	// LoadLevel - Tells the GameMaster to load a level.

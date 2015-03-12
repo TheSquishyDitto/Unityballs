@@ -61,6 +61,9 @@ public class CameraController : MonoBehaviour {
 		marble = gm.marble;//GameObject.FindGameObjectWithTag("Marble").transform;
 		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
+		
+		mouseSensitivity = 0.05f;
+		keyboardSensitivity = 3f;
 	}
 	
 	// Update - Called once per frame

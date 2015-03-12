@@ -77,15 +77,19 @@ public class GameMaster : MonoBehaviour {
 		name = "Game Master";
 		timer = 0;
 		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
+		Debug.Log ("start timer is " + timer);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		//Debug.Log ("update timer is " + timer);
 		if (!freezeTimer) {	// If the timer isn't frozen,
+			//Debug.Log ("its cold");
 			if (!paused) {	// and the game isn't paused,
+				//Debug.Log ("am i pauseed");
 				if (state == GameState.Start && timer > 0) { // in the starting phase,
 					timer -= Time.deltaTime;	// the timer counts down to 0,
-
+					//Debug.Log ("COUNTING DOWWWWWWN");
 					if (timer <= 0)	{ // and when it reaches 0, the gameplay begins.
 						OnPlay();
 					}
@@ -122,6 +126,8 @@ public class GameMaster : MonoBehaviour {
 		finishLine = null;
 		pauseMenu = null;
 		hud = null;
+		//Debug.Log ("RESETTING");
+		
 	}
 
 	// LoadLevel - Loads another level using that level's index.
@@ -155,6 +161,7 @@ public class GameMaster : MonoBehaviour {
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
 		Time.timeScale = 1;
+		//Debug.Log ("start 'er up");
 		timer = countdownLength + hud.goLength;
 		state = GameState.Start;
 		marble.GetComponent<Marble>().Respawn();
@@ -167,6 +174,7 @@ public class GameMaster : MonoBehaviour {
 		hud.countdown.gameObject.SetActive(true);
 
 		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
+		//Debug.Log ("ONSTART timer is " + timer);
 	}
 
 	// OnPlay - Called when the player is to actually play the level.

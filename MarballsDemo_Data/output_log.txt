@@ -1,0 +1,65 @@
+Initialize engine version: 5.0.0f4 (5b98b70ebeb9)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA Quadro K5000 (ID=0x11ba)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\Assembly-UnityScript-firstpass.dll (this message is harmless)
+Loading C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\Assembly-UnityScript-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.139 seconds
+desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\cs25809\Desktop\MarballsDemo_Data\Managed\System.dll (this message is harmless)
+start timer is 0
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.284653 ms
+
+Unloading 71 unused Assets to reduce memory usage. Loaded Objects now: 548.
+Total: 0.583204 ms (FindLiveObjects: 0.056784 ms CreateObjectMapping: 0.034908 ms MarkObjects: 0.382596 ms  DeleteObjects: 0.107052 ms)
+
+(GameMaster.cs) You win!
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.421938 ms
+
+Unloading 48 unused Assets to reduce memory usage. Loaded Objects now: 332.
+Total: 0.560862 ms (FindLiveObjects: 0.036770 ms CreateObjectMapping: 0.052595 ms MarkObjects: 0.261115 ms  DeleteObjects: 0.209450 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.875038 ms
+
+Unloading 66 unused Assets to reduce memory usage. Loaded Objects now: 543.
+Total: 0.624628 ms (FindLiveObjects: 0.064697 ms CreateObjectMapping: 0.029323 ms MarkObjects: 0.410058 ms  DeleteObjects: 0.119619 ms)
+
+(GameMaster.cs) You win!
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.098231 ms
+
+Unloading 47 unused Assets to reduce memory usage. Loaded Objects now: 332.
+Total: 0.810341 ms (FindLiveObjects: 0.035373 ms CreateObjectMapping: 0.058180 ms MarkObjects: 0.444966 ms  DeleteObjects: 0.269958 ms)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.773106 ms
+
+Unloading 74 unused Assets to reduce memory usage. Loaded Objects now: 723.
+Total: 0.885744 ms (FindLiveObjects: 0.070747 ms CreateObjectMapping: 0.047475 ms MarkObjects: 0.413781 ms  DeleteObjects: 0.352342 ms)
+

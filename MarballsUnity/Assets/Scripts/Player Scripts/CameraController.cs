@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// CameraController.cs
-/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar.  4, 2015
+/// Last Revision: Mar. 22, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -58,7 +58,7 @@ public class CameraController : MonoBehaviour {
 	// Start - Use this for initialization
 	void Start () {
 		playerRadius = radius;
-		marble = gm.marble;//GameObject.FindGameObjectWithTag("Marble").transform;
+		marble = gm.marble.transform;//GameObject.FindGameObjectWithTag("Marble").transform;
 		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
 		
@@ -128,32 +128,25 @@ public class CameraController : MonoBehaviour {
 	#region Control Functions
 	// Moves camera up.
 	public void MoveUp() {
-		//if(!Physics.Raycast(transform.position, transform.up, 0.8f)){	// Checks if camera is close to another object
-			psy = Mathf.Clamp(psy + (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
-		//}
+		psy = Mathf.Clamp(psy + (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
 	}
 	
 	// Moves camera down.
 	public void MoveDown() {
-		//if(!Physics.Raycast(transform.position, -transform.up, 0.8f)){	// Checks if camera is close to another object
 		psy = Mathf.Clamp(psy - (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
-		//}
 		
 	}
 	
 	// Moves camera left.
 	public void MoveLeft() {
-		//if(!Physics.Raycast(transform.position, -transform.right, 0.8f)){	// Checks if camera is close to another object
 		theta -= keyboardSensitivity * Time.deltaTime;
-		//}
 		
 	}
 	
 	// Moves camera right.
 	public void MoveRight() {
-		//if(!Physics.Raycast(transform.position, transform.right, 0.8f)){	// Checks if camera is close to another object
 		theta += keyboardSensitivity * Time.deltaTime;
-		//}
+
 		
 	}
 	

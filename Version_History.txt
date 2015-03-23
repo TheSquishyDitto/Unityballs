@@ -2,8 +2,30 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 22, 2015:
+	- Kyle cleaned some code, made some features less buggy, and added more debug options.
+		+ Replaced debug state buttons with toggles that both display the current state and allow it to be changed.
+		+ Added a debug slider for viewing the game at different framerates.
+		+ Added an alternate, less intense victory animation for quicker debugging and playtesting.
+		+ Added a debug cheaty "win" button.
+		+ Made movement and some animations framerate independent.
+			* Level 1 should now always be completable in just about 3 seconds regardless of machine.
+		+ Imported some Unity standard effect assets; can add nifty flares to lights now.
+
+March 12, 2015:
+	- Chris, Kyle, and Charlie solidified various features for the presentation:
+		+ Added winning screen, win message, and functional buttons for proceeding, replaying, or leaving.
+		+ Implemented Brenton's fan on the test level; applies force to anything in its trigger zone.
+		+ GUI scales more nicely at different resolutions.
+		+ Built the project into a presentable executable.
+
+March 11, 2015:
+	- Kyle added a death screen and a fancy countdown timer, as well as temporary icons to the HUD.
+	- Charlie modified various GUI elements and imported the Copperplate font.
+	- Brenton added a spawn platform.
+	
 March 10, 2015:
-	-Jacob added:
+	- Jacob added:
 		+ Modified Stage 1 to be an arrow rather than tear drop
 		+ Modified Stage 2 to be more detailed:
 			* Added borders around the edge of the stage

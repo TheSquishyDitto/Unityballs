@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// SpawnArea.cs
-/// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Mar. 11, 2015
+/// Last Revision: Mar. 22, 2015
 /// 
 /// Class that dictates how spawning pads should function.
 /// 
@@ -24,13 +24,13 @@ public class SpawnArea : MonoBehaviour {
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM ();
-		gm.respawn = transform;
+		gm.respawn = this;
 	}
 
 	// Start - Use this for initialization
 	void Start () {
 		if (gm.marble)
-			gm.marble.GetComponent<Marble>().Respawn(); // Makes sure marble is in the right spot once the spawn pad is out.
+			gm.marble.Respawn(); // Makes sure marble is in the right spot once the spawn pad is out.
 	}
 	
 	// Update is called once per frame

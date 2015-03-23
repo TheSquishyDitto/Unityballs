@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// BaseParticle.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Feb. 11, 2015
+/// Last Revision: Mar. 22, 2015
 /// 
 /// Class that simply follows the marble and plays particle effects as deemed appropriate.
 /// 
@@ -19,7 +19,7 @@ using System.Collections;
 public class BaseParticle : MonoBehaviour {
 
 	public GameMaster gm;		// Reference to Game Master.
-	public Transform marble;	// Reference to child marble.
+	//public Transform marble;	// Reference to child marble.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
@@ -28,11 +28,12 @@ public class BaseParticle : MonoBehaviour {
 
 	// Start - Use this for initialization
 	void Start () {
-		marble = gm.marble;
+		//marble = gm.marble;
 	}
 	
 	// Update - Called once per frame.
 	void Update () {
-		transform.position = marble.position;
+		if (gm.marble)
+			transform.position = gm.marble.transform.position;
 	}
 }

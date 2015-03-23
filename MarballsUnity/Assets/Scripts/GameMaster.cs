@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 23, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -185,8 +185,10 @@ public class GameMaster : MonoBehaviour {
 
 		hud.countdown.gameObject.SetActive(true);
 
-		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
-		//Debug.Log ("ONSTART timer is " + timer);
+		if (finishLine)	{
+			finishLine.GetComponent<FinishLine>().FlameOff();
+			finishLine.GetComponent<FinishLine>().arrow.SetActive(true);
+		}
 	}
 
 	// OnPlay - Called when the player is to actually play the level.
@@ -202,7 +204,10 @@ public class GameMaster : MonoBehaviour {
 
 		hud.countdown.gameObject.SetActive(false);
 
-		if (finishLine)	finishLine.GetComponent<FinishLine>().FlameOff();
+		if (finishLine)	{
+			finishLine.GetComponent<FinishLine>().FlameOff();
+			finishLine.GetComponent<FinishLine>().arrow.SetActive(true);
+		}
 	}
 
 	// OnWin - Called when a level is won.
@@ -210,9 +215,10 @@ public class GameMaster : MonoBehaviour {
 		state = GameState.Win;
 		Time.timeScale = 0.5f; // Slowmo victory!
 		
-		if (finishLine) 
-			finishLine.GetComponent<FinishLine> ().FlameOn ();
-		else
+		if (finishLine) {
+			finishLine.GetComponent<FinishLine>().FlameOn ();
+			finishLine.GetComponent<FinishLine>().arrow.SetActive(false);
+		} else
 			Debug.LogWarning("(GameMaster.cs) This level has no finish line?");
 	}
 

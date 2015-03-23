@@ -1,8 +1,11 @@
-# Unityballs
-	The actual game of Marballs we will be creating through the Unity game engine.
+=================
+UNITYBALLS README
+=================
+	This is the actual game of Marballs we will be creating through the Unity game engine.
 	This readme will be updated as relevant information comes up.
 
-##GIT PRACTICES:
+GIT PRACTICES
+=============
 	- *Pull before modifying anything!* If someone else modifies something before you're done, pull it in anyway!
 	- After you're done making changes, push to your branch and send a pull request to Chris's branch.
 	- Try to avoid modifying the same files/lines that others are working on at the same time.
@@ -10,15 +13,16 @@
 		* Click on a conflicting file.
 		* Right click on the area that shows the file's content.
 		* Choose which version of the file to keep: local is your version, remote belongs to the other branch.
-	
-##CODING PRACTICES:
-	###Naming Conventions:
+		
+CODING PRACTICES
+================
+	1. Naming Conventions:
 		- Anything named should have a name reflecting its purpose. (ex. a calculating function can be named Calculate, but probably not Donut)
 		- Constant names should be in ALL CAPS. (ex: const float PI = 3.14)
 		- Variable names should use camelBack casing. (ex: int num, float preciseNum)
 		- Function, file, object, class, and enum declaration names should use CamelCaps. (ex. void FixedUpdate())
 		
-	###Comments:
+	2. Comments:
 		- Comments should typically use // and be placed after or above the line they are explaining.
 		- All functions and important variables should have an accompanying comment explaining their purpose.
 			* Function comments should be of the format: // FunctionName - Explanation
@@ -39,14 +43,15 @@
 			/// </summary>
 			...
 		
-	###General:
+	3. General:
 		- FixedUpdate is always called at a consistent rate. To easily make things framerate independent, use FixedUpdate instead of Update.
 		- Aim for modularity and reusability!
 		- Avoid redundant code where possible.
 	
-	###Coroutine Usage:
+	4. Coroutine Usage:
 		- WaitForSeconds values that are too small (~3 decimal places) will default to the length of a frame! Consider using a different WaitFor___ function.
 		- Coroutines may seem like they run in parallel, but they occupy the same thread space.
 		
-##RESOURCES
+RESOURCES
+=========
 	- [Unity Tutorials](https://unity3d.com/learn/tutorials/modules)

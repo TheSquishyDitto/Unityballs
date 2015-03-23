@@ -18,7 +18,8 @@ using System.Collections;
 
 public class DebugMenu : MonoBehaviour {
 
-	public GameMaster gm;		// Reference to GameMaster.
+	GameMaster gm;				// Reference to GameMaster.
+
 	public Slider fpsSlider;	// Reference to target frame setting slider.
 	public Text fpsText;		// Reference to accompanying text for target FPS slider.
 	public Toggle start;		// Reference to start toggle.

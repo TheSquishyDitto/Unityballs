@@ -2,6 +2,9 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 23, 2015:
+	- Charlie, Chris, and Kyle added an indicator to the finish line that is visible at all times.
+		
 March 22, 2015:
 	- Kyle cleaned some code, made some features less buggy, and added more debug options.
 		+ Replaced debug state buttons with toggles that both display the current state and allow it to be changed.

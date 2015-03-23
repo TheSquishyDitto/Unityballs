@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 23, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -19,12 +19,14 @@ public class FinishLine : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public GameMaster gm;			// Reference to Game Master.
+	GameMaster gm;					// Reference to Game Master.
+
 	//public Transform marble;		// Reference to the marble.
 	public GameObject flames;		// Reference to parent object of flame particles.
 	//public ParticleSystem flame1;	// Reference to first flame particles. Currently unnecessary.
 	//public ParticleSystem flame2;	// Reference to second flame particles. Currently unnecessary.
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
+	public GameObject arrow;		// Reference to the indicator arrow.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
 

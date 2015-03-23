@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// GameMaster.cs
-/// Authors: Kyle Dawson, Charlie Sun, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 11, 2015
+/// Last Revision: Mar. 22, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -27,12 +27,11 @@ public class GameMaster : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public static GameMaster GM = null;	// Reference to singleton.
+	public static GameMaster GM;	// Reference to singleton.
 
-	public Transform marble;		// Reference to currently active marble.
+	public Marble marble;			// Reference to currently active marble.
 	public Transform cam;			// Reference to camera.
-	public Transform respawn;		// Reference to level's respawn point.
-	//public LevelGUI gui;			// Reference to current level's GUI. Pending deprecation.
+	public SpawnArea respawn;		// Reference to level's respawn point.
 	public Transform finishLine;	// Reference to finish line.
 	public InputManager input;		// Reference to input manager.
 	public PauseMenu pauseMenu; 	// Reference to pause menu.
@@ -43,6 +42,7 @@ public class GameMaster : MonoBehaviour {
 	public bool paused;				// True if game is paused, false otherwise.
 	public float timer;				// How much time has elapsed since the start of a level.
 	public float countdownLength;	// How long timer should countdown in the starting phase.
+	public bool simpleAnim = false;	// Whether the victory animation should be excessive or not.
 
 	public bool debug = true;		// If true, game is currently in general debug mode. DEBUG
 	public bool freezeTimer = false;// If true, timer will not change.
@@ -64,9 +64,8 @@ public class GameMaster : MonoBehaviour {
 	// Awake - Called before anything else.
 	void Awake () {
 		if (GM != null) {
-			Destroy (gameObject);
-		}
-		else{
+			Destroy (gameObject);	// If a GameMaster already exists, destroys this instance.
+		} else {
 			GM = this;  // Failsafe in case there was a condition in which the GM was not already set to be this.
 			DontDestroyOnLoad(this); // GameMaster should exist forever.
 		}
@@ -77,19 +76,15 @@ public class GameMaster : MonoBehaviour {
 		name = "Game Master";
 		timer = 0;
 		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
-		Debug.Log ("start timer is " + timer);
+		//Debug.Log ("start timer is " + timer); // DEBUG
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//Debug.Log ("update timer is " + timer);
 		if (!freezeTimer) {	// If the timer isn't frozen,
-			//Debug.Log ("its cold");
 			if (!paused) {	// and the game isn't paused,
-				//Debug.Log ("am i pauseed");
 				if (state == GameState.Start && timer > 0) { // in the starting phase,
 					timer -= Time.deltaTime;	// the timer counts down to 0,
-					//Debug.Log ("COUNTING DOWWWWWWN");
 					if (timer <= 0)	{ // and when it reaches 0, the gameplay begins.
 						OnPlay();
 					}
@@ -105,12 +100,26 @@ public class GameMaster : MonoBehaviour {
 	public void TogglePause() {
 		paused = !paused;
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
-		if (pauseMenu)
+		if (pauseMenu) {
 			pauseMenu.gameObject.SetActive(paused);
-		else
+			// [ code to reset pause menu buttons to initial state ]
+		} else
 			Debug.LogWarning("(GameMaster.cs) No pause menu found!");
 	}
-	
+
+	// CancelCoroutines - Stops various animations and clears what they've done.
+	public void CancelCoroutines() {
+		hud.StopCoroutine("OnDeath");
+		finishLine.GetComponent<FinishLine>().StopCoroutine("SwirlFinish");
+		hud.StopCoroutine("OnVictory");
+		hud.winOptions.SetActive(false);
+		marble.transform.localScale = new Vector3(marble.defSize, marble.defSize, marble.defSize);
+		hud.deathScreen.color = new Color(hud.deathScreen.color.r, hud.deathScreen.color.g, hud.deathScreen.color.b, 0);
+		hud.deathMessage.color = new Color(hud.deathMessage.color.r, hud.deathMessage.color.g, hud.deathMessage.color.b, 0);
+		hud.winScreen.color = new Color(hud.winScreen.color.r, hud.winScreen.color.g, hud.winScreen.color.b, 0);
+		hud.winMessage.color = new Color(hud.winMessage.color.r, hud.winMessage.color.g, hud.winMessage.color.b, 0);
+	}
+
 	// ResetVariables - Clears and sets variables to their initial states.
 	// NOTES: - Should typically only be called when loading a level.
 	// 		  - For references, objects that aren't destroyed should not be nulled out!
@@ -126,7 +135,7 @@ public class GameMaster : MonoBehaviour {
 		finishLine = null;
 		pauseMenu = null;
 		hud = null;
-		//Debug.Log ("RESETTING");
+		//Debug.Log ("RESETTING"); // DEBUG
 		
 	}
 
@@ -144,11 +153,12 @@ public class GameMaster : MonoBehaviour {
 
 	// OnLevelWasLoaded - Triggers every time a level loads.
 	void OnLevelWasLoaded(int level) {
+
 		if(level == 0)	{
 			if(levelSelect)
 			{
 				mainMenu.ToggleSelectLevel();
-				levelSelect = !levelSelect;
+				levelSelect = false;
 			}	
 		}
 		
@@ -158,17 +168,19 @@ public class GameMaster : MonoBehaviour {
 		//}
 	}
 
+	// State Changers - Functions that change the current game state.
+	#region State Changers
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
 		Time.timeScale = 1;
 		//Debug.Log ("start 'er up");
 		timer = countdownLength + hud.goLength;
 		state = GameState.Start;
-		marble.GetComponent<Marble>().Respawn();
-		marble.GetComponent<Rigidbody>().isKinematic = false;
+		marble.Respawn();
+		marble.marbody.isKinematic = false;
 
 		if (respawn) {
-			respawn.GetComponent<SpawnArea>().sfx.SetActive(true);
+			respawn.sfx.SetActive(true);
 		}
 
 		hud.countdown.gameObject.SetActive(true);
@@ -181,11 +193,11 @@ public class GameMaster : MonoBehaviour {
 	public void OnPlay() {
 		Time.timeScale = 1;
 		timer = 0;
-		marble.GetComponent<Rigidbody>().isKinematic = false;
+		marble.marbody.isKinematic = false;
 		state = GameState.Playing;
 
 		if (respawn) {
-			respawn.GetComponent<SpawnArea>().sfx.SetActive(false);
+			respawn.sfx.SetActive(false);
 		}
 
 		hud.countdown.gameObject.SetActive(false);
@@ -196,10 +208,13 @@ public class GameMaster : MonoBehaviour {
 	// OnWin - Called when a level is won.
 	public void OnWin() {
 		state = GameState.Win;
-		Debug.Log("(GameMaster.cs) You win!");
 		Time.timeScale = 0.5f; // Slowmo victory!
-		//marble.GetComponent<Marble>().Brake();
 		
-		if (finishLine) finishLine.GetComponent<FinishLine> ().FlameOn ();
+		if (finishLine) 
+			finishLine.GetComponent<FinishLine> ().FlameOn ();
+		else
+			Debug.LogWarning("(GameMaster.cs) This level has no finish line?");
 	}
+
+	#endregion
 }

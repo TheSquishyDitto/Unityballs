@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// InputManager.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 11, 2015
+/// Last Revision: Mar. 22, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -77,15 +77,22 @@ public class InputManager : MonoBehaviour {
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
 			
 				MenuControls();
-	
-				// As long as the game isn't paused, these controls handle marble movement and positioning.
-				if (!gm.paused) {
-					MarbleControls();
-				}
 			}
 	
 			// These controls are suited to experimentation and have their own conditions.
 			DebugControls();
+		}
+	}
+
+	// FixedUpdate - Called at a fixed interval around every physics calculation.
+	void FixedUpdate() {
+		if (allowInput) {
+			// As long as the game isn't paused, these controls handle marble movement and positioning.
+			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
+				if (!gm.paused) {
+					MarbleControls();
+				}
+			}
 		}
 	}
 
@@ -94,31 +101,31 @@ public class InputManager : MonoBehaviour {
 		if (gm.marble) {
 			// Forward movement.
 			if (Input.GetKey(forward)) {
-				gm.marble.GetComponent<Marble>().Forward();
+				gm.marble.Forward();
 			}
 			// Backward movement.
 			if (Input.GetKey(backward)) {
-				gm.marble.GetComponent<Marble>().Backward();
+				gm.marble.Backward();
 			}
 			// Leftwards movement.
 			if (Input.GetKey(left)) {
-				gm.marble.GetComponent<Marble>().Left();
+				gm.marble.Left();
 			}
 			// Rightwards movement.
 			if (Input.GetKey(right)) {
-				gm.marble.GetComponent<Marble>().Right();
+				gm.marble.Right();
 			}
 			// Jumping.
 			if (Input.GetKeyDown(jump)) {
-				gm.marble.GetComponent<Marble>().Jump();
+				gm.marble.Jump();
 			}
-			// Braking.
+			// Braking. Current implementation is better considered a debug control.
 			if (Input.GetKey(brake)) {
-				gm.marble.GetComponent<Marble>().Brake();
+				gm.marble.Brake();
 			}
 			// Respawning. May be better to consider it a debug control instead.
 			if (Input.GetKeyDown (respawn)) {
-				gm.marble.GetComponent<Marble>().Respawn();
+				gm.marble.Respawn();
 			}
 		}
 	}

@@ -42,6 +42,13 @@ public class PauseMenu : MonoBehaviour {
 		gm.LoadLevel(0);
 	}
 
+	// ResetMenu - Returns to initial pause menu state.
+	public void ResetMenu() {
+		pauseSet.SetActive(true);
+		optionSet.SetActive(false);
+		controlSet.SetActive(false);
+	}
+
 	// ToggleOptions - Goes to the option submenu and back.
 	public void ToggleOptions() {
 		pauseSet.SetActive (!pauseSet.activeSelf);

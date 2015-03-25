@@ -135,8 +135,10 @@ public class Marble : MonoBehaviour {
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
 
-			if (touchdown) jumpsLeft = maxJumps; // If marble has just hit the ground, refresh jumps.
-
+			if (touchdown) {
+				jumpsLeft = maxJumps; // If marble has just hit the ground, refresh jumps.
+			}
+			
 			marbody.drag = 0.5f;
 			marbody.AddForce(inputDirection * speedMultiplier * marbody.angularVelocity.magnitude * shackle, ForceMode.Impulse); // Applies force.
 			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.

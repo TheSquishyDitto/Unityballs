@@ -1,12 +1,12 @@
 ﻿/// <summary>
 /// SpeedBoostSource.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Feb. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class for speed boost granting entities.
 /// 
-/// NOTES: - Should probably either use general purpose version (BuffSource.cs) or make a base class for these.
+/// NOTES: - See buff source for implementation information.
 /// 
 /// TO DO: - Tweak behavior until desired.
 /// 
@@ -15,27 +15,18 @@
 using UnityEngine;
 using System.Collections;
 
-public class SpeedBoostSource : MonoBehaviour {
+public class SpeedBoostSource : BuffSource {
 
-	public float boostIntensity;	// How strong the boost should be.
-	public float duration;			// How long the boost should last.
-	public bool collectable;		// Whether this powerup source should disappear when collected.
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	// GiveBuff - Gives a specific buff to the specified marble.
+	protected override void GiveBuff(Marble marble) {
+		base.GiveBuff(marble);
+		marble.buffFunction = SpeedBoost; // Basically gives the marble the SpeedBoost function to use.
+		marble.heldBuff = Marble.PowerUp.SpeedBoost;
 	}
 
-	// OnTriggerEnter - Called when an object enters the trigger collider.
-	void OnTriggerEnter (Collider other) {
-		if (other.CompareTag("Marble")) {	// Only applies buff to marble.
-			other.GetComponent<Marble>().SpeedBoost(boostIntensity, duration);
-			if (collectable) gameObject.SetActive(false);	// Disappears when collected.
-		}	
+	// SpeedBoost - Modifies the marble's speed for a while.
+	public void SpeedBoost(float intensity, float duration) {
+		marble.buff = Marble.PowerUp.SpeedBoost;
+		marble.speedMultiplier = intensity;
 	}
 }

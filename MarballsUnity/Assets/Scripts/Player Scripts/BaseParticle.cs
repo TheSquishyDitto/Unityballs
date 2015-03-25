@@ -2,7 +2,7 @@
 /// BaseParticle.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class that simply follows the marble and plays particle effects as deemed appropriate.
 /// 
@@ -18,7 +18,7 @@ using System.Collections;
 
 public class BaseParticle : MonoBehaviour {
 
-	public GameMaster gm;		// Reference to Game Master.
+	protected GameMaster gm;		// Reference to Game Master.
 	//public Transform marble;	// Reference to child marble.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.

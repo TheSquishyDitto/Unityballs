@@ -2,6 +2,12 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 24, 2015:
+	- Kyle added a pointer to the finish line and revamped buff code.
+		+ Adding new buffs should be easier.
+		+ Can now hold on to buffs. Press F to use them.
+		+ Multijump is now usable in midair, and has a source on the test level.
+
 March 23, 2015:
 	- Charlie, Chris, and Kyle added an indicator to the finish line that is visible at all times.
 		

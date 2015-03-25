@@ -1,14 +1,16 @@
 ﻿/// <summary>
 /// BuffSource.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Feb. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
-/// NOTES: - Can be modified easily via Unity inspector. The alternative to this class is a base buff class.
+/// NOTES: - Any buff source classes that inherit from this should have their own buffing functions.
+/// 	   - Currently always overwrites the marble's currently held buff.
+///        - If there was a nice one or two line way to convert the enum into a method/function name, having separate classes would be mostly unnecessary.
 /// 
-/// TO DO: - Tweak behavior until desired.
+/// TO DO: - Investigate ways to make the inheritance unnecessary.
 /// 
 /// </summary>
 
@@ -17,17 +19,32 @@ using System.Collections;
 
 public class BuffSource : MonoBehaviour {
 
-	public Marble.PowerUp buffType;	// What type of buff this source gives.
-	public bool collectable;		// Whether this source disappears when collected.
+	#region Variables
+	protected GameMaster gm;		// Reference to the Game Master.
+	protected Marble marble;		// Reference to the marble being modified.
 
-	public float intensity;			// How strong the buff is. Acceptable values vary wildly by buff type.
-	public int jumpCount;			// If granting multijump, how many jumps the marble should have.
+	//public Marble.Powerup buff;		// Which buff this source gives.
+	public float intensity;				// How strong the buff is. Acceptable values vary by type.
+	public float duration;				// How long the given buff should last.
+	public Sprite icon;					// What icon should be displayed for this buff.
+	public Color iconTint = Color.white;// What color the icon should be tinted when active.
+	public GameObject particles;		// What type of particle system this buff should give.
+	public bool collectable;			// Whether this source disappears when collected.
 
-	public float duration;			// How long the given buff should last.
+	#endregion
+
+	// Initialize - Any initialization the given source should have should be done here.
+	protected virtual void Initialize() { }
+
+	// Awake - Called before anything else.
+	void Awake () {
+		gm = GameMaster.CreateGM();
+	}
 
 	// Use this for initialization
 	void Start () {
-	
+		marble = gm.marble;
+		Initialize();
 	}
 	
 	// Update is called once per frame
@@ -40,17 +57,24 @@ public class BuffSource : MonoBehaviour {
 		if (other.CompareTag("Marble")) {	// Only grants buffs to marbles.
 			Marble marble = other.GetComponent<Marble>();
 
-			switch (buffType) {	// Grants selected buff based on enum.
-			case Marble.PowerUp.None: marble.ClearBuffs(); break;
-			case Marble.PowerUp.SpeedBoost: marble.SpeedBoost(intensity, duration); break;
-			case Marble.PowerUp.MultiJump: marble.MultiJump(jumpCount); break;
-			case Marble.PowerUp.SuperJump: marble.SuperJump(intensity); break;
-			case Marble.PowerUp.SizeChange: marble.SizeChange(intensity, duration); break;
-			default: Debug.LogWarning("(BuffSource.cs) Unsupported buff type!"); break;
-
-			}
+			GiveBuff(marble);	// Gives the buff to the marble.
 
 			if (collectable) gameObject.SetActive(false);	// Disappears if collectable.
 		}	
+	}
+
+	// GiveBuff - Gives a specific buff to the specified marble.
+	protected virtual void GiveBuff(Marble marble) {
+
+		// Adds icon to holding GUI box.
+		if (gm.hud) {
+			gm.hud.heldPowerup.sprite = icon;
+			gm.hud.heldPowerup.color = iconTint;
+		}
+
+		// Passes information about the buff to the marble.
+		marble.heldParticles = particles;
+		marble.heldIntensity = intensity;
+		marble.heldDuration = duration;
 	}
 }

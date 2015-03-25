@@ -1,12 +1,12 @@
 ﻿/// <summary>
 /// SizeChangeSource.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Feb. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class for size change granting entities.
 /// 
-/// NOTES: - Should probably either use general purpose version (BuffSource.cs) or make a base class for these.
+/// NOTES: - See buff source for implementation information.
 /// 
 /// TO DO: - Tweak behavior until desired.
 /// 
@@ -15,27 +15,19 @@
 using UnityEngine;
 using System.Collections;
 
-public class SizeChangeSource : MonoBehaviour {
+public class SizeChangeSource : BuffSource {
 
-	public float boostIntensity;	// How large/small the marble should become.
-	public float duration;			// How long this change lasts.
-	public bool collectable;		// Whether change source should disappear when collected.
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	// GiveBuff - Gives a specific buff to the specified marble.
+	protected override void GiveBuff(Marble marble) {
+		base.GiveBuff(marble);
+		marble.buffFunction = SizeChange; // Basically gives the marble the SpeedBoost function to use.
+		marble.heldBuff = Marble.PowerUp.SizeChange;
 	}
 
-	// OnTriggerEnter - Called when an object enters the trigger collider.
-	void OnTriggerEnter (Collider other) {
-		if (other.CompareTag("Marble")) {	// Only changes marble size.
-			other.GetComponent<Marble>().SizeChange(boostIntensity, duration);
-			if (collectable) gameObject.SetActive(false);	// Disappears when collected.
-		}	
+	// SizeChange - Modifies marble's size.
+	public void SizeChange(float newSize, float duration) {
+		marble.buff = Marble.PowerUp.SizeChange;
+		marble.transform.localScale *= newSize; //new Vector3(newSize, newSize, newSize);
 	}
+
 }

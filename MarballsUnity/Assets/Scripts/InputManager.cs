@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -19,7 +19,7 @@ public class InputManager : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public GameMaster gm;		// Reference to Game Master.
+	GameMaster gm;				// Reference to Game Master.
 	
 	public bool allowInput;		// Whether the game is currently accepting input for standard purposes.
 
@@ -35,6 +35,8 @@ public class InputManager : MonoBehaviour {
 	public KeyCode camRight;	// Which key moves the camera right.
 	public KeyCode camToggle;	// Which key toggles the camera control mode.
 
+	public KeyCode use;			// Which key uses buffs.
+	public KeyCode levelHelp;	// Which key toggles level helpers.
 	public KeyCode pause;		// Which key pauses the game.
 	public KeyCode brake;		// Which key brakes the marble.
 	public KeyCode respawn;		// Which key respawns the marble.
@@ -52,7 +54,7 @@ public class InputManager : MonoBehaviour {
 
 		allowInput = true;
 
-		// DEFAULT CONTROLS - SHOULD BE READ EXTERNALLY OR SOMETHING LATER
+		// DEFAULT CONTROLS - SHOULD BE READ EXTERNALLY OR SOMETHING LATER MAYBE
 		forward = KeyCode.W;
 		backward = KeyCode.S;
 		left = KeyCode.A;
@@ -63,6 +65,8 @@ public class InputManager : MonoBehaviour {
 		camLeft = KeyCode.LeftArrow;
 		camRight = KeyCode.RightArrow;
 		camToggle = KeyCode.C;
+		use = KeyCode.F;
+		levelHelp = KeyCode.LeftShift;
 		pause = KeyCode.Escape;
 		brake = KeyCode.B;
 		respawn = KeyCode.R;
@@ -75,7 +79,9 @@ public class InputManager : MonoBehaviour {
 	
 			// These controls are active during gameplay.
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
-			
+				if (!gm.paused) {
+					MarbleControls();
+				}
 				MenuControls();
 			}
 	
@@ -86,14 +92,14 @@ public class InputManager : MonoBehaviour {
 
 	// FixedUpdate - Called at a fixed interval around every physics calculation.
 	void FixedUpdate() {
-		if (allowInput) {
+		/*if (allowInput) {
 			// As long as the game isn't paused, these controls handle marble movement and positioning.
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
 				if (!gm.paused) {
 					MarbleControls();
 				}
 			}
-		}
+		}*/
 	}
 
 	// MarbleControls - Controls for the marble.
@@ -118,6 +124,10 @@ public class InputManager : MonoBehaviour {
 			// Jumping.
 			if (Input.GetKeyDown(jump)) {
 				gm.marble.Jump();
+			}
+			// Use a held buff.
+			if (Input.GetKeyDown(use)) {
+				gm.marble.UseBuff();
 			}
 			// Braking. Current implementation is better considered a debug control.
 			if (Input.GetKey(brake)) {
@@ -164,6 +174,11 @@ public class InputManager : MonoBehaviour {
 		// Toggles the game being paused.
 		if (Input.GetKeyDown(pause)) {
 			gm.TogglePause();
+		}
+
+		// Toggles level guides.
+		if (Input.GetKeyDown(levelHelp)) {
+			gm.ToggleGuides();
 		}
 	}
 

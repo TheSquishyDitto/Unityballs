@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -45,7 +45,7 @@ public class FinishLine : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+		arrow.SetActive(gm.guides);	// Lazy way of dealing with it at the moment.
 	}
 
 	// FixedUpdate is called every physics frame

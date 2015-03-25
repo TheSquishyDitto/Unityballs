@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -43,6 +43,8 @@ public class GameMaster : MonoBehaviour {
 	public float timer;				// How much time has elapsed since the start of a level.
 	public float countdownLength;	// How long timer should countdown in the starting phase.
 	public bool simpleAnim = false;	// Whether the victory animation should be excessive or not.
+	public bool useOnGrab = false;	// If true, picked up powerups are used immediately and automatically.
+	public bool guides = false;		// If true, arrows pop up to help the player.
 
 	public bool debug = true;		// If true, game is currently in general debug mode. DEBUG
 	public bool freezeTimer = false;// If true, timer will not change.
@@ -96,7 +98,7 @@ public class GameMaster : MonoBehaviour {
 		}
 	}
 
-	// Pause - Toggles game paused state.
+	// TogglePause - Toggles game paused state.
 	public void TogglePause() {
 		paused = !paused;
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
@@ -105,6 +107,11 @@ public class GameMaster : MonoBehaviour {
 			// [ code to reset pause menu buttons to initial state ]
 		} else
 			Debug.LogWarning("(GameMaster.cs) No pause menu found!");
+	}
+
+	// ToggleGuides - Toggles helpful level guides such as finish line arrows.
+	public void ToggleGuides() {
+		guides = !guides;
 	}
 
 	// CancelCoroutines - Stops various animations and clears what they've done.

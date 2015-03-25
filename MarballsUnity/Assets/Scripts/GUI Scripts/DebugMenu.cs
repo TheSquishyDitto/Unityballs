@@ -82,6 +82,11 @@ public class DebugMenu : MonoBehaviour {
 		gm.simpleAnim = simple;
 	}
 
+	// DEBUG - UseOnGrab - Automatically use picked up buffs.
+	public void UseOnGrab (bool use) {
+		gm.useOnGrab = use;
+	}
+
 	// DEBUG - CheatFinish - Wins the level for you.
 	public void CheatFinish() {
 		gm.marble.transform.position = gm.finishLine.position;

@@ -1,12 +1,10 @@
 ﻿/// <summary>
 /// BuffClearSource.cs
-/// Authors: Kyle Dawson, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Feb. 23, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class for buff/powerup clearing entities.
-/// 
-/// NOTES: - Should probably either use general purpose version (BuffSource.cs) or make a base class for these.
 /// 
 /// TO DO: - Tweak behavior until desired.
 /// 

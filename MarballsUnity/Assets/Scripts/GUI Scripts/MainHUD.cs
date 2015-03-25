@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 24, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -20,25 +20,27 @@ public class MainHUD : MonoBehaviour {
 
 		// Variables
 	#region Variables
-	public GameMaster gm;		// Reference to Game Master.
-	//public Transform marble;	// Reference to currently active marble.
+	GameMaster gm;				// Reference to Game Master.
+
 	public Text timer;			// Reference to timer text.
 	public Text speed;			// Reference to speed gauge text.
 	public Text rps;			// Reference to rps (rotations per second) gauge text.
 	public Image countdown;		// Reference to countdown image container.
-	public Image powerup;		// Reference to powerup picture.
+	public Image powerup;		// Reference to image of currently active powerup.
+	public Image heldPowerup;	// Reference to held powerup picture.
 	public Image deathScreen;	// Reference to death tint.
 	public Text deathMessage;	// Reference to death message text.
 	public Image winScreen;		// Reference to win tint.
 	public Text winMessage;		// Reference to win message text.
-	
+
+	public GameObject buffBox;	  // Reference to the active buff indicator.
 	public GameObject winOptions; // Reference to win options.
-	public GameObject debugSet;	// Reference to debug buttons and info display.
+	public GameObject debugSet;	  // Reference to debug buttons and info display.
 
 	public Sprite[] nums;		// Easy holder of number textures.
 	float remainder;			// Decimal portion of timer.
 	public float goLength;		// Desired duration of "GO!" Should be between 0 and 1.
-	//int nextLevel;			// Stores value of next level
+
 	#endregion
 	
 	// Awake - Called before anything else.
@@ -55,8 +57,8 @@ public class MainHUD : MonoBehaviour {
 
 		gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
 
+		buffBox.SetActive((gm.marble.buff != Marble.PowerUp.None));
 		debugSet.SetActive(gm.debug);
-		//nextLevel = Application.loadedLevel + 1;
 	}
 	
 	// Update is called once per frame
@@ -76,20 +78,39 @@ public class MainHUD : MonoBehaviour {
 				if (remainder >= 1) remainder = remainder % 1;
 				countdown.rectTransform.localScale = (gm.timer >= goLength) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(3, 3, 3);
 
-			} else {
+			} else if (gm.state == GameMaster.GameState.Playing) {
 				timer.text = gm.timer.ToString("F1") + " s";	// Displays timer to one decimal place.
+
+				// Cuts away active buff icon based on time remaining.
+				if (buffBox.activeSelf)
+					powerup.fillAmount = (gm.marble.buffTimer != Mathf.Infinity)? gm.marble.buffTimer / gm.marble.buffTimeMax : 1;
 			}
 		
 			if (gm.marble != null) {
 				// Speed gauge.
 				speed.text = Mathf.Round(gm.marble.marbody.velocity.magnitude) + " m/s";
 				rps.text = Mathf.Round(gm.marble.marbody.angularVelocity.magnitude) + " rps";
-
-				// [ maybe consider an RPM counter as well ]
 			}
 		}
 	}
 
+	// ShowActiveBuff - Shows the active buff box and places the previously "held" buff into the active slot.
+	public void ShowActiveBuff() {
+		buffBox.SetActive(true);
+		powerup.sprite = heldPowerup.sprite;
+		powerup.color = heldPowerup.color;
+		powerup.type = UnityEngine.UI.Image.Type.Filled;
+		powerup.fillMethod = UnityEngine.UI.Image.FillMethod.Radial360;
+		heldPowerup.sprite = null;
+		heldPowerup.color = Color.clear;
+	}
+
+	// HideActiveBuff - Hides and clears the active buff box.
+	public void HideActiveBuff() {
+		buffBox.SetActive(false);
+		// If we need to clear it, we can do so here.
+	}
+	
 	// Restart - Reloads the current level.
 	public void Restart (){
 		gm.LoadLevel(Application.loadedLevel);
@@ -109,6 +130,8 @@ public class MainHUD : MonoBehaviour {
 			Debug.LogWarning("(MainHUD.cs) NextLevel was called when there's no next level! Next level would be " + (Application.loadedLevel + 1) + " but maximum is " + (Application.levelCount - 1) + "!");
 	}
 
+	// Animation Coroutines - Display special GUI animations over time.
+	#region Animation Coroutines
 	// OnDeath - Called when player falls off the stage or otherwise is killed.
 	public IEnumerator OnDeath() {
 
@@ -156,7 +179,8 @@ public class MainHUD : MonoBehaviour {
 
 		// Enables victory options.
 		winOptions.SetActive(true);
-		
-				
+
 	}
+
+	#endregion
 }

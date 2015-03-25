@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Mar. 25, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -14,6 +14,7 @@
 /// </summary>
 
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 public class Marble : MonoBehaviour {
@@ -36,7 +37,6 @@ public class Marble : MonoBehaviour {
 	public GameMaster gm;				// Reference to the Game Master.
 	public Transform cam;				// Reference to the main camera.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
-	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
 
 	public float defSpeedMultiplier;	// Default speed multiplier.
 	public float defRevSpeed;			// Default rev speed.
@@ -49,6 +49,7 @@ public class Marble : MonoBehaviour {
 	protected float shackle = 0.01f;	// Limiter constant for velocity.
 	public float speedMultiplier;		// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed;				// Determines how quickly the marble will rev up to max angular velocity.
+	public float brakeSpeed;			// How fast the marble can brake in normal gameplay.
 
 	protected bool hasJumped = false;	// Check if a jump has occured
 	public float jumpHeight;			// How powerful the marble's jump is.
@@ -57,13 +58,16 @@ public class Marble : MonoBehaviour {
 																			
 	protected RaycastHit hit;			// Saves raycast hit.
 
+	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
 	public PowerUp heldBuff;			// What buff the marble is holding onto.
 	public ApplyBuff buffFunction;		// Which function will be called to apply the buff.
 	public GameObject heldParticles;	// The particles to instantiate when buff is used.
 	public float heldIntensity;			// Intensity of held buff.
 	public float heldDuration;			// Duration of held buff.
 
+	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
 	public PowerUp buff = PowerUp.None;	// What buff the marble currently has.
+	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
 	public float buffTimeMax;			// How much time the buff timer had at the beginning.
 	public float buffTimer;				// How much time until a buff expires.
 
@@ -90,7 +94,6 @@ public class Marble : MonoBehaviour {
 		//tangent = new Vector3();
 		cam = gm.cam;
 		ClearBuffs();	// Resets marble's properties to default.
-		//rigidbody.maxAngularVelocity = defMaxAngVelocity;
 	}
 	
 	// Update - Called once per frame.
@@ -110,14 +113,14 @@ public class Marble : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	// FixedUpdate - Called once per physics calculation. This happens independently of frames.
 	// NOTE: Time.deltaTime is unnecessary in FixedUpdate because it is integrated in physics calculations.
 	void FixedUpdate () {
 		//tangent = Vector3.zero; // See above
-
-		bool touchdown = !grounded;	// Boolean used to see if the marble landed since the previous frame.
-		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f * transform.localScale.x);	// Checks if marble is reasonably close to the ground		
+		
+		//bool touchdown = !grounded;	// Boolean used to see if the marble landed since the previous frame.
+		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.8f * transform.localScale.x);	// Checks if marble is reasonably close to the ground
 
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 
@@ -130,16 +133,18 @@ public class Marble : MonoBehaviour {
 			cross = Vector3.Cross(inputDirection, hit.normal);
 			float angle = Vector3.Angle(cross, inputDirection);
 			tangent = Quaternion.AngleAxis(angle, hit.normal) * cross;
-			tangent *= inputDirection.magnitude;			*/
+			tangent *= inputDirection.magnitude;
 
 			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
-			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
+			//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.*/
 
-			if (touchdown) {
+			/*if (touchdown) {
 				jumpsLeft = maxJumps; // If marble has just hit the ground, refresh jumps.
-			}
+			}*/
 			
 			marbody.drag = 0.5f;
+
+			// Force is only applied on the ground, and is dependent on how much the ball is spinning.
 			marbody.AddForce(inputDirection * speedMultiplier * marbody.angularVelocity.magnitude * shackle, ForceMode.Impulse); // Applies force.
 			inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 
@@ -150,15 +155,16 @@ public class Marble : MonoBehaviour {
 		}
 
 		// Handles jumping.
-		if (hasJumped) {	
+		if (hasJumped && !IsInvoking("JumpCooldown")) {	
 			Vector3 jumpDir = (grounded)? hit.normal : Vector3.up; // Jumps off of surface's normal if there is one,
 																   // otherwise jumps straight up.
 			marbody.AddForce (jumpHeight * jumpDir);
+
 			jumpsLeft--;
 			if (jumpsLeft == 0 && (buff == PowerUp.MultiJump || buff == PowerUp.SuperJump))
 				ClearBuffs();	// If ball has used up its extra/special jumps, clears powerup state.
 
-			hasJumped = false;
+			Invoke("JumpCooldown", 0.25f); // Calls RefreshJump() after some time has passed to prevent Multijump from using all jumps at once.
 		}
 
 	}
@@ -178,7 +184,10 @@ public class Marble : MonoBehaviour {
 		maxJumps = 1;
 		jumpsLeft = (grounded)? 1 : 0;
 
-		if (buffParticles) GameObject.Destroy(buffParticles.gameObject);
+		if (buffParticles) {
+			GameObject.Destroy(buffParticles.gameObject);
+			buffParticles = null;
+		}
 
 		buffTimer = 0;
 		buffTimeMax = 0;
@@ -217,11 +226,16 @@ public class Marble : MonoBehaviour {
 		inputDirection += cam.right * Time.deltaTime;
 	}
 	
-	// Jump. Can't jump in the air.
+	// Jump. Can't jump in the air unless using multijump.
 	public void Jump() {
-		if ((grounded || buff == PowerUp.MultiJump) && jumpsLeft > 0 /*!hasJumped*/) {
+		if ((grounded || (buff == PowerUp.MultiJump)) && jumpsLeft > 0 && !hasJumped) {
 			hasJumped = true;
 		}
+	}
+
+	// JumpCooldown - Clears the hasJumped bool.
+	void JumpCooldown() {
+		hasJumped = false;
 	}
 
 	// UseBuff - Applies the marble's currently held powerup. Currently overwrites any existing one.
@@ -247,13 +261,19 @@ public class Marble : MonoBehaviour {
 		}
 	}
 	
-	// Very basic, extremely potent brake. Can currently pause marble midair for the most part.
+	// Brake - Slows down and stops the marble.
 	public void Brake() {
-		marbody.velocity = Vector3.zero;
-		marbody.angularVelocity = Vector3.zero;
+
+		if (gm.debug) { // If in debug mode, just freeze the ball.
+			marbody.velocity = Vector3.zero;
+			marbody.angularVelocity = Vector3.zero;
+
+		} else { // Otherwise, gradually slow it like an actual brake.
+			if (grounded) marbody.AddForce(new Vector3(-marbody.velocity.x * Time.deltaTime, 0, -marbody.velocity.z * Time.deltaTime) * brakeSpeed, ForceMode.Impulse);
+		}
 	}
 	
-	// Respawns marble to roughly its starting position.
+	// Respawn - Respawns the marble to roughly its starting position.
 	public void Respawn() {
 		//Transform respawn = GameObject.FindGameObjectWithTag("Respawn").transform;
 		
@@ -270,4 +290,13 @@ public class Marble : MonoBehaviour {
 	}
 	
 	#endregion
+
+	// OnCollisionEnter - Currently used to refill the number of jumps the player has left.
+	void OnCollisionEnter(Collision collision) {
+		//foreach(ContactPoint contact in collision.contacts) {
+			//if (contact.point.y < transform.position.y) { // If there is a contact that is below the marble...
+				jumpsLeft = maxJumps; // Refills jumps.
+			//}
+		//}
+	}
 }

@@ -26,7 +26,7 @@ public class SuperJumpSource : BuffSource {
 	protected override void GiveBuff(Marble marble) {
 		base.GiveBuff(marble);
 		marble.buffFunction = SuperJump; // Basically gives the marble the SuperJump function to use.
-		marble.heldBuff = Marble.PowerUp.SpeedBoost;
+		marble.heldBuff = Marble.PowerUp.SuperJump;
 	}
 
 	// SuperJump - Modifies marble's jumping height.

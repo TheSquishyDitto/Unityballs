@@ -122,7 +122,7 @@ public class InputManager : MonoBehaviour {
 				gm.marble.Right();
 			}
 			// Jumping.
-			if (Input.GetKeyDown(jump)) {
+			if (Input.GetKey(jump)) {
 				gm.marble.Jump();
 			}
 			// Use a held buff.

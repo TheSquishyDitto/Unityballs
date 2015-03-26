@@ -2,7 +2,7 @@
 /// SpawnArea.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 26, 2015
 /// 
 /// Class that dictates how spawning pads should function.
 /// 
@@ -29,8 +29,8 @@ public class SpawnArea : MonoBehaviour {
 
 	// Start - Use this for initialization
 	void Start () {
-		if (gm.marble)
-			gm.marble.Respawn(); // Makes sure marble is in the right spot once the spawn pad is out.
+		//if (gm.marble && gm.cam)
+		//	gm.marble.Respawn(); // Makes sure marble is in the right spot once the spawn pad is out.
 	}
 	
 	// Update is called once per frame

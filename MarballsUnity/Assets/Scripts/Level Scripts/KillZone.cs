@@ -1,8 +1,8 @@
 /// <summary>
 /// KillZone.cs
-/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira, [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Mar. 11, 2015
+/// Last Revision: Mar. 26, 2015
 /// 
 /// Class that handles behavior of killzone boundaries.
 /// 
@@ -18,7 +18,7 @@ using System.Collections;
 
 public class KillZone : MonoBehaviour {
 	
-	public GameMaster gm;	// Reference to Game Master.
+	GameMaster gm;	// Reference to Game Master.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {

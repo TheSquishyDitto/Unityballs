@@ -36,13 +36,17 @@ public class DebugMenu : MonoBehaviour {
 	// Start - Use this for initialization.
 	void Start () {
 		simple.isOn = gm.simpleAnim;
-		fpsSlider.value = Application.targetFrameRate;
+
+		if (fpsSlider) 
+			fpsSlider.value = Application.targetFrameRate;
+		else
+			Application.targetFrameRate = 60;
 	}
 	
 	// Update - Called once per frame.
 	void Update () {
 
-		fpsText.text = "Target FPS: " + fpsSlider.value;	// Updates the text to the current target value.
+		if (fpsSlider) fpsText.text = "Target FPS: " + fpsSlider.value;	// Updates the text to the current target value.
 
 		if (gm.state == GameMaster.GameState.Start && !start.isOn) {
 			manual = false;
@@ -59,6 +63,11 @@ public class DebugMenu : MonoBehaviour {
 	// DEBUG - ChangeFPS - Changes application's preferred FPS. Acts as a soft ceiling.
 	public void ChangeFPS (float targetFPS) {
 		Application.targetFrameRate = (int)targetFPS;
+	}
+
+	// DEBUG - ChangeFPS - Changes application's preferred FPS. Acts as a soft ceiling.
+	public void ChangeFPS (string targetFPS) {
+		Application.targetFrameRate = int.Parse(targetFPS);
 	}
 
 	// DEBUG - StartButton - Sets game state to the starting state.

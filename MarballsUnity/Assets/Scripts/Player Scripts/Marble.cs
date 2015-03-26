@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 25, 2015
+/// Last Revision: Mar. 26, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -34,30 +34,34 @@ public class Marble : MonoBehaviour {
 
 	// Variables
 	#region Variables
+	[Header("References")]
 	public GameMaster gm;				// Reference to the Game Master.
 	public Transform cam;				// Reference to the main camera.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 
+	[Header("Default Values")]
 	public float defSpeedMultiplier;	// Default speed multiplier.
 	public float defRevSpeed;			// Default rev speed.
 	public float defMaxAngVelocity;		// Default maximum angular velocity.
 	public float defJumpHeight;			// Default jump height.
 	public float defSize;				// Default marble size.
-
-	protected Vector3 inputDirection;	// Holds desired direction of input before applying it.
-	public bool grounded;				// True if marble is on the ground, false otherwise.
-	protected float shackle = 0.01f;	// Limiter constant for velocity.
+	
+	[Header("Movement Values")]
 	public float speedMultiplier;		// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed;				// Determines how quickly the marble will rev up to max angular velocity.
 	public float brakeSpeed;			// How fast the marble can brake in normal gameplay.
-
+	protected Vector3 inputDirection;	// Holds desired direction of input before applying it.
+	protected float shackle = 0.01f;	// Limiter constant for velocity.
+	
 	protected bool hasJumped = false;	// Check if a jump has occured
 	public float jumpHeight;			// How powerful the marble's jump is.
 	public int maxJumps = 1;			// How many jumps marble can have.
 	public int jumpsLeft = 1;			// How many jumps the marble has remaining.
-																			
+	public bool grounded;				// True if marble is on the ground, false otherwise.
+	
 	protected RaycastHit hit;			// Saves raycast hit.
 
+	[Header("Held Buff Values")]
 	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
 	public PowerUp heldBuff;			// What buff the marble is holding onto.
 	public ApplyBuff buffFunction;		// Which function will be called to apply the buff.
@@ -65,6 +69,7 @@ public class Marble : MonoBehaviour {
 	public float heldIntensity;			// Intensity of held buff.
 	public float heldDuration;			// Duration of held buff.
 
+	[Header("Active Buff Values")]
 	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
 	public PowerUp buff = PowerUp.None;	// What buff the marble currently has.
 	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
@@ -196,6 +201,13 @@ public class Marble : MonoBehaviour {
 		if (gm.hud) { gm.hud.HideActiveBuff(); }
 	}
 
+	// ClearAllBuffs - Does the same as ClearBuffs, but clears the held buff as well.
+	// NOTE: Current implementation will cause the buff function to be triggered first.
+	public void ClearAllBuffs() {
+		UseBuff();
+		ClearBuffs();
+	}
+
 	// Ghost - Makes the marble ethereal, able to move through some objects.
 
 	// HeliBall - Turns the marble into a helicopter or allows it to levitate.
@@ -279,6 +291,8 @@ public class Marble : MonoBehaviour {
 		
 		marbody.velocity = Vector3.zero;
 		marbody.angularVelocity = Vector3.zero;
+		ClearAllBuffs();
+		cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
 			transform.position = gm.respawn.transform.position + new Vector3(0,5,0);

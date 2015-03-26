@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Mar. 26, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -29,15 +29,19 @@ public class CameraController : MonoBehaviour {
 	#region Variables
 	public GameMaster gm;					// Reference to Game Master.
 	public Transform marble; 				// Reference to coordinates of marble
-	
-	public float theta = Mathf.PI / 2;  	// Radians around y-axis (horizontal).
-	public float psy = 0.5f;	 			// Radians around x-axis (vertical).
-	public float radius = 15; 				// Distance from marble.
+
+	public float defTheta = Mathf.PI / 2;   // Default value of theta.
+	public float defPsy = 0.5f;				// Default value of psy.
+	public float defRadius = 15;			// Default radius from marble.
+
+	public float theta;  					// Radians around y-axis (horizontal).
+	public float psy;	 					// Radians around x-axis (vertical).
+	public float radius; 					// Distance from marble.
 	public float playerRadius;				// Player preferred distance from marble.
 	
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
-	public const float RADMIN = 3;						// Minimum distance from marble
+	public const float RADMIN = 3;					   // Minimum distance from marble
 	
 	//public float smooth = 1; // Used to adjust how smoothly the camera adjusts position between frames (Lerp)
 	
@@ -57,8 +61,9 @@ public class CameraController : MonoBehaviour {
 	
 	// Start - Use this for initialization
 	void Start () {
+		ResetPosition();
 		playerRadius = radius;
-		marble = gm.marble.transform;//GameObject.FindGameObjectWithTag("Marble").transform;
+		marble = gm.marble.transform;
 		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
 		
@@ -122,6 +127,12 @@ public class CameraController : MonoBehaviour {
 		retPos.z = radius * Mathf.Cos (psy) * Mathf.Sin (theta) + marble.position.z;
 		
 		return retPos;
+	}
+
+	// ResetPosition - Returns the camera to its initial position.
+	public void ResetPosition() {
+		theta = defTheta;
+		psy = defPsy;
 	}
 	
 	// Control Functions

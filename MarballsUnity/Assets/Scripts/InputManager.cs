@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Mar. 27, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -80,7 +80,7 @@ public class InputManager : MonoBehaviour {
 			// These controls are active during gameplay.
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
 				if (!gm.paused) {
-					MarbleControls();
+					MarbleSpecialControls();
 				}
 				MenuControls();
 			}
@@ -92,54 +92,68 @@ public class InputManager : MonoBehaviour {
 
 	// FixedUpdate - Called at a fixed interval around every physics calculation.
 	void FixedUpdate() {
-		/*if (allowInput) {
+		if (allowInput) {
 			// As long as the game isn't paused, these controls handle marble movement and positioning.
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
-				if (!gm.paused) {
-					MarbleControls();
+				if (!gm.paused && gm.marble) {
+					MarbleMoveControls();
 				}
-			}
-		}*/
-	}
-
-	// MarbleControls - Controls for the marble.
-	void MarbleControls() {
-		if (gm.marble) {
-			// Forward movement.
-			if (Input.GetKey(forward)) {
-				gm.marble.Forward();
-			}
-			// Backward movement.
-			if (Input.GetKey(backward)) {
-				gm.marble.Backward();
-			}
-			// Leftwards movement.
-			if (Input.GetKey(left)) {
-				gm.marble.Left();
-			}
-			// Rightwards movement.
-			if (Input.GetKey(right)) {
-				gm.marble.Right();
-			}
-			// Jumping.
-			if (Input.GetKey(jump)) {
-				gm.marble.Jump();
-			}
-			// Use a held buff.
-			if (Input.GetKeyDown(use)) {
-				gm.marble.UseBuff();
-			}
-			// Braking. Current implementation is better considered a debug control.
-			if (Input.GetKey(brake)) {
-				gm.marble.Brake();
-			}
-			// Respawning. May be better to consider it a debug control instead.
-			if (Input.GetKeyDown (respawn)) {
-				gm.marble.Respawn();
 			}
 		}
 	}
 
+	// MarbleMoveControls - Controls for moving the marble.
+	void MarbleMoveControls() {
+		// Forward movement.
+		if (Input.GetKey(forward)) {
+			gm.marble.Forward();
+		}
+		// Backward movement.
+		if (Input.GetKey(backward)) {
+			gm.marble.Backward();
+		}
+		// Leftwards movement.
+		if (Input.GetKey(left)) {
+			gm.marble.Left();
+		}
+		// Rightwards movement.
+		if (Input.GetKey(right)) {
+			gm.marble.Right();
+		}
+		// Jumping.
+		if (Input.GetKey(jump)) {
+			gm.marble.Jump();
+		}
+		/*// Use a held buff.
+		if (Input.GetKeyDown(use)) {
+			gm.marble.UseBuff();
+		}
+		// Braking. Current implementation is better considered a debug control.
+		if (Input.GetKey(brake)) {
+			gm.marble.Brake();
+		}
+		// Respawning. May be better to consider it a debug control instead.
+		if (Input.GetKeyDown (respawn)) {
+			gm.marble.Respawn();
+		}*/
+	}
+
+	// MarbleSpecialControls - Controls that aren't related to directional movement.
+	void MarbleSpecialControls() {
+		// Use a held buff.
+		if (Input.GetKeyDown(use)) {
+			gm.marble.UseBuff();
+		}
+		// Braking. Current implementation is better considered a debug control.
+		if (Input.GetKey(brake)) {
+			gm.marble.Brake();
+		}
+		// Respawning. May be better to consider it a debug control instead.
+		if (Input.GetKeyDown (respawn)) {
+			gm.marble.Respawn();
+		}
+	}
+	
 	// CameraControls - Controls for the camera.
 	void CameraControls() {
 		if (gm.cam) {

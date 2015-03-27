@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 26, 2015
+/// Last Revision: Mar. 27, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -292,7 +292,7 @@ public class Marble : MonoBehaviour {
 		marbody.velocity = Vector3.zero;
 		marbody.angularVelocity = Vector3.zero;
 		ClearAllBuffs();
-		cam.GetComponent<CameraController>().ResetPosition();
+		if (cam) cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
 			transform.position = gm.respawn.transform.position + new Vector3(0,5,0);

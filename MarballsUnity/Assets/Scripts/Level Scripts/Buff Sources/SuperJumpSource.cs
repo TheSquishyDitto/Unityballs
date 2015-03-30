@@ -33,5 +33,11 @@ public class SuperJumpSource : BuffSource {
 	public void SuperJump(float intensity, float duration = Mathf.Infinity) {
 		marble.buff = Marble.PowerUp.SuperJump;
 		marble.jumpHeight *= intensity;
+		marble.jumpFunction = NewJump;
+	}
+	
+	public void NewJump(){
+		if (marble.jumpsLeft > 0 && !marble.hasJumped)
+			marble.hasJumped = true;
 	}
 }

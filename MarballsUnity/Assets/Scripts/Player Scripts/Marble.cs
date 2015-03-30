@@ -31,6 +31,7 @@ public class Marble : MonoBehaviour {
 	}
 
 	public delegate void ApplyBuff(float intensity, float duration);	// This is declaring a sorta data type for a variable that can hold functions.
+	public delegate void ChangeJump();
 
 	// Variables
 	#region Variables
@@ -53,11 +54,12 @@ public class Marble : MonoBehaviour {
 	protected Vector3 inputDirection;	// Holds desired direction of input before applying it.
 	protected float shackle = 0.01f;	// Limiter constant for velocity.
 	
-	protected bool hasJumped = false;	// Check if a jump has occured
+	public bool hasJumped = false;		// Check if a jump has occured
 	public float jumpHeight;			// How powerful the marble's jump is.
 	public int maxJumps = 1;			// How many jumps marble can have.
 	public int jumpsLeft = 1;			// How many jumps the marble has remaining.
 	public bool grounded;				// True if marble is on the ground, false otherwise.
+	public ChangeJump jumpFunction;		// Variable holding any changes to jump behavior.
 	
 	protected RaycastHit hit;			// Saves raycast hit.
 
@@ -187,6 +189,7 @@ public class Marble : MonoBehaviour {
 		revSpeed = defRevSpeed;
 		jumpHeight = defJumpHeight;
 		maxJumps = 1;
+		jumpFunction = null;
 		jumpsLeft = (grounded)? 1 : 0;
 
 		if (buffParticles) {
@@ -240,8 +243,11 @@ public class Marble : MonoBehaviour {
 	
 	// Jump. Can't jump in the air unless using multijump.
 	public void Jump() {
-		if ((grounded || (buff == PowerUp.MultiJump)) && jumpsLeft > 0 && !hasJumped) {
-			hasJumped = true;
+		if (jumpFunction != null) {
+			jumpFunction();
+		} else {
+			if (grounded && jumpsLeft > 0 && !hasJumped) 
+				hasJumped = true;
 		}
 	}
 

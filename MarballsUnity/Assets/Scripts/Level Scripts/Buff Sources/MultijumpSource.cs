@@ -33,8 +33,14 @@ public class MultijumpSource : BuffSource {
 	// NOTE: Intensity will be truncated; it is only a float to match the other buff functions.
 	public void MultiJump(float intensity, float duration = Mathf.Infinity) {
 		marble.buff = Marble.PowerUp.MultiJump;
-
+		marble.jumpFunction = NewJump;
 		marble.maxJumps = (int)intensity;
 		marble.jumpsLeft = (marble.grounded)? marble.maxJumps : marble.maxJumps - 1; // If the marble is in the air, their current jump count will only allow the additional midair jumps.
 	}
+	
+	public void NewJump(){
+		if (marble.jumpsLeft > 0 && !marble.hasJumped)
+			marble.hasJumped = true;
+	}
+	
 }

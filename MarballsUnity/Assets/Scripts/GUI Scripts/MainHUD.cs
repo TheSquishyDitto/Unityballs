@@ -6,9 +6,7 @@
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
-/// TO DO: - Tweak countdown until it behaves as desired.
-/// 	   - Add other features.
-/// 	   - Deprecate nextLevel variable.
+/// TO DO: - Add other features.
 /// 
 /// </summary>
 
@@ -87,7 +85,7 @@ public class MainHUD : MonoBehaviour {
 			}
 		
 			if (gm.marble != null) {
-				// Speed gauge.
+				// Speed gauges.
 				speed.text = Mathf.Round(gm.marble.marbody.velocity.magnitude) + " m/s";
 				rps.text = Mathf.Round(gm.marble.marbody.angularVelocity.magnitude) + " rps";
 			}

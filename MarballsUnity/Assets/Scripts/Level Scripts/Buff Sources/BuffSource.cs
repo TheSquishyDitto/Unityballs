@@ -11,6 +11,7 @@
 ///        - If there was a nice one or two line way to convert the enum into a method/function name, having separate classes would be mostly unnecessary.
 /// 
 /// TO DO: - Investigate ways to make the inheritance unnecessary.
+/// 	   - Decide on respawn mechanics: timer vs player must use first.
 /// 
 /// </summary>
 
@@ -30,6 +31,8 @@ public class BuffSource : MonoBehaviour {
 	public Color iconTint = Color.white;// What color the icon should be tinted when active.
 	public GameObject particles;		// What type of particle system this buff should give.
 	public bool collectable;			// Whether this source disappears when collected.
+	//protected bool isCollected = false;	// Whether is currently already collected.
+	//public float respawnTimer = 10;		// How long after being collected will the buff respawn.
 
 	#endregion
 

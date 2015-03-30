@@ -17,12 +17,14 @@ public class GuideArrow : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-		GetComponent<MeshRenderer>().enabled = gm.guides;	// Lazy way of dealing with it at the moment.
+		GetComponent<MeshRenderer>().enabled = (gm.guides && gm.finishLine);	// Lazy way of dealing with it at the moment.
 	}
 
 	// LateUpdate - Called after update.
 	void LateUpdate() {
-		transform.position = gm.marble.marbody.position + new Vector3(0, 2, 0);
-		transform.rotation = Quaternion.LookRotation(-gm.finishLine.position + transform.position);
+		if (gm.finishLine) {
+			transform.position = gm.marble.marbody.position + new Vector3(0, 2, 0);
+			transform.rotation = Quaternion.LookRotation(-gm.finishLine.position + transform.position);
+		}
 	}
 }

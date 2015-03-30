@@ -2,6 +2,19 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 26, 2015:
+	- Kyle added a candidate speed boost tutorial level.
+
+March 25, 2015:
+	- Charlie added beginnings of Heliball powerup.
+		+ Currently when active, marble falls more slowly.
+	- Charlie and Kyle fixed some issues with jumping mechanics.
+		+ Marble may now keep jumping automatically if the jump key is held down.
+		+ There is a barely noticeable cooldown after standard jumping to restrict multijump.
+		+ Fringe issues:
+			* Marble may be unable to jump in some cases if it perfectly skids down wall and lands on floor if both share a collider.
+			* If marble is in midair without having jumped first, the player gets an extra jump. Could be a feature?
+
 March 24, 2015:
 	- Kyle added a pointer to the finish line and revamped buff code.
 		+ Adding new buffs should be easier.

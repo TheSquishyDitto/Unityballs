@@ -2,6 +2,15 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+March 31, 2015:
+	- Kyle refactored marble and powerup code for extendability. Then extended it.
+		+ Powerups can now completely overwrite marble's jumping and movement mechanics.
+		+ Powerups can now disappear when collected, and will respawn when used up.
+
+March 30, 2015:
+	- Charlie added a prototype super jump tutorial level.
+	- Charlie, Kyle, and Chris modified jumping so that powerups could change jumping trigger conditions.
+		
 March 26, 2015:
 	- Kyle added a candidate speed boost tutorial level.
 

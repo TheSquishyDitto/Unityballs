@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 26, 2015
+/// Last Revision: Mar. 31, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -62,6 +62,7 @@ public class CameraController : MonoBehaviour {
 	// Start - Use this for initialization
 	void Start () {
 		ResetPosition();
+		radius = defRadius;
 		playerRadius = radius;
 		marble = gm.marble.transform;
 		//radius = Vector3.Distance(transform.position, ball.position);

@@ -11,7 +11,7 @@ public class HoverSource : BuffSource {
 	// GiveBuff - Gives a specific buff to the specified marble.
 	protected override void GiveBuff(Marble marble) {
 		base.GiveBuff(marble);
-		marble.buffFunction = HeliBall; // Basically gives the marble the SuperJump function to use.
+		marble.buffFunction = HeliBall; // Basically gives the marble the buff function to use.
 		marble.heldBuff = Marble.PowerUp.HeliBall;
 	}
 	
@@ -21,5 +21,15 @@ public class HoverSource : BuffSource {
 		
 		ConstantForce hover = marble.gameObject.AddComponent<ConstantForce>();
 		hover.force = new Vector3(0,20,0);
+	}
+
+	// TakeBuff - Any special conditions that must be fixed to remove the buff.
+	protected override void TakeBuff() {
+		base.TakeBuff();
+		
+		if (marble.GetComponent<ConstantForce>())
+			Destroy (marble.GetComponent<ConstantForce>());
+
+		marble.jumpFunction = null;
 	}
 }

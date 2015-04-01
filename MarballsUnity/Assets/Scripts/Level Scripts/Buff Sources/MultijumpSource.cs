@@ -1,10 +1,10 @@
 ﻿/// <summary>
 /// MultijumpSource.cs
-/// Authors: Kyle Dawson
+/// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Mar. 31, 2015
 /// 
-/// Class for super jump granting entities.
+/// Class for multi jump granting entities.
 /// 
 /// NOTES: - See buff source for implementation information.
 /// 
@@ -25,7 +25,7 @@ public class MultijumpSource : BuffSource {
 	// GiveBuff - Gives a specific buff to the specified marble.
 	protected override void GiveBuff(Marble marble) {
 		base.GiveBuff(marble);
-		marble.buffFunction = MultiJump; // Basically gives the marble the SuperJump function to use.
+		marble.buffFunction = MultiJump; // Basically gives the marble the buff function to use.
 		marble.heldBuff = Marble.PowerUp.MultiJump;
 	}
 	
@@ -34,13 +34,39 @@ public class MultijumpSource : BuffSource {
 	public void MultiJump(float intensity, float duration = Mathf.Infinity) {
 		marble.buff = Marble.PowerUp.MultiJump;
 		marble.jumpFunction = NewJump;
-		marble.maxJumps = (int)intensity;
-		marble.jumpsLeft = (marble.grounded)? marble.maxJumps : marble.maxJumps - 1; // If the marble is in the air, their current jump count will only allow the additional midair jumps.
+
+		marble.midairJumps = (int)intensity;
+		//marble.maxJumps = (int)intensity;
+		//marble.jumpsLeft = (marble.grounded)? marble.maxJumps : marble.maxJumps - 1; // If the marble is in the air, their current jump count will only allow the additional midair jumps.
 	}
-	
+
+	// NewJump - Allows marble to jump in midair.
 	public void NewJump(){
-		if (marble.jumpsLeft > 0 && !marble.hasJumped)
-			marble.hasJumped = true;
+		if (marble.canJump && marble.midairJumps > 0) {
+
+			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
+
+			marble.marbody.AddForce (marble.jumpHeight * jumpDir);
+			marble.canJump = false;	// This prevents the jump from getting applied multiple times.
+
+			if (!marble.grounded) {
+				marble.midairJumps--;
+
+				if (marble.midairJumps == 0) {
+					marble.ClearBuffs();
+				}
+			}
+
+			marble.Invoke("JumpCooldown", 0.25f);	// Forces the marble to wait a moment in midair before allowing it to jump again.
+		}
+	}
+
+	// TakeBuff - Any special conditions that must be fixed to remove the buff.
+	protected override void TakeBuff() {
+		base.TakeBuff();
+
+		marble.midairJumps = 0;
+		marble.jumpFunction = null;
 	}
 	
 }

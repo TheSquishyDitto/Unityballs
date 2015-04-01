@@ -2,16 +2,11 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Mar. 31, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
 /// NOTES: - Any buff source classes that inherit from this should have their own buffing functions.
-/// 	   - Currently always overwrites the marble's currently held buff.
-///        - If there was a nice one or two line way to convert the enum into a method/function name, having separate classes would be mostly unnecessary.
-/// 
-/// TO DO: - Investigate ways to make the inheritance unnecessary.
-/// 	   - Decide on respawn mechanics: timer vs player must use first.
 /// 
 /// </summary>
 
@@ -30,9 +25,7 @@ public class BuffSource : MonoBehaviour {
 	public Sprite icon;					// What icon should be displayed for this buff.
 	public Color iconTint = Color.white;// What color the icon should be tinted when active.
 	public GameObject particles;		// What type of particle system this buff should give.
-	public bool collectable;			// Whether this source disappears when collected.
-	//protected bool isCollected = false;	// Whether is currently already collected.
-	//public float respawnTimer = 10;		// How long after being collected will the buff respawn.
+	public bool collectable;			// Whether this source disappears when collected. Respawns when used.
 
 	#endregion
 
@@ -46,7 +39,7 @@ public class BuffSource : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		marble = gm.marble;
+		//marble = gm.marble;
 		Initialize();
 	}
 	
@@ -58,11 +51,12 @@ public class BuffSource : MonoBehaviour {
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble")) {	// Only grants buffs to marbles.
-			Marble marble = other.GetComponent<Marble>();
+			marble = other.GetComponent<Marble>();
 
-			GiveBuff(marble);	// Gives the buff to the marble.
-
-			if (collectable) gameObject.SetActive(false);	// Disappears if collectable.
+			if (marble.heldBuff == Marble.PowerUp.None) {
+				GiveBuff(marble);	// Gives the buff to the marble.
+				if (collectable) gameObject.SetActive(false);	// Disappears if collectable.
+			}
 		}	
 	}
 
@@ -79,5 +73,11 @@ public class BuffSource : MonoBehaviour {
 		marble.heldParticles = particles;
 		marble.heldIntensity = intensity;
 		marble.heldDuration = duration;
+		marble.heldCleaner = TakeBuff;
+	}
+
+	// TakeBuff - Any special conditions that must be fixed to remove the buff.
+	protected virtual void TakeBuff() {
+		gameObject.SetActive(true);	// If buff source is collected, respawns it.
 	}
 }

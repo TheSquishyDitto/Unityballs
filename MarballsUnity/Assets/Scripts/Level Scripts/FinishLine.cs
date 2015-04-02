@@ -27,6 +27,7 @@ public class FinishLine : MonoBehaviour {
 	//public ParticleSystem flame2;	// Reference to second flame particles. Currently unnecessary.
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
 	public GameObject arrow;		// Reference to the indicator arrow.
+	public AudioClip explodeSound;	// Reference to a sound to use when exploding.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
 
@@ -130,6 +131,7 @@ public class FinishLine : MonoBehaviour {
 
 			// Insane explosion.
 			explosion = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Explosion"))).GetComponent<ParticleSystem>();
+			AudioSource.PlayClipAtPoint(explodeSound, gm.cam.position, 2.0f);
 			yield return new WaitForSeconds(2f); // Wait until explosion is partially finished.
 
 		} else {

@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Apr.  1, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -34,6 +34,9 @@ public class MainHUD : MonoBehaviour {
 	public GameObject buffBox;	  // Reference to the active buff indicator.
 	public GameObject winOptions; // Reference to win options.
 	public GameObject debugSet;	  // Reference to debug buttons and info display.
+
+	public string[] deathMessages;	// An array of messages to use when the player dies.
+	public string[] winMessages;	// An array of messages to use when the player wins.
 
 	public Sprite[] nums;		// Easy holder of number textures.
 	float remainder;			// Decimal portion of timer.
@@ -133,6 +136,8 @@ public class MainHUD : MonoBehaviour {
 	// OnDeath - Called when player falls off the stage or otherwise is killed.
 	public IEnumerator OnDeath() {
 
+		deathMessage.text = deathMessages[Random.Range(0, deathMessages.Length)]; // Chooses a random message.
+
 		// Makes the red screen visible.
 		for (int i = 0; i < 25; i++) {
 			deathScreen.color = new Color(1, 0, 0, i/50.0f);
@@ -156,7 +161,9 @@ public class MainHUD : MonoBehaviour {
 
 	// OnVictory - Displays winning text and buttons.
 	public IEnumerator OnVictory() {
-		
+
+		winMessage.text = winMessages[Random.Range(0, winMessages.Length)]; // Chooses a random message.
+
 		// Makes the green screen visible.
 		for (int i = 0; i < 25; i++) {
 			winScreen.color = new Color(winScreen.color.r, winScreen.color.g, winScreen.color.b, i/50.0f);

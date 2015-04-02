@@ -2,6 +2,14 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April  1, 2015:
+	- Charlie, Chris, and Kyle fixed a lighting issue on two levels.
+	- Brenton added a funnel model and updated the spawn point model.
+	- Kyle implemented a couple new features:
+		+ Randomized death/win messages.
+		+ Ghost powerup and its functionality.
+		+ New level hazard.
+	
 March 31, 2015:
 	- Kyle refactored marble and powerup code for extendability. Then extended it.
 		+ Powerups can now completely overwrite marble's jumping and movement mechanics.

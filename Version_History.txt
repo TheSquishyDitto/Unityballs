@@ -2,6 +2,18 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 2, 2015:
+	- Jacob added a number of new assets and modified existing ones
+		+ Power up badges (speed, ghost, generic)
+			* Modelled and textured, not animated
+		+ Reusable stage models:
+			* Start platform
+			* Straight platforms (short, mid, long)
+			* Hard turn platforms (left and right)
+			* Straight half-pipe path
+		+ Fixed stage 2 center piece (was floating just above the stage)
+			
+
 April  1, 2015:
 	- Charlie, Chris, and Kyle fixed a lighting issue on two levels.
 	- Brenton added a funnel model and updated the spawn point model.

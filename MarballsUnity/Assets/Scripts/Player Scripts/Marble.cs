@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr.  3, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -302,10 +302,10 @@ public class Marble : MonoBehaviour {
 		if (cam) cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
-			transform.position = gm.respawn.transform.position + new Vector3(0,5,0);
+			transform.position = gm.respawn.transform.position + new Vector3(0,3,0);
 		} else {
 			Debug.LogWarning("(Marble.cs) No spawn point available! Placing in default location..."); // DEBUG
-			transform.position = new Vector3(0, 5, 0);
+			transform.position = new Vector3(0, 3, 0);
 		}
 
 	}

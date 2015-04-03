@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿/// <summary>
+/// HoverSource.cs
+/// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
+/// Date Created:  Mar. 24, 2015
+/// Last Revision: Apr.  3, 2015
+/// 
+/// Class for hover/heliball granting entities.
+/// 
+/// NOTES: - See buff source for implementation information.
+/// 
+/// TO DO: - Tweak behavior until desired.
+/// 
+/// </summary>
+
+using UnityEngine;
 using System.Collections;
 
 public class HoverSource : BuffSource {
@@ -22,6 +36,10 @@ public class HoverSource : BuffSource {
 		ConstantForce hover = marble.gameObject.AddComponent<ConstantForce>();
 		hover.force = new Vector3(0,20,0);
 	}
+
+	// NewJump - Should allow continuous ascension while jump is held.
+
+	// NewMove - Should allow mid-air movement.
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
 	protected override void TakeBuff() {

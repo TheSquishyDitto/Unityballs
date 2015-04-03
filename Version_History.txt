@@ -2,6 +2,14 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 3, 2015:
+	- Kyle attempted to clean up the project.
+	- Ghostable objects are now truly selectively permeable: nothing but the marble will get through.
+	- Test level now has the following extra features:
+		+ Black hole and a runway of anchored springy cylinders
+		+ Ghost source and a ghostable wall, with a lil rigidcube for experimenting.
+		+ Optional big screen TV.
+
 April 2, 2015:
 	- Jacob added a number of new assets and modified existing ones
 		+ Power up badges (speed, ghost, generic)
@@ -12,7 +20,6 @@ April 2, 2015:
 			* Hard turn platforms (left and right)
 			* Straight half-pipe path
 		+ Fixed stage 2 center piece (was floating just above the stage)
-			
 
 April  1, 2015:
 	- Charlie, Chris, and Kyle fixed a lighting issue on two levels.
@@ -20,7 +27,8 @@ April  1, 2015:
 	- Kyle implemented a couple new features:
 		+ Randomized death/win messages.
 		+ Ghost powerup and its functionality.
-		+ New level hazard.
+		+ New level hazard: black hole.
+		+ Silly sound for victory explosion.
 	
 March 31, 2015:
 	- Kyle refactored marble and powerup code for extendability. Then extended it.

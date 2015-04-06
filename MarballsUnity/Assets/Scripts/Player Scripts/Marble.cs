@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr.  3, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -55,8 +55,8 @@ public class Marble : MonoBehaviour {
 	public float speedMultiplier = 1;	// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed = 1000;		// Determines how quickly the marble will rev up to max angular velocity.
 	public float brakeSpeed = 2;		// How fast the marble can brake in normal gameplay.
-	protected Vector3 inputDirection;	// Holds desired direction of input before applying it.
-	protected float shackle = 0.01f;	// Limiter constant for velocity.
+	public Vector3 inputDirection;		// Holds desired direction of input before applying it.
+	public float shackle = 0.01f;	// Limiter constant for velocity.
 	public ChangeMove moveFunction;		// Variables holding any changes to movement behavior.
 	
 	//public bool hasJumped = false;	// Check if a jump has occured.
@@ -140,10 +140,8 @@ public class Marble : MonoBehaviour {
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
-			marbody.drag = 0.5f;
 			if (debugLights) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
-		} else {
-			marbody.drag = 0.1f;			
+		} else {			
 			if (debugLights) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
 		}
 
@@ -221,8 +219,12 @@ public class Marble : MonoBehaviour {
 
 			// Applies force if marble is on the ground.
 			if (grounded) {
+				marbody.drag = 0.5f;
 				marbody.AddForce(inputDirection * speedMultiplier * marbody.angularVelocity.magnitude * shackle, ForceMode.Impulse);
 				inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
+			}
+			else {
+				marbody.drag = 0.1f;
 			}
 		}
 	}
@@ -302,10 +304,10 @@ public class Marble : MonoBehaviour {
 		if (cam) cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
-			transform.position = gm.respawn.transform.position + new Vector3(0,5,0);
+			transform.position = gm.respawn.transform.position + new Vector3(0,3,0);
 		} else {
 			Debug.LogWarning("(Marble.cs) No spawn point available! Placing in default location..."); // DEBUG
-			transform.position = new Vector3(0, 5, 0);
+			transform.position = new Vector3(0, 3, 0);
 		}
 
 	}

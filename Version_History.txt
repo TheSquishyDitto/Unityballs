@@ -2,6 +2,12 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 6, 2015:
+	- Brenton updated the funnel.
+	- Charlie and Kyle implemented the functionality of the hover/heliball buff.
+	- Kyle added ghostly objects that are only solid while ghosting. Also significantly upgraded ghost scripts.
+	- Kyle added highly flexible tip spots that can be dragged onto a scene to give a player information.
+
 April 3, 2015:
 	- Kyle attempted to clean up the project.
 	- Ghostable objects are now truly selectively permeable: nothing but the marble will get through.

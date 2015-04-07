@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Apr.  3, 2015
+/// Last Revision: Apr.  6, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -30,7 +30,10 @@ public class MainHUD : MonoBehaviour {
 	public Text deathMessage;	// Reference to death message text.
 	public Image winScreen;		// Reference to win tint.
 	public Text winMessage;		// Reference to win message text.
+	public Image tipBox;		// Reference to the background panel of tip windows.
+	public Text tipMessage;		// Reference to the text in a tip window.
 
+	public GameObject tipWindow;  // Reference to the active tip window.
 	public GameObject buffBox;	  // Reference to the active buff indicator.
 	public GameObject winOptions; // Reference to win options.
 	public GameObject debugSet;	  // Reference to debug buttons and info display.

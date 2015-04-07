@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr.  6, 2015
 /// 
 /// Class that controls camera movement.
 /// 

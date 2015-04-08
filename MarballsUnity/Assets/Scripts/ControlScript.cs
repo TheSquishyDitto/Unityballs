@@ -64,6 +64,13 @@ public class ControlScript : MonoBehaviour {
 				t = !t;
 				Debug.Log (gm.input.forward);
 			}
+			else if (e != null && e.isMouse && Input.GetMouseButtonDown(0)){
+				k = KeyCode.Mouse0;
+				Debug.Log (k);
+				gm.input.forward = k;
+				
+				t = !t;
+			}
 			
 		}
 		

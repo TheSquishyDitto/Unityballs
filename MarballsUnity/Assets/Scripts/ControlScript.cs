@@ -30,32 +30,48 @@ public class ControlScript : MonoBehaviour {
 	*/
 	
 	KeyCode k;
-	
 
 	void Awake() {
 		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
 	}
 	
 	void Update() {
+		test.SetActive(t);
 		button.GetComponentInChildren<Text>().text = gm.input.forward.ToString();
+		
 	}
 
 	public void OnGUI(){
 		e = Event.current;
+		t = !t;	
 		
-		t = !t;
-		test.SetActive(t);
-		
-		if(t){
-			if (e != null && e.isKey && Input.anyKeyDown){
+		if(t){			
+			if (Input.GetKeyDown(KeyCode.LeftShift))
+			{
+				gm.input.forward = KeyCode.LeftShift;
+				t = !t;
+			}
+			else if (Input.GetKeyDown(KeyCode.RightShift))
+			{
+				gm.input.forward = KeyCode.RightShift;
+				t = !t;
+			}
+			else if (e != null && e.isKey && Input.anyKeyDown){
 				k = e.keyCode;
 				Debug.Log (k);
 				gm.input.forward = k;
 				
 				t = !t;
-				test.SetActive(t);
 				Debug.Log (gm.input.forward);
 			}
+			else if (e != null && e.isMouse && Input.GetMouseButtonDown(0)){
+				k = KeyCode.Mouse0;
+				Debug.Log (k);
+				gm.input.forward = k;
+				
+				t = !t;
+			}
+			
 		}
 		
 	}

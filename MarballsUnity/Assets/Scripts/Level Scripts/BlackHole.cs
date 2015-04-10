@@ -11,6 +11,7 @@
 /// 
 /// TO DO: - Tweak behavior until desired.
 /// 	   - Make non-marble objects get destroyed when they touch it.
+/// 	   - Inherit from and override GravityZone once GravityZone is completed.
 /// 
 /// </summary>
 

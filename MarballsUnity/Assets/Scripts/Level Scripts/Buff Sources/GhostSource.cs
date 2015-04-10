@@ -2,7 +2,7 @@
 /// GhostSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  1, 2015
-/// Last Revision: Apr.  6, 2015
+/// Last Revision: Apr.  9, 2015
 /// 
 /// Class for ghost granting entities.
 /// 
@@ -23,8 +23,8 @@ public class GhostSource : BuffSource {
 	public delegate void GhostAction();
 	public delegate void UnghostAction();
 
-	public static GhostAction Ghosting;		// A subscription list of all things that need to happen when ghosting.
-	public static UnghostAction Unghosting;	// Likewise for unghosting.
+	public static event GhostAction Ghosting;		// A subscription list of all things that need to happen when ghosting.
+	public static event UnghostAction Unghosting;	// Likewise for unghosting.
 
 	Color marbleColor;	// Reference to marble's original color.
 

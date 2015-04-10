@@ -9,6 +9,7 @@
 /// NOTES: - This is a singleton class so only one of it should ever exist, if you need a reference to it, call GameMaster.CreateGM()
 /// 
 /// TO DO: - Add game conditions.
+/// 	   - Add more events to subscribe to?
 /// 
 /// </summary>
 
@@ -24,6 +25,11 @@ public class GameMaster : MonoBehaviour {
 		Playing,	// The part of the game where mechanics matter.
 		Win			// State immediately after player wins a level.
 	}
+
+	public delegate void StartAction();
+	public delegate void PlayAction();
+	public delegate void DieAction();
+	public delegate void WinAction();
 
 	// Variables
 	#region Variables
@@ -50,6 +56,12 @@ public class GameMaster : MonoBehaviour {
 	public bool freezeTimer = false;// If true, timer will not change.
 	
 	public bool levelSelect = false;// Done for win screen
+
+	// Events
+	public static event StartAction start;	// Container for actions when game starts. 
+	public static event PlayAction play;	// Container for actions when gameplay begins.
+	public static event DieAction die;		// Container for actions when player dies.
+	public static event WinAction win;		// Container for actions when winning.
 
 	#endregion
 
@@ -78,7 +90,6 @@ public class GameMaster : MonoBehaviour {
 		name = "Game Master";
 		timer = 0;
 		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
-		//Debug.Log ("start timer is " + timer); // DEBUG
 	}
 	
 	// Update is called once per frame
@@ -142,7 +153,6 @@ public class GameMaster : MonoBehaviour {
 		finishLine = null;
 		pauseMenu = null;
 		hud = null;
-		//Debug.Log ("RESETTING"); // DEBUG
 		
 	}
 
@@ -168,65 +178,45 @@ public class GameMaster : MonoBehaviour {
 				levelSelect = false;
 			}	
 		}
-		
-		//if (level != 0 && level != 1) {
-			//state = GameState.OnStart();
-			//OnStart();
-		//}
 	}
 
-	// State Changers - Functions that change the current game state.
+	// State Changers - Functions that change the game's conditions.
 	#region State Changers
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
 		Time.timeScale = 1;
-		//Debug.Log ("start 'er up");
-		timer = countdownLength + hud.goLength;
+		timer = countdownLength + hud.goLength; // The go length addition can be a subscribed event.
 		state = GameState.Start;
-		marble.Respawn();
-		marble.marbody.isKinematic = false;
 
-		if (respawn) {
-			respawn.sfx.SetActive(true);
-		}
+		if (start != null) start();	// Activates any functions subscribed to the starting event.
 
-		hud.countdown.gameObject.SetActive(true);
+		hud.countdown.gameObject.SetActive(true); // Should be subscribed from the MainHUD.
 
-		if (finishLine)	{
-			finishLine.GetComponent<FinishLine>().FlameOff();
-			finishLine.GetComponent<FinishLine>().arrow.SetActive(true);
-		}
 	}
 
 	// OnPlay - Called when the player is to actually play the level.
 	public void OnPlay() {
 		Time.timeScale = 1;
 		timer = 0;
-		marble.marbody.isKinematic = false;
 		state = GameState.Playing;
 
-		if (respawn) {
-			respawn.sfx.SetActive(false);
-		}
+		if (play != null) play();	// Activates any functions subscribed to the gameplay event.
 
-		hud.countdown.gameObject.SetActive(false);
+		hud.countdown.gameObject.SetActive(false); // Should be subscribed from the MainHUD.
 
-		if (finishLine)	{
-			finishLine.GetComponent<FinishLine>().FlameOff();
-			finishLine.GetComponent<FinishLine>().arrow.SetActive(true);
-		}
+	}
+
+	// OnDeath - Called when the player dies.
+	public void OnDeath() {
+		if (die != null) die();	// Should subscribe the HUD's OnDeath functionality to this.
 	}
 
 	// OnWin - Called when a level is won.
 	public void OnWin() {
 		state = GameState.Win;
 		Time.timeScale = 0.5f; // Slowmo victory!
-		
-		if (finishLine) {
-			finishLine.GetComponent<FinishLine>().FlameOn ();
-			finishLine.GetComponent<FinishLine>().arrow.SetActive(false);
-		} else
-			Debug.LogWarning("(GameMaster.cs) This level has no finish line?");
+
+		if (win != null) win();
 	}
 
 	#endregion

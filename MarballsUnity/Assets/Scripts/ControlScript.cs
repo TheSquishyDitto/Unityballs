@@ -41,12 +41,13 @@ public class ControlScript : MonoBehaviour {
 		
 	}
 
+	// OnGUI - The only input class allowed in here are events; Input class does not work within here.
 	public void OnGUI(){
 		e = Event.current;
 		t = !t;	
 		
 		if(t){			
-			if (Input.GetKeyDown(KeyCode.LeftShift))
+			/*if (Input.GetKeyDown(KeyCode.LeftShift))
 			{
 				gm.input.forward = KeyCode.LeftShift;
 				t = !t;
@@ -56,16 +57,16 @@ public class ControlScript : MonoBehaviour {
 				gm.input.forward = KeyCode.RightShift;
 				t = !t;
 			}
-			else if (e != null && e.isKey && Input.anyKeyDown){
-				k = e.keyCode;
+			else*/ if (e != null && (e.isKey || e.shift)/* && Input.anyKeyDown*/){
+				k = e.keyCode;	// Shift keys do not have a keycode yet apparently.
 				Debug.Log (k);
 				gm.input.forward = k;
 				
 				t = !t;
 				Debug.Log (gm.input.forward);
 			}
-			else if (e != null && e.isMouse && Input.GetMouseButtonDown(0)){
-				k = KeyCode.Mouse0;
+			else if (e != null && e.isMouse/* && Input.GetMouseButtonDown(0)*/){
+				k = (KeyCode)System.Enum.Parse(typeof(KeyCode), "Mouse" + e.button, true);//KeyCode.Mouse0;
 				Debug.Log (k);
 				gm.input.forward = k;
 				

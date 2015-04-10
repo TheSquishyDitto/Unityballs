@@ -2,7 +2,7 @@
 /// SpawnArea.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Mar. 26, 2015
+/// Last Revision: Apr.  9, 2015
 /// 
 /// Class that dictates how spawning pads should function.
 /// 
@@ -27,6 +27,18 @@ public class SpawnArea : MonoBehaviour {
 		gm.respawn = this;
 	}
 
+	// OnEnable - Called whenever the spawnpad is activated.
+	void OnEnable() {
+		GameMaster.start += SparkleOn;
+		GameMaster.play += SparkleOff;
+	}
+
+	// OnDisable - Called whenever the spawnpad is deactivated.
+	void OnDisable() {
+		GameMaster.start -= SparkleOn;
+		GameMaster.play -= SparkleOff;
+	}
+
 	// Start - Use this for initialization
 	void Start () {
 		//if (gm.marble && gm.cam)
@@ -43,7 +55,6 @@ public class SpawnArea : MonoBehaviour {
 		if (other.attachedRigidbody)
 			// It turns out you can actually lock a rigidbody's position using binary flag presets. Behaves more nicely than turning gravity off.
 			other.attachedRigidbody.constraints = (gm.state == GameMaster.GameState.Start) ? RigidbodyConstraints.FreezePosition : RigidbodyConstraints.None;
-			//other.attachedRigidbody.useGravity = (gm.state == GameMaster.GameState.Start) ? false : true;
 		
 	}
 
@@ -52,5 +63,15 @@ public class SpawnArea : MonoBehaviour {
 		if (other.attachedRigidbody)
 			other.attachedRigidbody.constraints = RigidbodyConstraints.None; // Failsafe in case the stay function fails.
 		
+	}
+
+	// SparkleOn - Activates the spawn pad's pretty features.
+	void SparkleOn() {
+		sfx.SetActive(true);
+	}
+
+	// SparkleOff - Deactivates the spawn pad's pretty features.
+	void SparkleOff() {
+		sfx.SetActive(false);
 	}
 }

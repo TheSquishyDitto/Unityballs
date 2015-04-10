@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Apr.  3, 2015
+/// Last Revision: Apr.  9, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -28,6 +28,7 @@ public class FinishLine : MonoBehaviour {
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
 	public GameObject arrow;		// Reference to the indicator arrow.
 	public AudioClip explodeSound;	// Reference to a sound to use when exploding.
+	//public bool gravityFinish;	// Whether crazy Christmas swirl or a black hole-like thing is used.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
 
@@ -37,6 +38,20 @@ public class FinishLine : MonoBehaviour {
 	void Awake () {
 		gm = GameMaster.CreateGM ();
 		gm.finishLine = this.transform;
+	}
+
+	// OnEnable - Called when the object is enabled.
+	void OnEnable() {
+		GameMaster.start += FlameOff;
+		GameMaster.play += FlameOff;
+		GameMaster.win += FlameOn;
+	}
+
+	// OnDisable - Called when the object is disabled.
+	void OnDisable() {
+		GameMaster.start -= FlameOff;
+		GameMaster.play -= FlameOff;
+		GameMaster.win -= FlameOn;
 	}
 
 	// Start - Use this for initialization

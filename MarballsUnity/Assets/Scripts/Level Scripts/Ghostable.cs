@@ -2,7 +2,7 @@
 /// Ghostable.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  1, 2015
-/// Last Revision: Apr.  6, 2015
+/// Last Revision: Apr.  9, 2015
 /// 
 /// Class for objects that should be passable with the ghost powerup.
 ///
@@ -30,6 +30,14 @@ public class Ghostable : MonoBehaviour {
 		gm = GameMaster.CreateGM();
 	}
 
+	// OnEnable - Called when object wakes up.
+	void OnEnable() {
+		// Tells the static GhostSource that this particular wall needs to be toggled on or off when the player ghosts.
+		// In other words, subscribes the wall to the ghosting event.
+		GhostSource.Ghosting += GhostMode;
+		GhostSource.Unghosting += NormalMode;
+	}
+
 	// Start - Use this for initialization
 	void Start () {
 		ghostWall = GetComponent<Collider>();
@@ -41,9 +49,6 @@ public class Ghostable : MonoBehaviour {
 		Physics.IgnoreCollision(ghostWall, gm.marble.GetComponent<Collider>(), !physical);
 		gameObject.layer = (!physical)? LayerMask.NameToLayer("Ignore Raycast") : LayerMask.NameToLayer("Default");
 
-		// Tells the static GhostSource that this particular wall needs to be toggled on or off when the player ghosts.
-		GhostSource.Ghosting += GhostMode;
-		GhostSource.Unghosting += NormalMode;
 	}
 	
 	// Update - Called once per frame.
@@ -57,8 +62,8 @@ public class Ghostable : MonoBehaviour {
 		//	Physics.IgnoreCollision(ghostWall, collision.collider);
 	}
 
-	// OnDestroy - Tells the static GhostSource that this wall will no longer exist.
-	void OnDestroy() {
+	// OnDisable - Tells the static GhostSource that this wall doesn't need to be bothered with.
+	void OnDisable() {
 		GhostSource.Ghosting -= GhostMode;
 		GhostSource.Unghosting -= NormalMode;
 	}

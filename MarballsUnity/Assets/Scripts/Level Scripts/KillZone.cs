@@ -9,7 +9,7 @@
 /// NOTES: - Should be attached to objects with plane-like trigger colliders.
 /// 	   - Currently respawns ball back at the spawn pad.
 /// 
-/// TO DO: - Maybe tweak it and give it a low priority texture for fun.
+/// TO DO: - Allow the option for killzones to "destroy" the marble.
 /// 
 /// </summary>
 
@@ -19,6 +19,8 @@ using System.Collections;
 public class KillZone : MonoBehaviour {
 	
 	GameMaster gm;	// Reference to Game Master.
+
+	//public bool destroyMarble;	// Whether this killzone should obliterate the marble on contact or not.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
@@ -40,10 +42,7 @@ public class KillZone : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		// Check if what fell into the killzone was a marble, since you wouldn't want a falling box to reset the player.
 		if (other.CompareTag("Marble") && gm.state == GameMaster.GameState.Playing) {
-			//gm.marble.GetComponent<Marble>().Respawn();
-
-			//Time.timeScale = 0.5f; // Slowmo death!
-			gm.hud.StartCoroutine("OnDeath");
+			gm.hud.StartCoroutine("OnDeath");	// Call gm.OnDeath instead.
 		}
 	}
 

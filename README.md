@@ -51,6 +51,10 @@ CODING PRACTICES
 4. Coroutine Usage:
   - WaitForSeconds values that are too small (~3 decimal places) will default to the length of a frame! Consider using a different WaitFor___ function.
   - Coroutines may seem like they run in parallel, but they occupy the same thread space.
+  
+5. Events:
+  - To subscribe to a script's event, add the desired function to the event in OnEnable.
+  - ALWAYS unsubscribe from events after adding them! Do so in OnDisable. This is to prevent memory leaks.
 		
 RESOURCES
 ---------

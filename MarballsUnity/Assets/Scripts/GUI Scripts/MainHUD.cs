@@ -30,6 +30,8 @@ public class MainHUD : MonoBehaviour {
 	public Text deathMessage;	// Reference to death message text.
 	public Image winScreen;		// Reference to win tint.
 	public Text winMessage;		// Reference to win message text.
+	//public Image tintScreen;	// Reference to the panel that tints the screen.
+	//public Text statusMessage;// Reference to the text that displays during certain events.
 	public Image tipBox;		// Reference to the background panel of tip windows.
 	public Text tipMessage;		// Reference to the text in a tip window.
 
@@ -38,6 +40,8 @@ public class MainHUD : MonoBehaviour {
 	public GameObject winOptions; // Reference to win options.
 	public GameObject debugSet;	  // Reference to debug buttons and info display.
 
+	//public Color winColor;		// Color to tint the screen when winning.
+	//public Color deathColor;		// Color to tint the screen when dying.
 	public string[] deathMessages;	// An array of messages to use when the player dies.
 	public string[] winMessages;	// An array of messages to use when the player wins.
 

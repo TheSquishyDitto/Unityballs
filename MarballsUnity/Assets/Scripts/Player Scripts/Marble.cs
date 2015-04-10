@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr.  3, 2015
+/// Last Revision: Apr.  9, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -45,11 +45,11 @@ public class Marble : MonoBehaviour {
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
 
 	[Header("Starting Values")]
+	public float maxAngVelocity = 50;	// Default maximum angular velocity.
+	public float defSize = 1;			// Default marble size.
+	//public float defJumpHeight;		// Default jump height.
 	//public float defSpeedMultiplier;	// Default speed multiplier.
 	//public float defRevSpeed;			// Default rev speed.
-	public float maxAngVelocity = 50;	// Default maximum angular velocity.
-	//public float defJumpHeight;		// Default jump height.
-	public float defSize = 1;			// Default marble size.
 	
 	[Header("Movement Values")]
 	public float speedMultiplier = 1;	// How speedy the variety of marble should be. Changes are now highly noticeable.
@@ -58,15 +58,15 @@ public class Marble : MonoBehaviour {
 	public Vector3 inputDirection;		// Holds desired direction of input before applying it.
 	public float shackle = 0.01f;	// Limiter constant for velocity.
 	public ChangeMove moveFunction;		// Variables holding any changes to movement behavior.
-	
-	//public bool hasJumped = false;	// Check if a jump has occured.
+
 	public float jumpHeight = 1300;		// How powerful the marble's jump is.
-	//public int maxJumps = 1;			// How many jumps marble can have.
-	//public int jumpsLeft = 1;			// How many jumps the marble has remaining.
 	public int midairJumps = 0;			// How many times the marble can jump in midair.
 	public bool canJump = false;		// Whether the marble can currently jump or not.
 	public bool grounded;				// True if marble is on the ground, false otherwise.
 	public ChangeJump jumpFunction;		// Variable holding any changes to jump behavior.
+	//public bool hasJumped = false;	// Check if a jump has occured.
+	//public int maxJumps = 1;			// How many jumps marble can have.
+	//public int jumpsLeft = 1;			// How many jumps the marble has remaining.
 	
 	public RaycastHit hit;				// Saves grounded raycast hit.
 
@@ -99,6 +99,19 @@ public class Marble : MonoBehaviour {
 		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
 		gm.marble = this;	// Tells the Game Master that this is the currently controlled marble.
 		marbody = GetComponent<Rigidbody>();
+	}
+
+	// OnEnable - Called when the marble is activated. Used to subscribe to events.
+	void OnEnable() {
+		GameMaster.start += Respawn; 	// When the game starts, marble should respawn.
+		GameMaster.play += ResetState;	// When the gameplay begins, marble should be fresh.
+	}
+
+	// OnDisable - Called when the marble is deactivated. Used to unsubscribe from events.
+	// NOTE: Anything subscribed to in OnEnable should be unsubscribed from here to prevent memory leaks.
+	void OnDisable() {
+		GameMaster.start -= Respawn;
+		GameMaster.play -= ResetState;
 	}
 
 	// Start - Use this for initialization. If a reference from the Game Master is needed, make it here.
@@ -183,6 +196,7 @@ public class Marble : MonoBehaviour {
 	#endregion
 
 	// Control Functions - Functions that allow the player to manipulate the marble.
+	// NOTE: If we want to add controller support, we'll need to add axis-based functions.
 	#region Control Functions
 	// Forward.
 	public void Forward() {
@@ -300,7 +314,7 @@ public class Marble : MonoBehaviour {
 	public void Respawn() {
 		
 		ForceBrake();
-		ClearAllBuffs();
+		ResetState();
 		if (cam) cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
@@ -311,13 +325,20 @@ public class Marble : MonoBehaviour {
 		}
 
 	}
+
+	// ResetState - Clears marble's conditions. 
+	public void ResetState() {
+		ClearAllBuffs();
+		marbody.isKinematic = false;
+		marbody.constraints = RigidbodyConstraints.None;
+	}
 	
 	#endregion
 
 	// OnCollisionEnter - Currently used to refresh marble jumps.
 	void OnCollisionEnter(Collision collision) {
 		// CURRENTLY DOES NOT CARE IF THE THING BUMPED INTO IS BELOW IT OR NOT
-		// ISSUE: DOES NOT TRIGGER WHEN WALLS AND FLOOR SHARE A COLLIDER
+		// ISSUE: DOES NOT TRIGGER WHEN WALLS AND FLOOR SHARE A COLLIDER, ALSO MAY TRIGGER MULTIPLE TIMES AGAINST SOME SURFACES
 
 		// If marble actually lands on the ground during cooldown, it's allowed to jump anyway.
 		if (IsInvoking("JumpCooldown")) { 

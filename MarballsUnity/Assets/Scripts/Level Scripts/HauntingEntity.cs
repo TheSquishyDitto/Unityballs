@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MovingWall : Ghostable {
+public class HauntingEntity : Ghostable {
 
 	public Transform destination;	// Where the object should move to.
 
@@ -26,18 +26,24 @@ public class MovingWall : Ghostable {
 	
 	// Update - Called once per frame.
 	protected override void Update () {
+		// If visible and distant enough away...
 		if (!((Renderer)appearances[0]).isVisible && Vector3.Distance(myTransform.position, destination.position) > 0) {
-			myTransform.position += (destination.position - myTransform.position).normalized * Time.deltaTime * (gm.timer / 60);
-			myTransform.LookAt(gm.cam);
-			myTransform.eulerAngles = new Vector3(myTransform.eulerAngles.x, 0, myTransform.eulerAngles.z);
+			myTransform.position = new Vector3(myTransform.position.x, destination.position.y + 2, myTransform.position.z); // Stay on player's y-level.
+			myTransform.position += (destination.position - myTransform.position).normalized * Time.deltaTime * (gm.timer / 60); // Move towards player, quickly as time goes on.
+			myTransform.LookAt(gm.cam); // Face the camera.
+			myTransform.eulerAngles = new Vector3(myTransform.eulerAngles.x, 0, myTransform.eulerAngles.z); // Try to keep y-axis unrotated (doesn't work?)
 		}
 	}
 
 	// OnTriggerEnter - Called when object enters trigger radius.
 	void OnTriggerEnter() {
 		shouldTeleport = true;
+
+		// If entity can be seen, fade away.
 		if (visible) 
 			StartCoroutine("FadeOut");
+
+		// Otherwise, do something spooky.
 		else {
 			Teleport();
 			int effect = Random.Range(0, 2);

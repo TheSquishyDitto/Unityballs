@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 11, 2015
+/// Last Revision: Apr. 13, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour {
 	public float psy;	 					// Radians around x-axis (vertical).
 	public float radius; 					// Distance from marble.
 	public float playerRadius;				// Player preferred distance from marble.
-	//public float playerPsy;					// Player preferred psy.
+	public float playerPsy;					// Player preferred psy. Currently not adjustable.
 	
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
@@ -65,6 +65,7 @@ public class CameraController : MonoBehaviour {
 		ResetPosition();
 		radius = defRadius;
 		playerRadius = radius;
+		playerPsy = psy;
 		marble = gm.marble.transform;
 		//radius = Vector3.Distance(transform.position, ball.position);
 		mode = ControlMode.Keyboard;
@@ -100,9 +101,10 @@ public class CameraController : MonoBehaviour {
 		radius = playerRadius;	// Attempts to set radius at the player preferred distance.
 
 		// If radius is too small, pushes it out, and up if autorotate is enabled.
-		if (radius < RADMIN) {
-			MoveUp();
-			radius = RADMIN;	} 
+		//if (radius < RADMIN) {
+		//	MoveUp();
+		//	Debug.Log("Movin' on up!");
+		//	radius = RADMIN;	} 
 
 		// Checks if marble can "see" the camera currently.
 		Debug.DrawRay(marble.position, transform.position - marble.position, Color.blue); // DEBUG
@@ -111,11 +113,29 @@ public class CameraController : MonoBehaviour {
 		if (Physics.Raycast(marble.position, (transform.position - marble.position).normalized, out hit, radius)) {
 			transform.position = hit.point - (transform.position - marble.position).normalized;
 			radius = Vector3.Distance(transform.position, marble.position); // Currently ignores minimum radius.
+
+			// Moves camera up if stuck against wall, otherwise settles it back down.
+			// NOTE: Currently causes jitter!
+			if (autoRotate) {
+				if (radius < RADMIN)
+					MoveUp();
+				else if (psy > playerPsy && radius > RADMIN + 3)
+					MoveDown();
+			}
 		}
 	}
 	
 	// LateUpdate - Called directly after everything updates
 	void LateUpdate () {
+
+		// Experimental autorotation.
+		/*Vector3 direction = transform.position - marble.position;
+
+		if (autoRotate && marble.GetComponent<Rigidbody>().velocity.magnitude > 31) {
+			if (direction.x != marble.GetComponent<Rigidbody>().velocity.x || direction.z != marble.GetComponent<Rigidbody>().velocity.z)
+				MoveRight();
+		}*/
+
 		// Consider attempting to Lerp again if there's any jitter.
 		transform.position = GetSphericalPosition();
 		transform.LookAt(marble.position);

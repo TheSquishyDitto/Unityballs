@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Apr.  9, 2015
+/// Last Revision: Apr. 13, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -29,7 +29,7 @@ public class FinishLine : MonoBehaviour {
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
 	public GameObject arrow;		// Reference to the indicator arrow.
 	public AudioClip explodeSound;	// Reference to a sound to use when exploding.
-	//public bool gravityFinish;	// Whether crazy Christmas swirl or a black hole-like thing is used.
+	public bool gravityFinish;		// Whether crazy Christmas swirl or a black hole-like thing is used.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
 
@@ -74,7 +74,7 @@ public class FinishLine : MonoBehaviour {
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
 			impactVelocity = gm.marble.marbody.velocity;	// Stores marble's velocity at the time of impact.
-			//gm.marble.marbody.isKinematic = true;	// Hands total control of marble position to scripts.
+			gm.marble.marbody.isKinematic = (!gravityFinish || gm.simpleAnim);	// Hands total control of marble position to scripts.
 			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
 			gm.OnWin(); // When player gets to finish they win!
 		}	
@@ -96,7 +96,7 @@ public class FinishLine : MonoBehaviour {
 
 	// SwirlFinish - Coroutine that makes the marble spiral after crossing the finish line.
 	public IEnumerator SwirlFinish () {
-/*
+
 		// NOTE: TO CHANGE WHERE THE MARBLE SWIRLS AROUND, MOVE THE "SWIRLPOINT"
 
 		ParticleSystem explosion = null; 	// Reference to explosion particles.
@@ -104,51 +104,53 @@ public class FinishLine : MonoBehaviour {
 		// [insert code to smoothly get timer into position, maybe separate coroutine? ]
 
 		if (!gm.simpleAnim) {
-			// CRAZY WIN ANIMATION
+			if (!gravityFinish) {
+				// CRAZY WIN ANIMATION
 
-			// [insert code to smoothly get the marble into the starting position of swirl without teleporting, maybe separate coroutine? ]
+				// [insert code to smoothly get the marble into the starting position of swirl without teleporting, maybe separate coroutine? ]
 
-			// Spickler Magic
-			float theta = Mathf.PI / 50.0f;	// Some random constant that Spickler came up with.
-			float spiconstant = 0.1f;		// Another random constant Spickler came up with.
+				// Spickler Magic
+				float theta = Mathf.PI / 50.0f;	// Some random constant that Spickler came up with.
+				float spiconstant = 0.1f;		// Another random constant Spickler came up with.
 
-			int swirls = 200;	// Factors into how many full revolutions/swirls the marble does. Bigger number means more swirling.
-			int width = 4;		// Factors into radius of swirls. The smaller this number, the bigger the radius.
-			int height = 4;		// Factors into how high the marble travels. The bigger this number, the less height.
-			int speed = 2;		// Factors into how fast the marble swirls. Bigger numbers = faster. Double digits = Earthquake.
-			float gap = 0;		// Factors into the gap between bottom cone and top cone. The bigger the number the bigger the gap.
+				int swirls = 200;	// Factors into how many full revolutions/swirls the marble does. Bigger number means more swirling.
+				int width = 4;		// Factors into radius of swirls. The smaller this number, the bigger the radius.
+				int height = 4;		// Factors into how high the marble travels. The bigger this number, the less height.
+				int speed = 2;		// Factors into how fast the marble swirls. Bigger numbers = faster. Double digits = Earthquake.
+				float gap = 0;		// Factors into the gap between bottom cone and top cone. The bigger the number the bigger the gap.
 
-			// Inverse Christmas Tree Swirl
-			for (int i = 0; i < swirls; i++) {
-				gm.marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * i),	// The smaller the number being divided by, the bigger the circle.
-				                                         (((gap * Mathf.PI + theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
-				                                         (theta * i / width) * Mathf.Sin (speed * theta * i))   // The smaller the number being divided by, the bigger the circle.
-														+ swirlPoint.transform.position - new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
-				
-				yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next loop iteration.
+				// Inverse Christmas Tree Swirl
+				for (int i = 0; i < swirls; i++) {
+					gm.marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * i),	// The smaller the number being divided by, the bigger the circle.
+					                                         (((gap * Mathf.PI + theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
+					                                         (theta * i / width) * Mathf.Sin (speed * theta * i))   // The smaller the number being divided by, the bigger the circle.
+															+ swirlPoint.transform.position - new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
+					
+					yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next loop iteration.
+				}
+
+				// Christmas Tree Swirl
+				for (int i = swirls; i > 0; i--) {
+					gm.marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * -i),	// The smaller the number being divided by, the bigger the circle.
+					                                         (((gap * Mathf.PI - theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
+					                                         (theta * i / width) * Mathf.Sin (speed * theta * -i))   // The smaller the number being divided by, the bigger the circle.
+															+ swirlPoint.transform.position + new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
+
+					yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next loop iteration.
+				}
+			
+				// Shrinks the marble into oblivion.
+				int shrinks = 25; // How many shrink iterations there should be.
+				for (int i = 0; i < shrinks; i++) {
+					gm.marble.transform.localScale -= new Vector3(1.0f/shrinks, 1.0f/shrinks, 1.0f/shrinks);
+					yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next iteration.
+				}
+
+				// Insane explosion.
+				explosion = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Explosion"))).GetComponent<ParticleSystem>();
+				AudioSource.PlayClipAtPoint(explodeSound, gm.cam.position, 2.0f);
+				yield return new WaitForSeconds(2f); // Wait until explosion is partially finished.
 			}
-
-			// Christmas Tree Swirl
-			for (int i = swirls; i > 0; i--) {
-				gm.marble.transform.position = new Vector3 ((theta * i / width) * Mathf.Cos (speed * theta * -i),	// The smaller the number being divided by, the bigger the circle.
-				                                         (((gap * Mathf.PI - theta * i) / height) + spiconstant), // The greater the number multiplied by pi, the higher the marble goes.
-				                                         (theta * i / width) * Mathf.Sin (speed * theta * -i))   // The smaller the number being divided by, the bigger the circle.
-														+ swirlPoint.transform.position + new Vector3(0, (((gap * Mathf.PI + theta * swirls) / height) + spiconstant), 0);	// Makes this all happen around a given point.
-
-				yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next loop iteration.
-			}
-		
-			// Shrinks the marble into oblivion.
-			int shrinks = 25; // How many shrink iterations there should be.
-			for (int i = 0; i < shrinks; i++) {
-				gm.marble.transform.localScale -= new Vector3(1.0f/shrinks, 1.0f/shrinks, 1.0f/shrinks);
-				yield return new WaitForFixedUpdate(); // Waits for next fixed update before calling the next iteration.
-			}
-
-			// Insane explosion.
-			explosion = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Explosion"))).GetComponent<ParticleSystem>();
-			AudioSource.PlayClipAtPoint(explodeSound, gm.cam.position, 2.0f);
-			yield return new WaitForSeconds(2f); // Wait until explosion is partially finished.
 
 		} else {
 			// SIMPLE WIN ANIMATION
@@ -168,15 +170,15 @@ public class FinishLine : MonoBehaviour {
 			}
 
 			yield return new WaitForSeconds(0.3f);
-		}*/
-		yield return null;
+		}
+
 		gm.hud.StartCoroutine("OnVictory");	// Shows victory screen.
 
 		// Destroys particles once they're done.
-	//	if (explosion) {
-	//		yield return new WaitForSeconds(5);
-	//		Destroy(explosion.gameObject);
-	//	}
+		if (explosion) {
+			yield return new WaitForSeconds(5);
+			Destroy(explosion.gameObject);
+		}
 
 	}
 

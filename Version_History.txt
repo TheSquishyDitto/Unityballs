@@ -2,12 +2,20 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 13, 2015:
+	- Kyle modified a few things based on feedback:
+		+ Ghost level has more lights, obstacle course platforms widened, foyer buff duration extended.
+			* Jerry now constantly updates his y-coordinate to match the player's.
+		+ Rough implementation of camera autorotation: moves (jitters) up when stuck against a wall now.
+		+ Finish line now has the option to use an invisible black hole as its animation.
+
 April 12, 2015:
 	- Kyle added various tweaks and features:
 		+ Updated finish line prefab to include Brentoncloth.
 		+ Crudely implemented some of Chris's sounds, and added a few more.
 		+ Added some modular/simple scripts for teleporting, adjusting rotation, and making textures slide.
 		+ Added mockup for some sort of ghost level.
+			* Added demonic ghost entity, nicknamed Jerry.
 
 April 10, 2015:
 	- Brenton gave life to the finish line cloth.

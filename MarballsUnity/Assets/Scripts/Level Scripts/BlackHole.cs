@@ -2,7 +2,7 @@
 /// BlackHole.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  1, 2015
-/// Last Revision: Apr. 12, 2015
+/// Last Revision: Apr. 13, 2015
 /// 
 /// Class for deadly sphere that sucks in other objects.
 ///  
@@ -19,11 +19,11 @@ using System.Collections;
 
 public class BlackHole : GravityZone {
 	
-	public SphereCollider deathSphere;		// Reference to killzone trigger collider.
+	public SphereCollider eventHorizon;		// Reference to point where marble is stuck in center.
 
 	// Gravity - Drags everything into the event horizon.
 	protected override void Gravity(Rigidbody body) {
-		if (distance > deathSphere.radius * transform.localScale.x + 1) {
+		if (distance > eventHorizon.radius * transform.localScale.x + 1) {
 			body.AddForce((dir.normalized
 			               / Mathf.Max(1f, Mathf.Pow(distance, attenuation)))
 			              * gravityStrength

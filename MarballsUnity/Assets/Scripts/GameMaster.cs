@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Apr. 10, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -126,6 +126,7 @@ public class GameMaster : MonoBehaviour {
 	}
 
 	// CancelCoroutines - Stops various animations and clears what they've done.
+	// TODO REFACTOR THIS
 	public void CancelCoroutines() {
 		hud.StopCoroutine("OnDeath");
 		finishLine.GetComponent<FinishLine>().StopCoroutine("SwirlFinish");

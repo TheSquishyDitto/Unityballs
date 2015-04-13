@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr.  9, 2015
+/// Last Revision: Apr. 12, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -41,6 +41,7 @@ public class Marble : MonoBehaviour {
 	[Header("References")]
 	public GameMaster gm;				// Reference to the Game Master.
 	public Transform cam;				// Reference to the main camera.
+	public Transform marform;			// Reference to the marble's transform.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
 
@@ -98,6 +99,7 @@ public class Marble : MonoBehaviour {
 	void Awake () {
 		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
 		gm.marble = this;	// Tells the Game Master that this is the currently controlled marble.
+		marform = transform;
 		marbody = GetComponent<Rigidbody>();
 	}
 

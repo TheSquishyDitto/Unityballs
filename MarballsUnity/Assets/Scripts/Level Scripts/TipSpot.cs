@@ -69,7 +69,7 @@ public class TipSpot : MonoBehaviour {
 	}
 
 	// OnDrawGizmos - Allows the tip spot to be seen more easily in the scene view.
-	void OnDrawGizmos() {
+	void OnDrawGizmosSelected() {
 		Gizmos.color = textColor;
 
 		// Draws different gizmos if different colliders are used.

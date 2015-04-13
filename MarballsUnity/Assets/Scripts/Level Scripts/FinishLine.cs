@@ -9,6 +9,7 @@
 /// NOTES: - Should tell the GameMaster the player has won.
 /// 
 /// TO DO: - Tweak behavior until desired.
+/// 	   - Add gravity zone as an option for the victory animation!
 /// 
 /// </summary>
 

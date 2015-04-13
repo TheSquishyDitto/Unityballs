@@ -2,7 +2,7 @@
 /// Ghostable.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  1, 2015
-/// Last Revision: Apr.  9, 2015
+/// Last Revision: Apr. 12, 2015
 /// 
 /// Class for objects that should be passable with the ghost powerup.
 ///
@@ -17,10 +17,11 @@ using System.Collections;
 
 public class Ghostable : MonoBehaviour {
 
-	GameMaster gm;		// Reference to the GameMaster.
-	Marble marble;		// Reference to any marble that happens to enter the collider.
-	Collider ghostWall;	// Reference to the collider that will be toggled.
-	Renderer appearance;// Reference to the renderer on this object.
+	protected GameMaster gm;		// Reference to the GameMaster.
+	protected Marble marble;		// Reference to any marble that happens to enter the collider.
+	protected Collider ghostWall;	// Reference to the collider that will be toggled.
+	Renderer appearance;			// Reference to the renderer on this object.
+	Color originalColor;			// Original color of shader material.
 
 	public bool physical = true;	// Whether this object is solid normally or not.
 
@@ -39,9 +40,13 @@ public class Ghostable : MonoBehaviour {
 	}
 
 	// Start - Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		ghostWall = GetComponent<Collider>();
 		appearance = GetComponent<Renderer>();
+		if (!physical) {
+			originalColor = appearance.material.GetColor("_TintColor");
+			appearance.material.SetColor("_TintColor", Color.clear);
+		}
 
 		appearance.enabled = physical;
 		marble = gm.marble;
@@ -52,8 +57,8 @@ public class Ghostable : MonoBehaviour {
 	}
 	
 	// Update - Called once per frame.
-	void Update () {
-	
+	protected virtual void Update () {
+
 	}
 
 	// OnCollisionEnter - Currently can be used to prevent spirit walls from being touched by physical objects.
@@ -69,18 +74,40 @@ public class Ghostable : MonoBehaviour {
 	}
 
 	// GhostMode - Makes physical walls passable, and spiritual walls solid (only to the marble).
-	protected void GhostMode() {
+	protected virtual void GhostMode() {
 		Physics.IgnoreCollision(ghostWall, marble.GetComponent<Collider>(), physical);
-		if (!physical) appearance.enabled = true;
+
 		gameObject.layer = (physical)? LayerMask.NameToLayer("Ignore Raycast") : LayerMask.NameToLayer("Default");
 
+		StopAllCoroutines();
+		if (!physical) StartCoroutine("FadeIn");
 	}
 
 	// NormalMode - The opposite of GhostMode.
-	protected void NormalMode() {
-
+	protected virtual void NormalMode() {
 		Physics.IgnoreCollision(ghostWall, marble.GetComponent<Collider>(), !physical);
-		if (!physical) appearance.enabled = false;
+
 		gameObject.layer = (!physical)? LayerMask.NameToLayer("Ignore Raycast") : LayerMask.NameToLayer("Default");
+		StopAllCoroutines();
+		if (!physical) StartCoroutine("FadeOut");
+	}
+
+	// FadeIn - Makes the wall slowly fade in to existence.
+	protected virtual IEnumerator FadeIn() {
+		appearance.enabled = true;
+		Color currentColor = appearance.material.GetColor("_TintColor");
+		for (int i = 1; i <= 50; i++) {
+			appearance.material.SetColor("_TintColor", Color.Lerp(currentColor, originalColor, i/50.0f));
+			yield return new WaitForEndOfFrame();
+		}
+	}
+
+	// FadeOut - Makes the wall slowly fade out of existence.
+	protected virtual IEnumerator FadeOut() {
+		for (int i = 1; i <= 50; i++) {
+			appearance.material.SetColor("_TintColor", Color.Lerp(originalColor, Color.clear, i/50.0f));
+			yield return new WaitForEndOfFrame();
+		}
+		if (!physical) appearance.enabled = false;
 	}
 }

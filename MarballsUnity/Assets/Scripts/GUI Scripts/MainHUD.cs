@@ -7,6 +7,7 @@
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
 /// TO DO: - Add other features.
+/// 	   - Refactor to use events, and possibly only one tint screen and text display!
 /// 
 /// </summary>
 
@@ -75,11 +76,20 @@ public class MainHUD : MonoBehaviour {
 
 			if (gm.state == GameMaster.GameState.Start) {
 				timer.text = "0.0 s";
+				countdown.enabled = true;
 
 				// 3 2 1 GO! Countdown
 				// Changes number based on current integer portion of the timer.
+				Sprite lastFrame = countdown.sprite;
 				countdown.sprite = (gm.timer <= nums.Length)? nums[(int)(gm.timer + (1 - goLength))] : nums[nums.Length - 1]; // If timer is longer than the number of sprites, defaults to last.
-				// [sound effect for timer changing should go here]
+
+				// Sound effect should play at the beginning and when the numbers change.
+				if (lastFrame != countdown.sprite/* || (float)System.Math.Round(gm.timer, 2) == gm.countdownLength*/) {
+					if (countdown.sprite != nums[0])
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), gm.cam.position);
+					else 
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/gong"), gm.cam.position);
+				}
 
 				// Makes number shrink as the timer goes down to the next number, with special conditions for "GO!".
 				remainder = (gm.timer % 1) + (1 - goLength);
@@ -87,6 +97,7 @@ public class MainHUD : MonoBehaviour {
 				countdown.rectTransform.localScale = (gm.timer >= goLength) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(3, 3, 3);
 
 			} else if (gm.state == GameMaster.GameState.Playing) {
+				countdown.enabled = false;
 				timer.text = gm.timer.ToString("F1") + " s";	// Displays timer to one decimal place.
 
 				// Cuts away active buff icon based on time remaining.

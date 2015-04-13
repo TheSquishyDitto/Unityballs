@@ -2,13 +2,23 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 12, 2015:
+	- Kyle added various tweaks and features:
+		+ Updated finish line prefab to include Brentoncloth.
+		+ Crudely implemented some of Chris's sounds, and added a few more.
+		+ Added some modular/simple scripts for teleporting, adjusting rotation, and making textures slide.
+		+ Added mockup for some sort of ghost level.
+
+April 10, 2015:
+	- Brenton gave life to the finish line cloth.
+	- Chris added various sounds for a variety of situations.
+
 April 9, 2015:
 	- Kyle refactored, cleaned, improved, and implemented some code:
 		+ Objects can now more easily add functionality to GameMaster's OnStart, OnPlay, and OnWin functions.
 		+ Fixed key rebinding script to properly allow mouse input. Still does not properly detect the shift key.
 		+ Added unpolished generic gravity zone script to allow different areas to exert different forces.
 		
-	
 April 8, 2015:
 	- Charlie implemented beginning functionality of key rebinding script.
 

@@ -2,7 +2,7 @@
 /// DebugMenu.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Mar. 22, 2015
-/// Last Revision: Mar. 22, 2015
+/// Last Revision: Apr. 11, 2015
 /// 
 /// Class that controls our debug menu.
 /// 
@@ -37,10 +37,9 @@ public class DebugMenu : MonoBehaviour {
 	void Start () {
 		simple.isOn = gm.simpleAnim;
 
-		if (fpsSlider) 
-			fpsSlider.value = Application.targetFrameRate;
-		else
-			Application.targetFrameRate = 60;
+		Application.targetFrameRate = 60;
+
+		if (fpsSlider) fpsSlider.value = Application.targetFrameRate;
 	}
 	
 	// Update - Called once per frame.

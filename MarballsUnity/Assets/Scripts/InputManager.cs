@@ -9,6 +9,7 @@
 /// NOTES: - Should probably be attached to GameMaster object.
 /// 
 /// TO DO: - Allow customizable keys.
+/// 	   - REFACTOR ONCE THE ABOVE IS COMPLETED.
 /// 
 /// </summary>
 

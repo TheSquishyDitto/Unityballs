@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr.  6, 2015
+/// Last Revision: Apr. 11, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -25,7 +25,6 @@ public class CameraController : MonoBehaviour {
 	}
 	
 	// Variables
-	// (Regions don't do anything functionally, they just help organize code and can be collapsed)
 	#region Variables
 	public GameMaster gm;					// Reference to Game Master.
 	public Transform marble; 				// Reference to coordinates of marble
@@ -48,6 +47,7 @@ public class CameraController : MonoBehaviour {
 	public ControlMode mode;		 	// Which control mode camera is using.
 	public float mouseSensitivity; 		// Mouse sensitivity.
 	public float keyboardSensitivity; 	// Keyboard sensitivity.
+	//public bool autoRotate;			// Whether camera should automatically position itself as player moves.
 	//public bool invertX;				// Whether horizontal mouse controls should be inverted.
 	//public bool invertY;				// Whether vertical mouse controls should be inverted.
 

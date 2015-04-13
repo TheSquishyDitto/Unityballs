@@ -2,7 +2,7 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr. 10, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
@@ -24,6 +24,8 @@ public class BuffSource : MonoBehaviour {
 	public float duration;				// How long the given buff should last.
 	public Sprite icon;					// What icon should be displayed for this buff.
 	public Color iconTint = Color.white;// What color the icon should be tinted when active.
+	public Transform badge;				// The badge levitating in this powerup.
+	public float rotationSpeed = 100;	// How fast badge should rotate.
 	public GameObject particles;		// What type of particle system this buff should give.
 	public bool collectable;			// Whether this source disappears when collected. Respawns when used.
 
@@ -45,7 +47,7 @@ public class BuffSource : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (badge) badge.Rotate(Vector3.left, rotationSpeed * Time.deltaTime);
 	}
 
 	// OnTriggerEnter - Called when an object enters the trigger collider.
@@ -74,6 +76,7 @@ public class BuffSource : MonoBehaviour {
 		marble.heldIntensity = intensity;
 		marble.heldDuration = duration;
 		marble.heldCleaner = TakeBuff;
+		AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/swordClash"), gm.marble.transform.position);
 	}
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.

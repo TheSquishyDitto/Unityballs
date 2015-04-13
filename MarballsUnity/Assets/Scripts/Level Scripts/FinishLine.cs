@@ -74,7 +74,7 @@ public class FinishLine : MonoBehaviour {
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
 			impactVelocity = gm.marble.marbody.velocity;	// Stores marble's velocity at the time of impact.
-			gm.marble.marbody.isKinematic = true;	// Hands total control of marble position to scripts.
+			//gm.marble.marbody.isKinematic = true;	// Hands total control of marble position to scripts.
 			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
 			gm.OnWin(); // When player gets to finish they win!
 		}	
@@ -96,7 +96,7 @@ public class FinishLine : MonoBehaviour {
 
 	// SwirlFinish - Coroutine that makes the marble spiral after crossing the finish line.
 	public IEnumerator SwirlFinish () {
-
+/*
 		// NOTE: TO CHANGE WHERE THE MARBLE SWIRLS AROUND, MOVE THE "SWIRLPOINT"
 
 		ParticleSystem explosion = null; 	// Reference to explosion particles.
@@ -168,15 +168,15 @@ public class FinishLine : MonoBehaviour {
 			}
 
 			yield return new WaitForSeconds(0.3f);
-		}
-
+		}*/
+		yield return null;
 		gm.hud.StartCoroutine("OnVictory");	// Shows victory screen.
 
 		// Destroys particles once they're done.
-		if (explosion) {
-			yield return new WaitForSeconds(5);
-			Destroy(explosion.gameObject);
-		}
+	//	if (explosion) {
+	//		yield return new WaitForSeconds(5);
+	//		Destroy(explosion.gameObject);
+	//	}
 
 	}
 

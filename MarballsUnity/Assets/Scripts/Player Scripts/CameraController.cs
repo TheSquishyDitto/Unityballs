@@ -37,6 +37,7 @@ public class CameraController : MonoBehaviour {
 	public float psy;	 					// Radians around x-axis (vertical).
 	public float radius; 					// Distance from marble.
 	public float playerRadius;				// Player preferred distance from marble.
+	//public float playerPsy;					// Player preferred psy.
 	
 	public const float PSYMAX = (Mathf.PI / 2) - 0.1f; // Maximum value for psy. Camera inverts at Pi/2+.
 	public const float PSYMIN = 0;					   // Minimum value for psy.
@@ -47,7 +48,7 @@ public class CameraController : MonoBehaviour {
 	public ControlMode mode;		 	// Which control mode camera is using.
 	public float mouseSensitivity; 		// Mouse sensitivity.
 	public float keyboardSensitivity; 	// Keyboard sensitivity.
-	//public bool autoRotate;			// Whether camera should automatically position itself as player moves.
+	public bool autoRotate = true;		// Whether camera should automatically position itself as player moves.
 	//public bool invertX;				// Whether horizontal mouse controls should be inverted.
 	//public bool invertY;				// Whether vertical mouse controls should be inverted.
 
@@ -98,7 +99,10 @@ public class CameraController : MonoBehaviour {
 
 		radius = playerRadius;	// Attempts to set radius at the player preferred distance.
 
-		if (radius < RADMIN) { radius = RADMIN;	} // If radius is too small, pushes it out
+		// If radius is too small, pushes it out, and up if autorotate is enabled.
+		if (radius < RADMIN) {
+			MoveUp();
+			radius = RADMIN;	} 
 
 		// Checks if marble can "see" the camera currently.
 		Debug.DrawRay(marble.position, transform.position - marble.position, Color.blue); // DEBUG

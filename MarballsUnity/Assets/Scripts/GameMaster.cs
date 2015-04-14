@@ -113,6 +113,7 @@ public class GameMaster : MonoBehaviour {
 	// TogglePause - Toggles game paused state.
 	public void TogglePause() {
 		paused = !paused;
+		input.allowInput = !(input.allowInput);
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
 		if (pauseMenu) {
 			pauseMenu.gameObject.SetActive(paused);

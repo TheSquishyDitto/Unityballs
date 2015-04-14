@@ -22,7 +22,8 @@ public class MainMenu : MonoBehaviour {
 	public GameObject mainSet;		// Reference to main set of buttons.
 	public GameObject optionSet;	// Reference to option submenu buttons.
 	public GameObject levelSet;		// Reference to select level submenu buttons.
-	public GameObject controlSet;	// Reference to select controls submenu buttons.
+	public GameObject controlSet;	// Reference to select controls
+	
 	public GameObject props;
 	public GameObject title;
 
@@ -56,8 +57,8 @@ public class MainMenu : MonoBehaviour {
 	// ToggleSelectControls - Toggles the control submenu
 	public void ToggleSelectControls()
 	{
-		optionSet.SetActive (!optionSet.activeSelf);
-		controlSet.SetActive (!controlSet.activeSelf);
+		gameObject.SetActive(!gameObject.activeSelf);
+		controlSet.SetActive(!controlSet.activeSelf);
 		props.SetActive (!props.activeSelf);
 		title.SetActive (!title.activeSelf);
 	}

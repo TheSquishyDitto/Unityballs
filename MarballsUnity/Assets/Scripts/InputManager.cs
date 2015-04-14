@@ -54,7 +54,10 @@ public class InputManager : MonoBehaviour {
 	void Start () {
 
 		allowInput = true;
-
+		ResetDefault ();
+	}
+	
+	public void ResetDefault(){
 		// DEFAULT CONTROLS - SHOULD BE READ EXTERNALLY OR SOMETHING LATER MAYBE
 		forward = KeyCode.W;
 		backward = KeyCode.S;

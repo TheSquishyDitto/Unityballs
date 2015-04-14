@@ -42,6 +42,7 @@ public class GameMaster : MonoBehaviour {
 	public InputManager input;		// Reference to input manager.
 	public PauseMenu pauseMenu; 	// Reference to pause menu.
 	public MainMenu mainMenu;		// Reference to main menu.
+	public ControlScript controlMenu;	// Reference to control menu.
 	public MainHUD hud;				// Reference to HUD.
 
 	public GameState state;			// Current state of game.

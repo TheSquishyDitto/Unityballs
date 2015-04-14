@@ -22,6 +22,9 @@ public class MainMenu : MonoBehaviour {
 	public GameObject mainSet;		// Reference to main set of buttons.
 	public GameObject optionSet;	// Reference to option submenu buttons.
 	public GameObject levelSet;		// Reference to select level submenu buttons.
+	public GameObject controlSet;	// Reference to select controls submenu buttons.
+	public GameObject props;
+	public GameObject title;
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
@@ -48,6 +51,15 @@ public class MainMenu : MonoBehaviour {
 	{
 		mainSet.SetActive (!mainSet.activeSelf);
 		levelSet.SetActive (!levelSet.activeSelf);
+	}
+	
+	// ToggleSelectControls - Toggles the control submenu
+	public void ToggleSelectControls()
+	{
+		optionSet.SetActive (!optionSet.activeSelf);
+		controlSet.SetActive (!controlSet.activeSelf);
+		props.SetActive (!props.activeSelf);
+		title.SetActive (!title.activeSelf);
 	}
 
 	// QuitRequest - Quits the game.

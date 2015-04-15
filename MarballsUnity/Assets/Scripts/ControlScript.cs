@@ -24,7 +24,7 @@ public class ControlScript : MonoBehaviour {
 	public Button pauseButton;
 	
 	public GameObject popUp;
-	bool commandVisible;
+	bool commandVisible = false;
 	int id;
 	Event e;
 	KeyCode k;
@@ -32,41 +32,87 @@ public class ControlScript : MonoBehaviour {
 	void Awake() {
 		gm = GameMaster.CreateGM();	// Refers to Game Master, see GameMaster code for details.
 		gm.controlMenu = this;
-		
-		commandVisible = false;
-		
 	}
 	
 	void Update() {
 		popUp.SetActive(commandVisible);
 		
-		fButton.GetComponentInChildren<Text>().text = gm.input.forward.ToString();
-		bButton.GetComponentInChildren<Text>().text = gm.input.backward.ToString();
-		lButton.GetComponentInChildren<Text>().text = gm.input.left.ToString();
-		rButton.GetComponentInChildren<Text>().text = gm.input.right.ToString();
-		jButton.GetComponentInChildren<Text>().text = gm.input.jump.ToString();
-		camUp.GetComponentInChildren<Text>().text = gm.input.camUp.ToString();
-		camDown.GetComponentInChildren<Text>().text = gm.input.camDown.ToString();
-		camLeft.GetComponentInChildren<Text>().text = gm.input.camLeft.ToString();
-		camRight.GetComponentInChildren<Text>().text = gm.input.camRight.ToString();
-		camToggle.GetComponentInChildren<Text>().text = gm.input.camToggle.ToString();
-		useButton.GetComponentInChildren<Text>().text = gm.input.use.ToString();
-		breakButton.GetComponentInChildren<Text>().text = gm.input.brake.ToString();
-		respawnButton.GetComponentInChildren<Text>().text = gm.input.respawn.ToString();
-		helperButton.GetComponentInChildren<Text>().text = gm.input.levelHelp.ToString();
-		pauseButton.GetComponentInChildren<Text>().text = gm.input.pause.ToString();
+		fButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[0].ToString());
+		bButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[1].ToString());
+		lButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[2].ToString());
+		rButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[3].ToString());
+		jButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[4].ToString());
+		camUp.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[5].ToString());
+		camDown.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[6].ToString());
+		camLeft.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[7].ToString());
+		camRight.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[8].ToString());
+		camToggle.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[9].ToString());
+		useButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[10].ToString());
+		breakButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[11].ToString());
+		respawnButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[12].ToString());
+		helperButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[13].ToString());
+		pauseButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[14].ToString());
 	}
 	
-	/*
+	
 	string CleanUp(string name) {
+		string newName;
+		
+		if(name.Contains("Left")){
+			name = name.Replace("Left","");
+			newName = "Left"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Right")){
+			name = name.Replace("Right","");
+			newName = "Right"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Page")){
+			name = name.Replace("Page","");
+			newName = "Page"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Up")){
+			name = name.Replace("Up","");
+			newName = "Up"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Down")){
+			name = name.Replace("Down","");
+			newName = "Down"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Keypad")){
+			name = name.Replace("Keypad","");
+			newName = "Keypad"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Scroll")){
+			name = name.Replace("Scroll","");
+			newName = "Scroll"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Back")){
+			name = name.Replace("Back","");
+			newName = "Back"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Mouse0")){
+			newName = "Primary"+System.Environment.NewLine+"Mouse";
+		}
+		else if(name.Contains("Mouse1")){
+			newName = "Second"+System.Environment.NewLine+"Mouse";
+		}
+		else if(name.Contains("Mouse2")){
+			newName = "Third"+System.Environment.NewLine+"Mouse";
+		}
+		if(name.Contains("None")){
+			newName = "";
+		}
+		else 
+			newName = name;
+		
+		return newName;
 	}
-	*/
+	
 
 
 	// OnGUI - The only input class allowed in here are events; Input class does not work within here.
 	public void OnGUI(){
 		e = Event.current;
-		commandVisible = !commandVisible;
 		
 		if(commandVisible){
 			if (e != null && (e.isKey || e.shift)/* && Input.anyKeyDown*/){
@@ -86,7 +132,9 @@ public class ControlScript : MonoBehaviour {
 	}
 	
 	public void ButtonID(int num){
-		id = num;	
+		id = num;
+		commandVisible = !commandVisible;
+		Debug.Log (commandVisible);
 	}
 	
 	public void Default(){
@@ -95,52 +143,13 @@ public class ControlScript : MonoBehaviour {
 	
 	void ChangeKey(){
 		commandVisible = !commandVisible;
-		switch (id){
-			case 0:
-				gm.input.forward = k;
-				break;
-			case 1:
-				gm.input.backward = k;
-				break;
-			case 2:
-				gm.input.left = k;
-				break;
-			case 3:
-				gm.input.right = k;
-				break;
-			case 4:
-				gm.input.jump = k;
-				break;
-			case 5:
-				gm.input.camUp = k;
-				break;
-			case 6:
-				gm.input.camDown = k;
-				break;
-			case 7:
-				gm.input.camLeft = k;
-				break;
-			case 8:
-				gm.input.camRight = k;
-				break;
-			case 9:
-				gm.input.camToggle = k;
-				break;
-			case 10:
-				gm.input.use = k;
-				break;
-			case 11:
-				gm.input.brake = k;
-				break;
-			case 12:
-				gm.input.respawn = k;
-				break;
-			case 13:
-				gm.input.levelHelp = k;
-				break;
-			case 14:
-				gm.input.pause = k;
-				break;
-		}	
+		gm.input.keyBindings[id] = k;
+		
+		for(int i = 0; i < gm.input.keyBindings.Count; i++){
+			if(i != id && gm.input.keyBindings[i] == k) {
+				gm.input.keyBindings[i] = KeyCode.None;
+			}	
+		}
+		
 	}
 }

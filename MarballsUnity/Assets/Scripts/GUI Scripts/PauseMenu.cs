@@ -54,6 +54,11 @@ public class PauseMenu : MonoBehaviour {
 		pauseSet.SetActive (!pauseSet.activeSelf);
 		optionSet.SetActive (!optionSet.activeSelf);
 	}
+	
+	public void ToggleControls() {
+		optionSet.SetActive (!optionSet.activeSelf);
+		controlSet.SetActive(!controlSet.activeSelf);
+	}
 
 	// QuitRequest - Quits the game.
 	public void QuitRequest()

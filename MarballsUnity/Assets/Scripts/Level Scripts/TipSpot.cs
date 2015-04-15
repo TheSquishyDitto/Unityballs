@@ -92,19 +92,19 @@ public class TipSpot : MonoBehaviour {
 	string Substitute(string tipText) {
 		string result;
 
-		result = tipText.Replace("&use", gm.input.use.ToString());
-		result = result.Replace("&pause", gm.input.pause.ToString());
-		result = result.Replace("&jump", gm.input.jump.ToString());
-		result = result.Replace("&forward", gm.input.forward.ToString());
-		result = result.Replace("&back", gm.input.backward.ToString());
-		result = result.Replace("&left", gm.input.left.ToString());
-		result = result.Replace("&right", gm.input.right.ToString());
-		result = result.Replace("&camleft", gm.input.camLeft.ToString());
-		result = result.Replace("&camright", gm.input.camRight.ToString());
-		result = result.Replace("&camup", gm.input.camUp.ToString());
-		result = result.Replace("&camdown", gm.input.camDown.ToString());
-		result = result.Replace("&camtoggle", gm.input.camToggle.ToString());
-		result = result.Replace("&guide", gm.input.levelHelp.ToString());
+		result = tipText.Replace("&use", gm.input.keyBindings[10].ToString());
+		result = result.Replace("&pause", gm.input.keyBindings[14].ToString());
+		result = result.Replace("&jump", gm.input.keyBindings[4].ToString());
+		result = result.Replace("&forward", gm.input.keyBindings[0].ToString());
+		result = result.Replace("&back", gm.input.keyBindings[1].ToString());
+		result = result.Replace("&left", gm.input.keyBindings[2].ToString());
+		result = result.Replace("&right", gm.input.keyBindings[3].ToString());
+		result = result.Replace("&camleft", gm.input.keyBindings[7].ToString());
+		result = result.Replace("&camright", gm.input.keyBindings[8].ToString());
+		result = result.Replace("&camup", gm.input.keyBindings[5].ToString());
+		result = result.Replace("&camdown", gm.input.keyBindings[6].ToString());
+		result = result.Replace("&camtoggle", gm.input.keyBindings[9].ToString());
+		result = result.Replace("&guide", gm.input.keyBindings[13].ToString());
 
 		return result;
 	}

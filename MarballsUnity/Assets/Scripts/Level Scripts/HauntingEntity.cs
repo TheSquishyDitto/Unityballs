@@ -1,3 +1,16 @@
+/// <summary>
+/// HauntingEntity.cs
+/// Authors: Kyle Dawson
+/// Date Created:  Apr. 10, 2015
+/// Last Revision: Apr. 13, 2015
+/// 
+/// Class for Jerry. "I see."
+///
+/// TO DO: - Add more spooky behaviors such as jump scares and displaying images on screen.
+/// 	   - Finetune existing behavior maybe? The glitches are almost features though.
+/// 
+/// </summary>
+
 using UnityEngine;
 using System.Collections;
 
@@ -55,13 +68,13 @@ public class HauntingEntity : Ghostable {
 		}
 	}
 
-	// GhostMode - Makes physical walls passable, and spiritual walls solid (only to the marble).
+	// GhostMode - Makes Jerry visible.
 	protected override void GhostMode() {
 		StopAllCoroutines();
 		if (!physical) StartCoroutine("FadeIn");
 	}
 	
-	// NormalMode - The opposite of GhostMode.
+	// NormalMode - Makes Jerry invisible.
 	protected override void NormalMode() {
 		StopAllCoroutines();
 		if (!physical && visible) {

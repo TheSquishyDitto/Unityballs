@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿/// <summary>
+/// ProximityEnable.cs
+/// Authors: Kyle Dawson
+/// Date Created:  Apr. 15, 2015
+/// Last Revision: Apr. 15, 2015
+/// 
+/// Class for areas where objects should be disabled or enabled.
+///
+/// NOTES: - Strange behavior in cases of overlap.
+/// 
+/// </summary>
+/// 
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -15,36 +27,26 @@ public class ProximityEnable : MonoBehaviour {
 		proximityZone.isTrigger = true;
 
 		if (startDisabled) {
-			for (int i = 0; i < objects.Length; i++) {
-				objects[i].SetActive(false);
-			}
+			IterateActive(false);
 		}
-	}
-	
-	// Update - Called once per frame.
-	void Update () {
-	
 	}
 
 	// OnTriggerEnter - Called when object enters trigger, even if this is disabled.
 	void OnTriggerEnter () {
-		for (int i = 0; i < objects.Length; i++) {
-			if (!objects[i].activeSelf) {
-				objects[i].SetActive(true);
-				//Debug.Log("Activated! " + Time.time);
-			}
-		}
+		IterateActive(true);
 	}
 
 	// OnTriggerExit - Called when object leaves trigger, even if this is disabled.
 	void OnTriggerExit() {
 		if (disableOnExit) {
-			for (int i = 0; i < objects.Length; i++) {
-				if (objects[i].activeSelf) {
-					objects[i].SetActive(false);
-					//Debug.Log("Deactivated! " + Time.time);
-				}
-			}
+			IterateActive(false);
+		}
+	}
+
+	// IterateActive - Enables/disables all objects in the array.
+	void IterateActive(bool active) {
+		for (int i = 0; i < objects.Length; i++) {
+			objects[i].SetActive(active);
 		}
 	}
 }

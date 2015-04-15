@@ -2,6 +2,16 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 15, 2015:
+	- Charlie updated the Super Jump tutorial level to be fully playable now.
+		+ Kyle fixed first S-Jump source's badge rotation and changed sun angle to give more helpful shadows.
+	- Brenton added a prototype of the Heliball tutorial level.
+	- Kyle updated the ghost level so that the dozens of lights are not active simultaneously.
+		+ The script created to do that can be used to enable/disable anything with a trigger.
+
+April 14, 2015:
+	- Charlie fully implemented the key rebinding script and the controls menu.
+
 April 13, 2015:
 	- Kyle modified a few things based on feedback:
 		+ Ghost level has more lights, obstacle course platforms widened, foyer buff duration extended.

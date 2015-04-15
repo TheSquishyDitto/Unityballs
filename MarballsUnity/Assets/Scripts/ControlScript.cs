@@ -49,7 +49,7 @@ public class ControlScript : MonoBehaviour {
 		camToggle.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[9].ToString());
 		useButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[10].ToString());
 		breakButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[11].ToString());
-		respawnButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[12].ToString());
+		//respawnButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[12].ToString());
 		helperButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[13].ToString());
 		pauseButton.GetComponentInChildren<Text>().text = CleanUp(gm.input.keyBindings[14].ToString());
 	}

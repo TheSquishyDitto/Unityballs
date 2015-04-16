@@ -100,7 +100,7 @@ public class InputManager : MonoBehaviour {
 		keyBindings[(int)Keys.LevelHelp] = KeyCode.LeftShift;
 		keyBindings[(int)Keys.Pause] = KeyCode.Escape;
 		keyBindings[(int)Keys.Brake] = KeyCode.B;
-		keyBindings[(int)Keys.Respawn] = KeyCode.R;
+		keyBindings[(int)Keys.Respawn] = KeyCode.R; // Disable for final product
 	}
 	
 	// Update - Called once per frame.

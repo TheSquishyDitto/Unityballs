@@ -56,56 +56,61 @@ public class ControlScript : MonoBehaviour {
 	
 	
 	string CleanUp(string name) {
-		string newName;
+		string changed;
 		
 		if(name.Contains("Left")){
 			name = name.Replace("Left","");
-			newName = "Left"+System.Environment.NewLine+name;
+			changed = "Left"+System.Environment.NewLine+name;
+			name = changed;
 		}
 		else if(name.Contains("Right")){
 			name = name.Replace("Right","");
-			newName = "Right"+System.Environment.NewLine+name;
+			changed = "Right"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Page")){
 			name = name.Replace("Page","");
-			newName = "Page"+System.Environment.NewLine+name;
+			changed = "Page"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Up")){
 			name = name.Replace("Up","");
-			newName = "Up"+System.Environment.NewLine+name;
+			changed = "Up"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Down")){
 			name = name.Replace("Down","");
-			newName = "Down"+System.Environment.NewLine+name;
+			changed = "Down"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Keypad")){
 			name = name.Replace("Keypad","");
-			newName = "Keypad"+System.Environment.NewLine+name;
+			changed = "Keypad"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Scroll")){
 			name = name.Replace("Scroll","");
-			newName = "Scroll"+System.Environment.NewLine+name;
+			changed = "Scroll"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Back")){
 			name = name.Replace("Back","");
-			newName = "Back"+System.Environment.NewLine+name;
+			changed = "Back"+System.Environment.NewLine+name;
+		}
+		else if(name.Contains("Caps")){
+			name = name.Replace("Caps","");
+			changed = "Caps"+System.Environment.NewLine+name;
 		}
 		else if(name.Contains("Mouse0")){
-			newName = "Primary"+System.Environment.NewLine+"Mouse";
+			changed = "Primary"+System.Environment.NewLine+"Mouse";
 		}
 		else if(name.Contains("Mouse1")){
-			newName = "Second"+System.Environment.NewLine+"Mouse";
+			changed = "Second"+System.Environment.NewLine+"Mouse";
 		}
 		else if(name.Contains("Mouse2")){
-			newName = "Third"+System.Environment.NewLine+"Mouse";
+			changed = "Third"+System.Environment.NewLine+"Mouse";
 		}
 		if(name.Contains("None")){
-			newName = "";
+			changed = "";
 		}
-		else 
-			newName = name;
-		
-		return newName;
+		else {
+			changed = name;
+		}
+		return changed;
 	}
 	
 

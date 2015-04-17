@@ -2,7 +2,7 @@
 /// MultijumpSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Class for multi jump granting entities.
 /// 
@@ -46,7 +46,8 @@ public class MultijumpSource : BuffSource {
 
 			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
 
-			marble.marbody.AddForce (marble.jumpHeight * jumpDir);
+			//marble.marbody.AddForce (marble.jumpHeight * jumpDir);
+			marble.marbody.velocity = new Vector3(marble.marbody.velocity.x, 0, marble.marbody.velocity.z) + (jumpDir * (marble.jumpHeight / 100));
 			marble.canJump = false;	// This prevents the jump from getting applied multiple times.
 
 			if (!marble.grounded) {

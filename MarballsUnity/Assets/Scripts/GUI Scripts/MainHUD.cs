@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Apr.  6, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -22,6 +22,7 @@ public class MainHUD : MonoBehaviour {
 	GameMaster gm;				// Reference to Game Master.
 
 	public Text timer;			// Reference to timer text.
+	public Text best;			// Reference to high score text.
 	public Text speed;			// Reference to speed gauge text.
 	public Text rps;			// Reference to rps (rotations per second) gauge text.
 	public Image countdown;		// Reference to countdown image container.
@@ -57,7 +58,19 @@ public class MainHUD : MonoBehaviour {
 		gm = GameMaster.CreateGM();
 		gm.hud = this;
 	}
-	
+
+	// OnEnable - Called when the HUD is activated.
+	void OnEnable() {
+		GameMaster.start += BeginCountdown;
+		GameMaster.play += HideCountdown;
+	}
+
+	// OnDisable - Called when the HUD is deactivated.	
+	void OnDisable() {
+		GameMaster.start -= BeginCountdown;
+		GameMaster.play -= HideCountdown;
+	}
+
 	// Use this for initialization
 	void Start () {
 		//marble = gm.marble.transform;
@@ -65,6 +78,12 @@ public class MainHUD : MonoBehaviour {
 		goLength = Mathf.Clamp(goLength, 0.01f, 0.999f);
 
 		gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
+
+		// Need to make this more accommodating for adding levels.
+		if (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1] != null && gm.data[Application.loadedLevel - 1].bestTime != Mathf.Infinity)
+			best.text = "Best: " + gm.data[Application.loadedLevel - 1].bestTime.ToString("F1") + " s";
+		else
+			best.enabled = false;
 
 		buffBox.SetActive((gm.marble.buff != Marble.PowerUp.None));
 		debugSet.SetActive(gm.debug);
@@ -75,8 +94,8 @@ public class MainHUD : MonoBehaviour {
 		if (!gm.paused) {
 
 			if (gm.state == GameMaster.GameState.Start) {
-				timer.text = "0.0 s";
-				countdown.enabled = true;
+				//timer.text = "0.0 s";
+				//countdown.enabled = true;
 
 				// 3 2 1 GO! Countdown
 				// Changes number based on current integer portion of the timer.
@@ -84,7 +103,7 @@ public class MainHUD : MonoBehaviour {
 				countdown.sprite = (gm.timer <= nums.Length)? nums[(int)(gm.timer + (1 - goLength))] : nums[nums.Length - 1]; // If timer is longer than the number of sprites, defaults to last.
 
 				// Sound effect should play at the beginning and when the numbers change.
-				if (lastFrame != countdown.sprite/* || (float)System.Math.Round(gm.timer, 2) == gm.countdownLength*/) {
+				if (lastFrame != countdown.sprite) {
 					if (countdown.sprite != nums[0])
 						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), gm.cam.position);
 					else 
@@ -97,7 +116,7 @@ public class MainHUD : MonoBehaviour {
 				countdown.rectTransform.localScale = (gm.timer >= goLength) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(3, 3, 3);
 
 			} else if (gm.state == GameMaster.GameState.Playing) {
-				countdown.enabled = false;
+				//countdown.enabled = false;
 				timer.text = gm.timer.ToString("F1") + " s";	// Displays timer to one decimal place.
 
 				// Cuts away active buff icon based on time remaining.
@@ -111,6 +130,19 @@ public class MainHUD : MonoBehaviour {
 				rps.text = Mathf.Round(gm.marble.marbody.angularVelocity.magnitude) + " rps";
 			}
 		}
+	}
+
+	// BeginCountdown - Sets up countdown.
+	public void BeginCountdown() {
+		timer.text = "0.0 s";
+		gm.timer += goLength;
+		countdown.gameObject.SetActive(true);
+		countdown.sprite = null;
+	}
+
+	// HideCountdown - Hides countdown.
+	public void HideCountdown() {
+		countdown.gameObject.SetActive(false);
 	}
 
 	// ShowActiveBuff - Shows the active buff box and places the previously "held" buff into the active slot.
@@ -154,7 +186,9 @@ public class MainHUD : MonoBehaviour {
 	// OnDeath - Called when player falls off the stage or otherwise is killed.
 	public IEnumerator OnDeath() {
 
-		deathMessage.text = deathMessages[Random.Range(0, deathMessages.Length)]; // Chooses a random message.
+		deathMessage.text = (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
+			gm.data[Application.loadedLevel - 1].deathMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].deathMessages.Length)] :
+			deathMessages[Random.Range(0, deathMessages.Length)]; // Chooses a random message.
 
 		// Makes the red screen visible.
 		for (int i = 0; i < 25; i++) {
@@ -180,7 +214,9 @@ public class MainHUD : MonoBehaviour {
 	// OnVictory - Displays winning text and buttons.
 	public IEnumerator OnVictory() {
 
-		winMessage.text = winMessages[Random.Range(0, winMessages.Length)]; // Chooses a random message.
+		winMessage.text = (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
+			gm.data[Application.loadedLevel - 1].winMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].winMessages.Length)] :
+			winMessages[Random.Range(0, winMessages.Length)]; // Chooses a random message.
 
 		// Makes the green screen visible.
 		for (int i = 0; i < 25; i++) {

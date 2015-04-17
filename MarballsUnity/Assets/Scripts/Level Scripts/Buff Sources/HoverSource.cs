@@ -2,7 +2,7 @@
 /// HoverSource.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Apr.  3, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Class for hover/heliball granting entities.
 /// 
@@ -35,14 +35,12 @@ public class HoverSource : BuffSource {
 		marble.moveFunction = NewMove;
 	}
 	
-	// NewJump - Allows marble to jump in midair.
+	// NewJump - Allows marble to float in midair.
 	public void NewJump(){			
 			Vector3 jumpDir = Vector3.up;
 			
 			if(marble.transform.position.y <= maxHeight)
 				marble.marbody.AddForce (-Physics.gravity.y * jumpDir);
-			
-			marble.canJump = false;	// This prevents the jump from getting applied multiple times.
 	}
 	
 

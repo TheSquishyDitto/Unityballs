@@ -47,6 +47,7 @@ CODING PRACTICES
 3. General:
   - Aim for modularity and reusability!
   - Avoid redundant code where possible.
+  - You can more easily set up levels now by going to the Marballs menu in the editor! Just click "Create Level"!
 	
 4. Coroutine Usage:
   - WaitForSeconds values that are too small (~3 decimal places) will default to the length of a frame! Consider using a different WaitFor___ function.

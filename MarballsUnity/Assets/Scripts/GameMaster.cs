@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 10, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -14,13 +14,17 @@
 /// </summary>
 
 using UnityEngine;
+using System;
+using System.IO;
 using System.Collections;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class GameMaster : MonoBehaviour {
 
 	// Enum for state of game.
 	public enum GameState {
 		Menu,		// State between or before levels.
+		//Prestart,	// State where the camera pans around the level.
 		Start,		// The state immediately before the timer begins.
 		Playing,	// The part of the game where mechanics matter.
 		Win			// State immediately after player wins a level.
@@ -33,6 +37,8 @@ public class GameMaster : MonoBehaviour {
 
 	// Variables
 	#region Variables
+	// public string version = "[insert fancy decimals here]"; // Which version of Marballs is currently running.
+
 	public static GameMaster GM;	// Reference to singleton.
 
 	public Marble marble;			// Reference to currently active marble.
@@ -44,6 +50,7 @@ public class GameMaster : MonoBehaviour {
 	public MainMenu mainMenu;		// Reference to main menu.
 	public ControlScript controlMenu;	// Reference to control menu.
 	public MainHUD hud;				// Reference to HUD.
+	public LevelDataObject[] data;	// Reference to information about all levels.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -86,14 +93,17 @@ public class GameMaster : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
+	// Start - Use this for initialization.
 	void Start () {
 		name = "Game Master";
 		timer = 0;
 		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
+
+		Debug.Log("Save File Path: " + Application.persistentDataPath); // DEBUG - This is where data is saved to.
+		Load(); // Loads game data.
 	}
 	
-	// Update is called once per frame
+	// Update - Called once per frame.
 	void Update () {
 		if (!freezeTimer) {	// If the timer isn't frozen,
 			if (!paused) {	// and the game isn't paused,
@@ -183,18 +193,66 @@ public class GameMaster : MonoBehaviour {
 		}
 	}
 
+	// Save - Saves the player's time.
+	void Save() {
+		// Creates/overwrites file.
+		BinaryFormatter converter = new BinaryFormatter();
+		FileStream file = File.Create(Application.persistentDataPath + "/PlayerTimes.dat");
+
+		// Writes level data to player record.
+		PlayerRecord record = new PlayerRecord();
+		for (int i = 0; i < data.Length; i++) {
+			if (data[i] != null) {
+				record.bestTimes.Add(data[i].bestTime);
+				record.levelNames.Add(data[i].levelName);
+			}
+		}
+
+		// Saves data and closes file.
+		converter.Serialize(file, record);
+		file.Close();
+
+		Debug.Log("(GameMaster.cs) Saved file!");
+	}
+
+	// Load - Loads the player's time.
+	void Load() {
+		// Checks if file exists.
+		if (File.Exists(Application.persistentDataPath + "/PlayerTimes.dat")) {
+			// Opens file.
+			BinaryFormatter converter = new BinaryFormatter();
+			FileStream file = File.Open(Application.persistentDataPath + "/PlayerTimes.dat", FileMode.Open);
+
+			// Reads what data is there and closes file.
+			PlayerRecord records = (PlayerRecord)converter.Deserialize(file);
+			file.Close();
+
+			// Loads data into level data.
+			if (records.bestTimes.Count == data.Length) {
+				for (int i = 0; i < data.Length; i++) {
+					Debug.Log("LOADED DATA FOR LEVEL " + i + ": " + records.bestTimes[i]); // DEBUG
+
+					// Checks to make sure saved data and active data share formatting.
+					if (data[i] != null && records.bestTimes != null && records.levelNames != null && data[i].levelName == records.levelNames[i])
+						data[i].bestTime = records.bestTimes[i];
+					else
+						Debug.LogWarning("(GameMaster.cs) Saved data and active data are mismatched!");
+				}
+			} else {
+				Debug.LogWarning("(GameMaster.cs) Saved data and active data sets are different lengths!");
+			}
+		}
+	}
+
 	// State Changers - Functions that change the game's conditions.
 	#region State Changers
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
 		Time.timeScale = 1;
-		timer = countdownLength + hud.goLength; // The go length addition can be a subscribed event.
+		timer = countdownLength;
 		state = GameState.Start;
 
 		if (start != null) start();	// Activates any functions subscribed to the starting event.
-
-		hud.countdown.gameObject.SetActive(true); // Should be subscribed from the MainHUD.
-
 	}
 
 	// OnPlay - Called when the player is to actually play the level.
@@ -204,9 +262,6 @@ public class GameMaster : MonoBehaviour {
 		state = GameState.Playing;
 
 		if (play != null) play();	// Activates any functions subscribed to the gameplay event.
-
-		hud.countdown.gameObject.SetActive(false); // Should be subscribed from the MainHUD.
-
 	}
 
 	// OnDeath - Called when the player dies.
@@ -219,7 +274,13 @@ public class GameMaster : MonoBehaviour {
 		state = GameState.Win;
 		Time.timeScale = 0.5f; // Slowmo victory!
 
-		if (win != null) win();
+		if (win != null) win(); // Should subscribe the various victory functions to this.
+
+		// If the player got a better time than the current best, saves their data.
+		if (Application.loadedLevel > 0 && data[Application.loadedLevel - 1].bestTime > timer) {
+			data[Application.loadedLevel - 1].bestTime = timer;
+			Save();
+		}
 	}
 
 	#endregion

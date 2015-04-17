@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿/// <summary>
+/// ControlScript.cs
+/// Authors: Charlie Sun
+/// Date Created:  Apr.  8, 2015
+/// Last Revision: Apr. 16, 2015
+/// 
+/// Class that allows dynamic key rebinding.
+/// 
+/// NOTES: - Does not allow joysticks, extra mouse buttons, or controllers.
+/// 
+/// TO DO: - Tweak and optimize.
+/// 
+/// </summary>
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -56,44 +70,34 @@ public class ControlScript : MonoBehaviour {
 	
 	
 	string CleanUp(string name) {
-		string newName;
+		string newName = name;
 		
 		if(name.Contains("Left")){
-			name = name.Replace("Left","");
-			newName = "Left"+System.Environment.NewLine+name;
-			//name = newName;
+			newName = "Left"+System.Environment.NewLine+name.Replace("Left","");
 		}
 		else if(name.Contains("Right")){
-			name = name.Replace("Right","");
-			newName = "Right"+System.Environment.NewLine+name;
+			newName = "Right"+System.Environment.NewLine+name.Replace("Right","");
 		}
 		else if(name.Contains("Page")){
-			name = name.Replace("Page","");
-			newName = "Page"+System.Environment.NewLine+name;
+			newName = "Page"+System.Environment.NewLine+name.Replace("Page","");
 		}
 		else if(name.Contains("Up")){
-			name = name.Replace("Up","");
-			newName = "Up"+System.Environment.NewLine+name;
+			newName = "Up"+System.Environment.NewLine+name.Replace("Up","");
 		}
 		else if(name.Contains("Down")){
-			name = name.Replace("Down","");
-			newName = "Down"+System.Environment.NewLine+name;
+			newName = "Down"+System.Environment.NewLine+name.Replace("Down","");
 		}
 		else if(name.Contains("Keypad")){
-			name = name.Replace("Keypad","");
-			newName = "Keypad"+System.Environment.NewLine+name;
+			newName = "Keypad"+System.Environment.NewLine+name.Replace("Keypad","");
 		}
 		else if(name.Contains("Scroll")){
-			name = name.Replace("Scroll","");
-			newName = "Scroll"+System.Environment.NewLine+name;
+			newName = "Scroll"+System.Environment.NewLine+name.Replace("Scroll","");
 		}
 		else if(name.Contains("Back")){
-			name = name.Replace("Back","");
-			newName = "Back"+System.Environment.NewLine+name;
+			newName = "Back"+System.Environment.NewLine+name.Replace("Back","");
 		}
 		else if(name.Contains("Caps")){
-			name = name.Replace("Caps","");
-			newName = "Caps"+System.Environment.NewLine+name;
+			newName = "Caps"+System.Environment.NewLine+name.Replace("Caps","");
 		}
 		else if(name.Contains("Mouse0")){
 			newName = "Primary"+System.Environment.NewLine+"Mouse";
@@ -107,9 +111,7 @@ public class ControlScript : MonoBehaviour {
 		else if(name.Contains("None")){
 			newName = "";
 		}
-		else {
-			newName = name;
-		}
+
 		return newName;
 	}
 	

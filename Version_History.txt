@@ -2,6 +2,15 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 16, 2015:
+	- Charlie fixed issues with the key rebinding script.
+	- Kyle changed and implemented some things:
+		+ Added support for saving and loading player's best times, and a small portion of the HUD to display them.
+		+ Individual levels can have properties modified in the editor, like difficulty ratings and custom messages.
+		+ Fixed and simplified jumping mechanics to be significantly more consistent.
+		+ Added a "Marballs" menu in the editor's menu bar, along with a level creation tool under it.
+		+ Minor tweaks to multiple levels and scripts.
+
 April 15, 2015:
 	- Charlie updated the Super Jump tutorial level to be fully playable now.
 		+ Kyle fixed first S-Jump source's badge rotation and changed sun angle to give more helpful shadows.

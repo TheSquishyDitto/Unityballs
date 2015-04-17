@@ -116,12 +116,14 @@ public class CameraController : MonoBehaviour {
 
 			// Moves camera up if stuck against wall, otherwise settles it back down.
 			// NOTE: Currently causes jitter!
+			/*
 			if (autoRotate) {
 				if (radius < RADMIN)
 					MoveUp();
 				else if (psy > playerPsy && radius > RADMIN + 3)
 					MoveDown();
 			}
+			*/
 		}
 	}
 	

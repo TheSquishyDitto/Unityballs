@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 12, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -62,7 +62,7 @@ public class Marble : MonoBehaviour {
 
 	public float jumpHeight = 1300;		// How powerful the marble's jump is.
 	public int midairJumps = 0;			// How many times the marble can jump in midair.
-	public bool canJump = false;		// Whether the marble can currently jump or not.
+	public bool canJump = true;			// Whether the marble can currently jump or not.
 	public bool grounded;				// True if marble is on the ground, false otherwise.
 	public ChangeJump jumpFunction;		// Variable holding any changes to jump behavior.
 	//public bool hasJumped = false;	// Check if a jump has occured.
@@ -89,7 +89,7 @@ public class Marble : MonoBehaviour {
 	public RemoveBuff buffCleaner;		// Which function should be used to get rid of the buff.
 
 	[Header("Debug")]
-	public bool debugLights;			// Whether marble should light up under certain scenarios.
+	public bool flashLight;				// Whether marble should light up under certain scenarios.
 	
 	#endregion
 
@@ -155,9 +155,9 @@ public class Marble : MonoBehaviour {
 
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
-			if (debugLights) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
+			if (flashLight) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
 		} else {			
-			if (debugLights) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
+			if (flashLight) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
 		}
 
 
@@ -253,11 +253,15 @@ public class Marble : MonoBehaviour {
 
 		// Otherwise, use the vanilla conditions. Marble may only jump when on the ground.
 		} else {
-			if (canJump && grounded) {
+			/*if (canJump && grounded) {
 				//Debug.Log("Successfully jumping!");
 				marbody.AddForce (jumpHeight * hit.normal);
 				canJump = false;	// This prevents the jump from getting applied multiple times.
 
+			}*/
+
+			if (grounded && canJump) {
+				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
 			}
 		}
 	}
@@ -343,11 +347,11 @@ public class Marble : MonoBehaviour {
 		// ISSUE: DOES NOT TRIGGER WHEN WALLS AND FLOOR SHARE A COLLIDER, ALSO MAY TRIGGER MULTIPLE TIMES AGAINST SOME SURFACES
 
 		// If marble actually lands on the ground during cooldown, it's allowed to jump anyway.
-		if (IsInvoking("JumpCooldown")) { 
-			CancelInvoke("JumpCooldown"); 
-		}
+		//if (IsInvoking("JumpCooldown")) { 
+		//	CancelInvoke("JumpCooldown"); 
+		//}
 
-		canJump = true;
+		//canJump = true;
 
 		/*foreach(ContactPoint contact in collision.contacts) {
 			if (contact.point.y < transform.position.y) { // If there is a contact that is below the marble...

@@ -2,7 +2,7 @@
 /// GravityZone.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  9, 2015
-/// Last Revision: Apr. 12, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Generic class for areas that have modified gravity.
 ///  
@@ -39,6 +39,7 @@ public class GravityZone : MonoBehaviour {
 	public GravityType type;		// What type of gravity zone this is.
 	[Tooltip("Direction of linear force. Linear only.")]
 	public Vector3 direction;		// Direction of linear force. Should only show up if linear is chosen.
+	public bool useTransform;		// Whether the direction will be manually specified or relative to transform.
 	[Tooltip("Center of radial force. Radial only.")]
 	public Vector3 center;			// Center of radial force. Should only show up if radial is chosen.
 	public bool usePosition = true;	// Whether object's transform position should be the radial center.
@@ -66,6 +67,7 @@ public class GravityZone : MonoBehaviour {
 	// Update - Called once per frame
 	protected void Update () {
 		if (usePosition) center = transform.position;	// Updates position of center if zone is moving.
+		if (useTransform) direction = transform.up;		// Updates direction for similar reasons.
 	}
 
 	// OnTriggerStay - Called every frame an object is inside the gravity zone.

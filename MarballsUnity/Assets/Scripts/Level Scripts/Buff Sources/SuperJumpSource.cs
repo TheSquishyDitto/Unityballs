@@ -2,7 +2,7 @@
 /// SuperJumpSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr. 16, 2015
 /// 
 /// Class for super jump granting entities.
 /// 
@@ -46,8 +46,8 @@ public class SuperJumpSource : BuffSource {
 			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
 			
 			marble.marbody.AddForce (marble.jumpHeight * jumpDir);
-			marble.canJump = false;	// This prevents the jump from getting applied multiple times.
-
+			marble.canJump = false;	// This prevents the marble from immediately using its original jump afterwards.
+			marble.Invoke("JumpCooldown", 1f);
 			marble.ClearBuffs();
 		}
 	}

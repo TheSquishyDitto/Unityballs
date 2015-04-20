@@ -3,6 +3,7 @@
 ====================================================================================================
 
 April 19, 2015:
+	- Brenton tweaked the Heliball level.
 	- Kyle added and tweaked several features:
 		+ Imported Unity's "Image Effects" standard assets to allow interesting rendering effects.
 		+ Debug god mode buff. (allows unlimited flight and unrestricted movement in air)
@@ -11,6 +12,7 @@ April 19, 2015:
 		+ Save data is now done per level, and holds the player's top 5 best times.
 		+ Added a script for predetermined paths, which can be used for panning the camera.
 		+ Added more level-specific victory and death messages.
+		+ Experimental buttons for the main menu, heading towards dynamically addable buttons.
 		+ Occlusion culling possibly added to ghost level? Maybe? I think?
 		+ Jerry got scarier.
 

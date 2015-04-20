@@ -24,7 +24,7 @@ public class GameMaster : MonoBehaviour {
 	// Enum for state of game.
 	public enum GameState {
 		Menu,		// State between or before levels.
-		//Prestart,	// State where the camera pans around the level.
+		Prestart,	// State where the camera pans around the level.
 		Start,		// The state immediately before the timer begins.
 		Playing,	// The part of the game where mechanics matter.
 		Win			// State immediately after player wins a level.
@@ -48,6 +48,7 @@ public class GameMaster : MonoBehaviour {
 	public ControlScript controlMenu;	// Reference to control menu.
 	public MainHUD hud;				// Reference to HUD.
 	public LevelDataObject levelData;// Reference to information about current level.
+	public Camera panCam;			// Reference to pan cam.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -244,8 +245,18 @@ public class GameMaster : MonoBehaviour {
 
 	// State Changers - Functions that change the game's conditions.
 	#region State Changers
+	// OnPreStart - Called before level starts
+	public void OnPreStart(){
+		panCam.gameObject.SetActive(true);
+		hud.gameObject.SetActive(false);
+		marble.Respawn();
+	}
+	
+	
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
+		panCam.gameObject.SetActive(false);
+		hud.gameObject.SetActive(true);
 		Time.timeScale = 1;
 		timer = countdownLength;
 		state = GameState.Start;

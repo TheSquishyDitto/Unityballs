@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ScriptedPath : MonoBehaviour {
-
+	GameMaster gm;
+	
 	// Variables
 	#region Variables
 	[Range(0, 2)]
@@ -24,8 +25,15 @@ public class ScriptedPath : MonoBehaviour {
 
 	#endregion
 
+	void Awake () {
+		gm = GameMaster.CreateGM();
+		gm.panCam = this.GetComponent<Camera>();
+	}
+
 	// Use this for initialization
-	void Start () {
+	void Start () {		
+		gm.OnPreStart();
+		
 		myTransform = transform;
 
 		if (points.Count > 0 && !points.Contains(null)) {
@@ -39,7 +47,9 @@ public class ScriptedPath : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+		if(Input.GetKeyDown(KeyCode.Return) && gm.state == GameMaster.GameState.Prestart) {
+			gm.OnStart();
+		}
 	}
 	
 	// Move - Coroutine to consistently move between points.

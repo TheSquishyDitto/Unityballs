@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Apr. 19, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -30,14 +30,11 @@ public class GameMaster : MonoBehaviour {
 		Win			// State immediately after player wins a level.
 	}
 
-	public delegate void StartAction();
-	public delegate void PlayAction();
-	public delegate void DieAction();
-	public delegate void WinAction();
+	public delegate void EventAction(); // Datatype that most event functions will use.
 
 	// Variables
 	#region Variables
-	// public string version = "[insert fancy decimals here]"; // Which version of Marballs is currently running.
+	public string version = "0.6.9";// Which version of Marballs is currently running.
 
 	public static GameMaster GM;	// Reference to singleton.
 
@@ -50,7 +47,7 @@ public class GameMaster : MonoBehaviour {
 	public MainMenu mainMenu;		// Reference to main menu.
 	public ControlScript controlMenu;	// Reference to control menu.
 	public MainHUD hud;				// Reference to HUD.
-	public LevelDataObject[] data;	// Reference to information about all levels.
+	public LevelDataObject levelData;// Reference to information about current level.
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
@@ -66,10 +63,10 @@ public class GameMaster : MonoBehaviour {
 	public bool levelSelect = false;// Done for win screen
 
 	// Events
-	public static event StartAction start;	// Container for actions when game starts. 
-	public static event PlayAction play;	// Container for actions when gameplay begins.
-	public static event DieAction die;		// Container for actions when player dies.
-	public static event WinAction win;		// Container for actions when winning.
+	public static event EventAction start;	// Container for actions when game starts. 
+	public static event EventAction play;	// Container for actions when gameplay begins.
+	public static event EventAction die;	// Container for actions when player dies.
+	public static event EventAction win;	// Container for actions when winning.
 
 	#endregion
 
@@ -91,6 +88,8 @@ public class GameMaster : MonoBehaviour {
 			GM = this;  // Failsafe in case there was a condition in which the GM was not already set to be this.
 			DontDestroyOnLoad(this); // GameMaster should exist forever.
 		}
+
+		LoadLevelData();
 	}
 
 	// Start - Use this for initialization.
@@ -100,7 +99,6 @@ public class GameMaster : MonoBehaviour {
 		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
 
 		Debug.Log("Save File Path: " + Application.persistentDataPath); // DEBUG - This is where data is saved to.
-		Load(); // Loads game data.
 	}
 	
 	// Update - Called once per frame.
@@ -181,8 +179,9 @@ public class GameMaster : MonoBehaviour {
 		Application.LoadLevel(levelName);
 	}
 
-	// OnLevelWasLoaded - Triggers every time a level loads.
+	// OnLevelWasLoaded - Triggers every time a level loads and before the start functions of everything on the level.
 	void OnLevelWasLoaded(int level) {
+		LoadLevelData();
 
 		if(level == 0)	{
 			if(levelSelect)
@@ -193,19 +192,27 @@ public class GameMaster : MonoBehaviour {
 		}
 	}
 
+	// LoadLevelData - Loads the level-specific scriptable object for this level.
+	void LoadLevelData() {
+		levelData = (LevelDataObject)Resources.Load("Data/" + Application.loadedLevelName + "Data");
+		if (levelData != null) {
+			Debug.Log("(GameMaster.cs) Obtained data for " + levelData.levelName); // DEBUG
+			Load(); // Loads game data.
+		} else {
+			Debug.LogWarning("(GameMaster.cs) Could not obtain: " + "Data/" + Application.loadedLevelName + "Data"); // DEBUG
+		}
+	}
+
 	// Save - Saves the player's time.
 	void Save() {
 		// Creates/overwrites file.
 		BinaryFormatter converter = new BinaryFormatter();
-		FileStream file = File.Create(Application.persistentDataPath + "/PlayerTimes.dat");
+		FileStream file = File.Create(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat");
 
 		// Writes level data to player record.
 		PlayerRecord record = new PlayerRecord();
-		for (int i = 0; i < data.Length; i++) {
-			if (data[i] != null) {
-				record.bestTimes.Add(data[i].bestTime);
-				record.levelNames.Add(data[i].levelName);
-			}
+		for (int i = 0; i < levelData.bestTimes.Count; i++) {
+			record.bestTimes.Add(levelData.bestTimes[i]);
 		}
 
 		// Saves data and closes file.
@@ -218,28 +225,19 @@ public class GameMaster : MonoBehaviour {
 	// Load - Loads the player's time.
 	void Load() {
 		// Checks if file exists.
-		if (File.Exists(Application.persistentDataPath + "/PlayerTimes.dat")) {
+		if (File.Exists(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat")) {
 			// Opens file.
 			BinaryFormatter converter = new BinaryFormatter();
-			FileStream file = File.Open(Application.persistentDataPath + "/PlayerTimes.dat", FileMode.Open);
+			FileStream file = File.Open(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat", FileMode.Open);
 
 			// Reads what data is there and closes file.
 			PlayerRecord records = (PlayerRecord)converter.Deserialize(file);
 			file.Close();
 
 			// Loads data into level data.
-			if (records.bestTimes.Count == data.Length) {
-				for (int i = 0; i < data.Length; i++) {
-					Debug.Log("LOADED DATA FOR LEVEL " + i + ": " + records.bestTimes[i]); // DEBUG
-
-					// Checks to make sure saved data and active data share formatting.
-					if (data[i] != null && records.bestTimes != null && records.levelNames != null && data[i].levelName == records.levelNames[i])
-						data[i].bestTime = records.bestTimes[i];
-					else
-						Debug.LogWarning("(GameMaster.cs) Saved data and active data are mismatched!");
-				}
-			} else {
-				Debug.LogWarning("(GameMaster.cs) Saved data and active data sets are different lengths!");
+			levelData.bestTimes.Clear();
+			for (int i = 0; i < records.bestTimes.Count; i++) {
+				levelData.bestTimes.Add(records.bestTimes[i]);
 			}
 		}
 	}
@@ -276,10 +274,21 @@ public class GameMaster : MonoBehaviour {
 
 		if (win != null) win(); // Should subscribe the various victory functions to this.
 
-		// If the player got a better time than the current best, saves their data.
-		if (Application.loadedLevel > 0 && data[Application.loadedLevel - 1].bestTime > timer) {
-			data[Application.loadedLevel - 1].bestTime = timer;
-			Save();
+		// Keeps player's five best times.
+		for (int i = 0; i < 5; i++) {
+			// Checks if there's a vacant slot or if the current slot is a worse time.
+			if (levelData.bestTimes.Count == i || levelData.bestTimes[i] > timer) {
+				levelData.bestTimes.Insert(i, timer);	// If so, shoves it in.
+
+				// Shaves off any times that go beyond 5th place.
+				if (levelData.bestTimes.Count > 5) {
+					levelData.bestTimes.RemoveRange(5, levelData.bestTimes.Count - 5);
+				}
+
+				Save(); // Saves game.
+
+				break; // Breaks out of for loop once the entry is added.
+			}
 		}
 	}
 

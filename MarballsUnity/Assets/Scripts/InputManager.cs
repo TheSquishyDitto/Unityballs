@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// InputManager.cs
-/// Authors: Kyle Dawson
+/// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: Apr. 18, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -42,11 +42,17 @@ public class InputManager : MonoBehaviour {
 		LevelHelp,
 		Pause
 	}
-	
+
+	//public delegate void InputEvent();	// Datatype for input function containers.
+
 	int numKeys = System.Enum.GetValues(typeof(Keys)).Length;
 	public List<KeyCode> keyBindings = new List<KeyCode>();
 
 /*
+	public static event InputEvent[] pressed;	// Containers for functions that occur when key is pressed.
+	// Main advantage to this is that the InputManager doesn't need to know about the functions it's calling.
+
+
 	public KeyCode forward;		// Which key moves the marble forward.
 	public KeyCode backward;	// Which key moves the marble backward.
 	public KeyCode left;		// Which key moves the marble left.
@@ -118,6 +124,15 @@ public class InputManager : MonoBehaviour {
 	
 			// These controls are suited to experimentation and have their own conditions.
 			DebugControls();
+
+			/*
+			// Event-based code would put most of the checking tasks on the objects with the actual functions.
+			for(int i; i < pressed.Length; i++) {
+				if (pressed[i] != null)
+					pressed[i]();
+			}
+
+			 */ 
 		}
 	}
 

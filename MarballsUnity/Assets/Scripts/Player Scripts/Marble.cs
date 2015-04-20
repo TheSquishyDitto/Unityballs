@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Apr. 19, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -28,13 +28,12 @@ public class Marble : MonoBehaviour {
 		SuperJump,  // Marble jumps very high
 		Ghost,		// Transparent marble can clip through certain objects
 		SizeChange, // Changes marble size
-		HeliBall 	// Make the marble a helicopter (OPTIONAL)
+		HeliBall, 	// Make the marble a helicopter
+		God			// Debug ball that can go anywhere.
 	}
 
 	public delegate void ApplyBuff(float intensity, float duration);	// This is declaring a sorta data type for a variable that can hold functions.
-	public delegate void RemoveBuff();			// Datatype for delegates that specify how to remove different buffs.
-	public delegate void ChangeMove();			// Datatype for delegates that change marble's movement behavior.
-	public delegate void ChangeJump();			// Datatype for delegates that change jumping behavior.
+	public delegate void ModifyBehavior();		// Datatype for most delegates that modify marble behavior.
 
 	// Variables
 	#region Variables
@@ -48,26 +47,20 @@ public class Marble : MonoBehaviour {
 	[Header("Starting Values")]
 	public float maxAngVelocity = 50;	// Default maximum angular velocity.
 	public float defSize = 1;			// Default marble size.
-	//public float defJumpHeight;		// Default jump height.
-	//public float defSpeedMultiplier;	// Default speed multiplier.
-	//public float defRevSpeed;			// Default rev speed.
 	
 	[Header("Movement Values")]
 	public float speedMultiplier = 1;	// How speedy the variety of marble should be. Changes are now highly noticeable.
 	public float revSpeed = 1000;		// Determines how quickly the marble will rev up to max angular velocity.
 	public float brakeSpeed = 2;		// How fast the marble can brake in normal gameplay.
 	public Vector3 inputDirection;		// Holds desired direction of input before applying it.
-	public float shackle = 0.01f;	// Limiter constant for velocity.
-	public ChangeMove moveFunction;		// Variables holding any changes to movement behavior.
+	public float shackle = 0.01f;		// Limiter constant for velocity.
+	public ModifyBehavior moveFunction;	// Variables holding any changes to movement behavior.
 
 	public float jumpHeight = 1300;		// How powerful the marble's jump is.
 	public int midairJumps = 0;			// How many times the marble can jump in midair.
 	public bool canJump = true;			// Whether the marble can currently jump or not.
 	public bool grounded;				// True if marble is on the ground, false otherwise.
-	public ChangeJump jumpFunction;		// Variable holding any changes to jump behavior.
-	//public bool hasJumped = false;	// Check if a jump has occured.
-	//public int maxJumps = 1;			// How many jumps marble can have.
-	//public int jumpsLeft = 1;			// How many jumps the marble has remaining.
+	public ModifyBehavior jumpFunction;	// Variable holding any changes to jump behavior.
 	
 	public RaycastHit hit;				// Saves grounded raycast hit.
 
@@ -78,7 +71,7 @@ public class Marble : MonoBehaviour {
 	public float heldIntensity;			// Intensity of held buff.
 	public float heldDuration;			// Duration of held buff.
 	public ApplyBuff buffFunction;		// Which function will be called to apply the buff.
-	public RemoveBuff heldCleaner;		// Which function will be called to remove the buff after it's used.
+	public ModifyBehavior heldCleaner;	// Which function will be called to remove the buff after it's used.
 
 	[Header("Active Buff Values")]
 	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
@@ -86,9 +79,9 @@ public class Marble : MonoBehaviour {
 	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
 	public float buffTimeMax;			// How much time the buff timer had at the beginning.
 	public float buffTimer;				// How much time until a buff expires.
-	public RemoveBuff buffCleaner;		// Which function should be used to get rid of the buff.
+	public ModifyBehavior buffCleaner;	// Which function should be used to get rid of the buff.
 
-	[Header("Debug")]
+	[Header("Misc. Options")]
 	public bool flashLight;				// Whether marble should light up under certain scenarios.
 	
 	#endregion
@@ -253,13 +246,6 @@ public class Marble : MonoBehaviour {
 
 		// Otherwise, use the vanilla conditions. Marble may only jump when on the ground.
 		} else {
-			/*if (canJump && grounded) {
-				//Debug.Log("Successfully jumping!");
-				marbody.AddForce (jumpHeight * hit.normal);
-				canJump = false;	// This prevents the jump from getting applied multiple times.
-
-			}*/
-
 			if (grounded && canJump) {
 				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
 			}
@@ -268,7 +254,6 @@ public class Marble : MonoBehaviour {
 
 	// JumpCooldown - If the marble needs to wait for some reason before jumping again, Invoke this.
 	public void JumpCooldown() {
-		//hasJumped = false;
 		canJump = true;
 		//Debug.Log("Refreshed! " + gm.timer);
 	}
@@ -340,62 +325,6 @@ public class Marble : MonoBehaviour {
 	}
 	
 	#endregion
-
-	// OnCollisionEnter - Currently used to refresh marble jumps.
-	void OnCollisionEnter(Collision collision) {
-		// CURRENTLY DOES NOT CARE IF THE THING BUMPED INTO IS BELOW IT OR NOT
-		// ISSUE: DOES NOT TRIGGER WHEN WALLS AND FLOOR SHARE A COLLIDER, ALSO MAY TRIGGER MULTIPLE TIMES AGAINST SOME SURFACES
-
-		// If marble actually lands on the ground during cooldown, it's allowed to jump anyway.
-		//if (IsInvoking("JumpCooldown")) { 
-		//	CancelInvoke("JumpCooldown"); 
-		//}
-
-		//canJump = true;
-
-		/*foreach(ContactPoint contact in collision.contacts) {
-			if (contact.point.y < transform.position.y) { // If there is a contact that is below the marble...
-				jumpsLeft = maxJumps; // Refills jumps.
-			}
-		}*/
-	}
-
-	// OnCollisionStay - Using this at the moment causess jumping to be applied many times.
-	void OnCollisionStay(Collision collision) {
-		//canJump = true;
-	}
-
-
-	/* OLDER JUMPING CODE
-
-	fixedupdate:
-	// Handles jumping.
-		if (hasJumped && !IsInvoking("JumpCooldown")) {	
-			Vector3 jumpDir = (grounded)? hit.normal : Vector3.up; // Jumps off of surface's normal if there is one,
-																   // otherwise jumps straight up.
-			marbody.AddForce (jumpHeight * jumpDir);
-
-			jumpsLeft--;
-			if (jumpsLeft == 0 && (buff == PowerUp.MultiJump || buff == PowerUp.SuperJump))
-				ClearBuffs();	// If ball has used up its extra/special jumps, clears powerup state.
-
-			Invoke("JumpCooldown", 0.25f); // Calls RefreshJump() after some time has passed to prevent Multijump from using all jumps at once.
-		}
-
-
-	controls functions:
-	// TriggerJump - Tells the marble that it should jump.
-	public void TriggerJump() {
-		if (jumpFunction != null) {
-			jumpFunction();
-		} else {
-			if (grounded && jumpsLeft > 0 && !hasJumped) 
-				hasJumped = true;
-		}
-	}
-	
-	*/
-
 
 	/*	TANGENT MOVEMENT CODE
 

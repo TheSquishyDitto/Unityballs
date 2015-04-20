@@ -53,11 +53,6 @@ public class HoverSource : BuffSource {
 			marble.inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
 		}
 	}
-	
-
-	// NewJump - Should allow continuous ascension while jump is held.
-
-	// NewMove - Should allow mid-air movement.
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
 	protected override void TakeBuff() {

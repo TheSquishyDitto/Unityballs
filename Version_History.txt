@@ -2,6 +2,18 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 19, 2015:
+	- Kyle added and tweaked several features:
+		+ Imported Unity's "Image Effects" standard assets to allow interesting rendering effects.
+		+ Debug god mode buff. (allows unlimited flight and unrestricted movement in air)
+		+ Multijump now has directional influence for jumping. Unintended side effect/feature is speed boosts while jumping.
+		+ Marble's shadow now uses a projector instead. Shadow always points downwards now as a result.
+		+ Save data is now done per level, and holds the player's top 5 best times.
+		+ Added a script for predetermined paths, which can be used for panning the camera.
+		+ Added more level-specific victory and death messages.
+		+ Occlusion culling possibly added to ghost level? Maybe? I think?
+		+ Jerry got scarier.
+
 April 16, 2015:
 	- Charlie fixed issues with the key rebinding script.
 	- Kyle changed and implemented some things:

@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Apr. 19, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -14,38 +14,39 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MainHUD : MonoBehaviour {
 
 		// Variables
 	#region Variables
-	GameMaster gm;				// Reference to Game Master.
+	GameMaster gm;					// Reference to Game Master.
 
-	public Text timer;			// Reference to timer text.
-	public Text best;			// Reference to high score text.
-	public Text speed;			// Reference to speed gauge text.
-	public Text rps;			// Reference to rps (rotations per second) gauge text.
-	public Image countdown;		// Reference to countdown image container.
-	public Image powerup;		// Reference to image of currently active powerup.
-	public Image heldPowerup;	// Reference to held powerup picture.
-	public Image deathScreen;	// Reference to death tint.
-	public Text deathMessage;	// Reference to death message text.
-	public Image winScreen;		// Reference to win tint.
-	public Text winMessage;		// Reference to win message text.
-	//public Image tintScreen;	// Reference to the panel that tints the screen.
-	//public Text statusMessage;// Reference to the text that displays during certain events.
-	public Image tipBox;		// Reference to the background panel of tip windows.
-	public Text tipMessage;		// Reference to the text in a tip window.
+	public Text timer;				// Reference to timer text.
+	public Text best;				// Reference to high score text.
+	public Text speed;				// Reference to speed gauge text.
+	public Text rps;				// Reference to rps (rotations per second) gauge text.
+	public Image countdown;			// Reference to countdown image container.
+	public Image powerup;			// Reference to image of currently active powerup.
+	public Image heldPowerup;		// Reference to held powerup picture.
+	public Image deathScreen;		// Reference to death tint.
+	public Text deathMessage;		// Reference to death message text.
+	public Image winScreen;			// Reference to win tint.
+	public Text winMessage;			// Reference to win message text.
+	//public Image tintScreen;		// Reference to the panel that tints the screen.
+	//public Text statusMessage;	// Reference to the text that displays during certain events.
+	public Image tipBox;			// Reference to the background panel of tip windows.
+	public Text tipMessage;			// Reference to the text in a tip window.
 
-	public GameObject tipWindow;  // Reference to the active tip window.
-	public GameObject buffBox;	  // Reference to the active buff indicator.
-	public GameObject winOptions; // Reference to win options.
-	public GameObject debugSet;	  // Reference to debug buttons and info display.
+	public GameObject tipWindow;  	// Reference to the active tip window.
+	public GameObject buffBox;	  	// Reference to the active buff indicator.
+	public GameObject winOptions; 	// Reference to win options.
+	public GameObject debugSet;	  	// Reference to debug buttons and info display.
 
 	//public Color winColor;		// Color to tint the screen when winning.
 	//public Color deathColor;		// Color to tint the screen when dying.
-	public string[] deathMessages;	// An array of messages to use when the player dies.
-	public string[] winMessages;	// An array of messages to use when the player wins.
+	public List<string> deathMessages = new List<string>();	// An array of messages to use when the player dies.
+	public List<string> winMessages = new List<string>();	// An array of messages to use when the player wins.
 
 	public Sprite[] nums;		// Easy holder of number textures.
 	float remainder;			// Decimal portion of timer.
@@ -79,11 +80,26 @@ public class MainHUD : MonoBehaviour {
 
 		gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
 
-		// Need to make this more accommodating for adding levels.
-		if (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1] != null && gm.data[Application.loadedLevel - 1].bestTime != Mathf.Infinity)
-			best.text = "Best: " + gm.data[Application.loadedLevel - 1].bestTime.ToString("F1") + " s";
-		else
-			best.enabled = false;
+		if (gm.levelData != null) {
+			// Display absolute best high score.
+			if (gm.levelData.bestTimes.Count > 0) 
+				best.text = "Best: " + gm.levelData.bestTimes[0].ToString("F1") + " s";
+			else
+				best.enabled = false;
+
+			// Use level message settings.
+			if (gm.levelData.messageMode == LevelDataObject.MessageMode.Append) {
+				for (int i = 0; i < gm.levelData.deathMessages.Count; i++)
+					deathMessages.Add(gm.levelData.deathMessages[i]);
+
+				for (int i = 0; i < gm.levelData.winMessages.Count; i++)
+					winMessages.Add(gm.levelData.winMessages[i]);
+
+			} else if (gm.levelData.messageMode == LevelDataObject.MessageMode.Replace) {
+				deathMessages = gm.levelData.deathMessages;
+				winMessages = gm.levelData.winMessages;
+			}
+		}
 
 		buffBox.SetActive((gm.marble.buff != Marble.PowerUp.None));
 		debugSet.SetActive(gm.debug);
@@ -94,9 +110,6 @@ public class MainHUD : MonoBehaviour {
 		if (!gm.paused) {
 
 			if (gm.state == GameMaster.GameState.Start) {
-				//timer.text = "0.0 s";
-				//countdown.enabled = true;
-
 				// 3 2 1 GO! Countdown
 				// Changes number based on current integer portion of the timer.
 				Sprite lastFrame = countdown.sprite;
@@ -186,9 +199,9 @@ public class MainHUD : MonoBehaviour {
 	// OnDeath - Called when player falls off the stage or otherwise is killed.
 	public IEnumerator OnDeath() {
 
-		deathMessage.text = (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
-			gm.data[Application.loadedLevel - 1].deathMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].deathMessages.Length)] :
-			deathMessages[Random.Range(0, deathMessages.Length)]; // Chooses a random message.
+		deathMessage.text = /*(Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
+			gm.data[Application.loadedLevel - 1].deathMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].deathMessages.Length)] :*/
+			deathMessages[Random.Range(0, deathMessages.Count)]; // Chooses a random message.
 
 		// Makes the red screen visible.
 		for (int i = 0; i < 25; i++) {
@@ -214,9 +227,9 @@ public class MainHUD : MonoBehaviour {
 	// OnVictory - Displays winning text and buttons.
 	public IEnumerator OnVictory() {
 
-		winMessage.text = (Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
-			gm.data[Application.loadedLevel - 1].winMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].winMessages.Length)] :
-			winMessages[Random.Range(0, winMessages.Length)]; // Chooses a random message.
+		winMessage.text = /*(Application.loadedLevel > 0 && gm.data[Application.loadedLevel - 1].customMessages)?
+			gm.data[Application.loadedLevel - 1].winMessages[Random.Range(0, gm.data[Application.loadedLevel - 1].winMessages.Length)] :*/
+			winMessages[Random.Range(0, winMessages.Count)]; // Chooses a random message.
 
 		// Makes the green screen visible.
 		for (int i = 0; i < 25; i++) {

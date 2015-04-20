@@ -1,0 +1,16 @@
+If we aim to commercialize this game, we need to check the licensing on these sounds.
+
+Known sounds with license issues:
+- static
+- ShortCircuit
+
+Sounds that belong to us:
+- CreepyAmbience
+- CreepyAmbience2
+- CreepyAmbience3
+- SpookyWind
+- WarningBlackHole
+- TempTip
+- TempTip2
+- WinsplosionBluhBluh
+- WinsplosionTemp

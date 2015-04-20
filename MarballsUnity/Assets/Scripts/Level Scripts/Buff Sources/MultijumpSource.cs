@@ -41,10 +41,12 @@ public class MultijumpSource : BuffSource {
 	}
 
 	// NewJump - Allows marble to jump in midair.
+	// NOTE - Current implementation gives marble a boost of speed when jumping with directional input.
 	public void NewJump(){
 		if (marble.canJump && marble.midairJumps > 0) {
 
 			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
+			jumpDir += marble.inputDirection;	// Allows jumps in this state to be more directionally influenced.
 
 			//marble.marbody.AddForce (marble.jumpHeight * jumpDir);
 			marble.marbody.velocity = new Vector3(marble.marbody.velocity.x, 0, marble.marbody.velocity.z) + (jumpDir * (marble.jumpHeight / 100));

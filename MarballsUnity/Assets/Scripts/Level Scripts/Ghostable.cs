@@ -2,7 +2,7 @@
 /// Ghostable.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  1, 2015
-/// Last Revision: Apr. 12, 2015
+/// Last Revision: Apr. 18, 2015
 /// 
 /// Class for objects that should be passable with the ghost powerup.
 ///
@@ -24,6 +24,7 @@ public class Ghostable : MonoBehaviour {
 	Color originalColor;			// Original color of shader material.
 
 	public bool physical = true;	// Whether this object is solid normally or not.
+	public int fadeLength = 50;		// How long it should take this object to fade in or out.
 
 
 	// Awake - Called before anything else.
@@ -96,17 +97,17 @@ public class Ghostable : MonoBehaviour {
 	protected virtual IEnumerator FadeIn() {
 		appearance.enabled = true;
 		Color currentColor = appearance.material.GetColor("_TintColor");
-		for (int i = 1; i <= 50; i++) {
-			appearance.material.SetColor("_TintColor", Color.Lerp(currentColor, originalColor, i/50.0f));
-			yield return new WaitForEndOfFrame();
+		for (int i = 1; i <= fadeLength; i++) {
+			appearance.material.SetColor("_TintColor", Color.Lerp(currentColor, originalColor, ((float)i)/fadeLength));
+			yield return new WaitForFixedUpdate();
 		}
 	}
 
 	// FadeOut - Makes the wall slowly fade out of existence.
 	protected virtual IEnumerator FadeOut() {
-		for (int i = 1; i <= 50; i++) {
-			appearance.material.SetColor("_TintColor", Color.Lerp(originalColor, Color.clear, i/50.0f));
-			yield return new WaitForEndOfFrame();
+		for (int i = 1; i <= fadeLength; i++) {
+			appearance.material.SetColor("_TintColor", Color.Lerp(originalColor, Color.clear, ((float)i)/fadeLength));
+			yield return new WaitForFixedUpdate();
 		}
 		if (!physical) appearance.enabled = false;
 	}

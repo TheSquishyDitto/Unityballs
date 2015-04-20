@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// MainMenu.cs
-/// Authors: Kyle Dawson, Charlie Sun, Brenton Brown [ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Kyle Dawson, Charlie Sun, Brenton Brown
 /// Date Created:  Feb. 11, 2015
 /// Last Revision: Mar.  9, 2015
 /// 
@@ -14,6 +14,7 @@
 /// </summary>
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class MainMenu : MonoBehaviour {
@@ -24,13 +25,25 @@ public class MainMenu : MonoBehaviour {
 	public GameObject levelSet;		// Reference to select level submenu buttons.
 	public GameObject controlSet;	// Reference to select controls
 	
-	public GameObject props;
-	public GameObject title;
+	public GameObject props;		// Reference to marbles holder on the menu.
+	public GameObject[] marbles;	// Reference to actual marble objects.
+	public GameObject title;		// Reference to title text.
 
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
 		gm.mainMenu = this;
+	}
+
+	void Start() {
+		GetComponent<Text>().text = " Version " + gm.version;
+
+		foreach(GameObject obj in marbles) {
+			if (GetComponent<Rigidbody>()) obj.GetComponent<Rigidbody>().maxAngularVelocity = 10000;
+		}
+
+		// GENERATE LEVEL SELECT BUTTONS
+
 	}
 
 	// LoadLevel - Tells the GameMaster to load a level.
@@ -61,6 +74,13 @@ public class MainMenu : MonoBehaviour {
 		controlSet.SetActive(!controlSet.activeSelf);
 		props.SetActive (!props.activeSelf);
 		title.SetActive (!title.activeSelf);
+	}
+
+	// FlickMarbles - Applies rotation to marbles during different events.
+	public void FlickMarbles(float amount) {
+		foreach(GameObject obj in marbles) {
+			if (obj.GetComponent<Rigidbody>()) obj.GetComponent<Rigidbody>().AddTorque(Vector3.one * (amount * 1000));
+		}
 	}
 
 	// QuitRequest - Quits the game.

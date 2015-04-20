@@ -23,7 +23,6 @@ public class GuideArrow : MonoBehaviour {
 	// LateUpdate - Called after update.
 	void LateUpdate() {
 		if (gm.finishLine) {
-			transform.position = gm.marble.marbody.position + new Vector3(0, 2, 0);
 			transform.rotation = Quaternion.LookRotation(-gm.finishLine.position + transform.position);
 		}
 	}

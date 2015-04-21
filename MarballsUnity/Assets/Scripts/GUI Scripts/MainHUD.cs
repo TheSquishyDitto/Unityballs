@@ -78,7 +78,7 @@ public class MainHUD : MonoBehaviour {
 
 		goLength = Mathf.Clamp(goLength, 0.01f, 0.999f);
 
-		gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
+		// gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
 
 		if (gm.levelData != null) {
 			// Display absolute best high score.
@@ -148,7 +148,7 @@ public class MainHUD : MonoBehaviour {
 	// BeginCountdown - Sets up countdown.
 	public void BeginCountdown() {
 		timer.text = "0.0 s";
-		gm.timer += goLength;
+		gm.timer += goLength - .1f;
 		countdown.gameObject.SetActive(true);
 		countdown.sprite = null;
 	}

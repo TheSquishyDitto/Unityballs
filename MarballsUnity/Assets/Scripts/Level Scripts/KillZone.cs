@@ -2,7 +2,7 @@
 /// KillZone.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Apr. 11, 2015
+/// Last Revision: Apr. 22, 2015
 /// 
 /// Class that handles behavior of killzone boundaries.
 /// 
@@ -29,8 +29,8 @@ public class KillZone : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (GetComponent<Renderer>())
-			GetComponent<Renderer>().enabled = false;	// Kill zone should only be rendered in scene view, not in gameplay.
+		//if (GetComponent<Renderer>())
+		//	GetComponent<Renderer>().enabled = false;	// Kill zone should only be rendered in scene view, not in gameplay.
 	}
 	
 	// Update is called once per frame

@@ -2,7 +2,7 @@
 /// ScriptedPath.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Apr. 19, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Apr. 22, 2015
 /// 
 /// Class for moving and rotating any object over time to specific locations.
 /// 
@@ -83,6 +83,7 @@ public class ScriptedPath : MonoBehaviour {
 			else if (loop) {
 				distance = Vector3.Distance(myTransform.position, points[0].position);
 				i = -1;
+				yield return new WaitForFixedUpdate(); // Prevent infinite loops without any pause.
 			}
 
 			//Debug.Log("Reached a point!");

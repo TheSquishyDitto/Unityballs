@@ -98,6 +98,7 @@ public class Marble : MonoBehaviour {
 
 	// OnEnable - Called when the marble is activated. Used to subscribe to events.
 	void OnEnable() {
+		GameMaster.pan += Respawn; 		// When the game starts, marble should respawn.
 		GameMaster.start += Respawn; 	// When the game starts, marble should respawn.
 		GameMaster.play += ResetState;	// When the gameplay begins, marble should be fresh.
 	}
@@ -105,6 +106,7 @@ public class Marble : MonoBehaviour {
 	// OnDisable - Called when the marble is deactivated. Used to unsubscribe from events.
 	// NOTE: Anything subscribed to in OnEnable should be unsubscribed from here to prevent memory leaks.
 	void OnDisable() {
+		GameMaster.pan -= Respawn;
 		GameMaster.start -= Respawn;
 		GameMaster.play -= ResetState;
 	}
@@ -152,8 +154,6 @@ public class Marble : MonoBehaviour {
 		} else {			
 			if (flashLight) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
 		}
-
-
 	}
 
 	#endregion
@@ -247,6 +247,7 @@ public class Marble : MonoBehaviour {
 		// Otherwise, use the vanilla conditions. Marble may only jump when on the ground.
 		} else {
 			if (grounded && canJump) {
+				// Directly set velocity to avoid excessively complicated checks.
 				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
 			}
 		}

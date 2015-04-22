@@ -9,6 +9,7 @@
 /// NOTES: - Should probably be attached to GameMaster object.
 /// 
 /// TO DO: - Allow customizable keys.
+/// 	   - Save player's key rebindings! This can use PlayerPrefs instead of serialization.
 /// 	   - REFACTOR ONCE THE ABOVE IS COMPLETED.
 /// 
 /// </summary>
@@ -112,7 +113,8 @@ public class InputManager : MonoBehaviour {
 	// Update - Called once per frame.
 	void Update () {
 		if (allowInput) {
-			CameraControls();
+			if (!gm.paused)
+				CameraControls();
 	
 			// These controls are active during gameplay.
 			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {

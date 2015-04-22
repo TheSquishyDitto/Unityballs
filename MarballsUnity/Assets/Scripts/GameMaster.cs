@@ -34,7 +34,7 @@ public class GameMaster : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public string version = "0.6.9";// Which version of Marballs is currently running.
+	public string version = "0.7.0";// Which version of Marballs is currently running.
 
 	public static GameMaster GM;	// Reference to singleton.
 
@@ -54,6 +54,7 @@ public class GameMaster : MonoBehaviour {
 	public bool paused;				// True if game is paused, false otherwise.
 	public float timer;				// How much time has elapsed since the start of a level.
 	public float countdownLength;	// How long timer should countdown in the starting phase.
+	public int scoreCount = 5;		// How many of the player's scores should be kept.
 	public bool simpleAnim = false;	// Whether the victory animation should be excessive or not.
 	public bool useOnGrab = false;	// If true, picked up powerups are used immediately and automatically.
 	public bool guides = false;		// If true, arrows pop up to help the player.
@@ -64,6 +65,7 @@ public class GameMaster : MonoBehaviour {
 	public bool levelSelect = false;// Done for win screen
 
 	// Events
+	public static event EventAction pan;	// Container for actions before the game actually starts.
 	public static event EventAction start;	// Container for actions when game starts. 
 	public static event EventAction play;	// Container for actions when gameplay begins.
 	public static event EventAction die;	// Container for actions when player dies.
@@ -117,15 +119,26 @@ public class GameMaster : MonoBehaviour {
 				}
 			}
 		}
+
+		// TODO Change keys to player's actual keys and/or let InputManager handle this.
+		if (state == GameMaster.GameState.Prestart) {
+			if(Input.GetKeyDown(KeyCode.Space)) {
+				OnStart();
+			}
+			
+			if (Input.GetKeyDown(KeyCode.Escape)) {
+				LoadLevel(0);
+			}
+		}
 	}
 
 	// TogglePause - Toggles game paused state.
 	public void TogglePause() {
 		paused = !paused;
-		input.allowInput = !(input.allowInput);
+		//input.allowInput = !(input.allowInput);
 		Time.timeScale = (paused)? 0 : 1; // When paused, physics simulation speed is set to 0.
 		if (pauseMenu) {
-			pauseMenu.gameObject.SetActive(paused);
+			pauseMenu.canvas.enabled = paused;
 			// [ code to reset pause menu buttons to initial state ]
 		} else
 			Debug.LogWarning("(GameMaster.cs) No pause menu found!");
@@ -245,18 +258,19 @@ public class GameMaster : MonoBehaviour {
 
 	// State Changers - Functions that change the game's conditions.
 	#region State Changers
-	// OnPreStart - Called before level starts
+	// OnPreStart - Called before level starts.
 	public void OnPreStart(){
-		panCam.gameObject.SetActive(true);
-		hud.gameObject.SetActive(false);
-		marble.Respawn();
+		//hud.gameObject.SetActive(false);	// SUBSCRIBED EVENTABLE
+		levelData.firstTime = debug;		// If we aren't testing the game, panning shouldn't always happen.
+		state = GameState.Prestart;
+
+		if (pan != null) pan();
 	}
 	
 	
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
-		panCam.gameObject.SetActive(false);
-		hud.gameObject.SetActive(true);
+		//hud.gameObject.SetActive(true);		// SUBSCRIBED EVENTABLE
 		Time.timeScale = 1;
 		timer = countdownLength;
 		state = GameState.Start;
@@ -286,14 +300,14 @@ public class GameMaster : MonoBehaviour {
 		if (win != null) win(); // Should subscribe the various victory functions to this.
 
 		// Keeps player's five best times.
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < scoreCount; i++) {
 			// Checks if there's a vacant slot or if the current slot is a worse time.
 			if (levelData.bestTimes.Count == i || levelData.bestTimes[i] > timer) {
 				levelData.bestTimes.Insert(i, timer);	// If so, shoves it in.
 
-				// Shaves off any times that go beyond 5th place.
-				if (levelData.bestTimes.Count > 5) {
-					levelData.bestTimes.RemoveRange(5, levelData.bestTimes.Count - 5);
+				// Shaves off any times that go beyond the specified place.
+				if (levelData.bestTimes.Count > scoreCount) {
+					levelData.bestTimes.RemoveRange(scoreCount, levelData.bestTimes.Count - scoreCount);
 				}
 
 				Save(); // Saves game.

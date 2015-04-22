@@ -2,6 +2,17 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 21, 2015:
+	- Kyle flushed out implementation of pre-level panning and threw in a couple other features:
+		+ Now displays high scores, level name, and text indicating how to go back or start.
+		+ Every level now has the panning.
+		+ Added bird's eye view minimap to lower right corner. Centered tip area window to fit it in.
+		+ Debug menu is now collapseable.
+		+ Main menu's level select screen now displays pictures and high scores.
+
+April 20, 2015:
+	- Charlie, Kyle, and Chris added rough implementation of pre-level panning.
+
 April 19, 2015:
 	- Brenton tweaked the Heliball level.
 	- Kyle added and tweaked several features:

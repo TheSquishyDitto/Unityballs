@@ -1,12 +1,12 @@
 ﻿/// <summary>
 /// FinishLine.cs
-/// Authors: Charlie Sun, Kyle Dawson,[ANYONE ELSE WHO MODIFIES CODE PUT YOUR NAME HERE]
+/// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Apr. 21, 2015
 /// 
 /// Class that controls the pause menu canvas.
 /// 
-/// TO DO: - Actual functional buttons and submenus.
+/// TO DO: - More functional settings menus. (AUDIO, VIDEO, GAME SETTINGS)
 /// 
 /// </summary>
 
@@ -15,7 +15,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour {
-	public GameMaster gm;			// Reference to Game Master.
+	GameMaster gm;					// Reference to Game Master.
+	public Canvas canvas;			// Reference to the pause canvas.
 	public GameObject pauseSet;		// Reference to pause button menu set.
 	public GameObject optionSet;	// Reference to option button submenu.
 	public GameObject controlSet;	// Reference to controls submenu.
@@ -23,8 +24,9 @@ public class PauseMenu : MonoBehaviour {
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		canvas = GetComponent<Canvas>();
 		gm.pauseMenu = this;
-		gameObject.SetActive(false);
+		canvas.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -56,6 +58,7 @@ public class PauseMenu : MonoBehaviour {
 	}
 	
 	public void ToggleControls() {
+		gm.input.allowInput = !gm.input.allowInput;
 		optionSet.SetActive (!optionSet.activeSelf);
 		controlSet.SetActive(!controlSet.activeSelf);
 	}

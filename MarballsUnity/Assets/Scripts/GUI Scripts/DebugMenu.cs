@@ -2,7 +2,7 @@
 /// DebugMenu.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Mar. 22, 2015
-/// Last Revision: Apr. 11, 2015
+/// Last Revision: Apr. 21, 2015
 /// 
 /// Class that controls our debug menu.
 /// 
@@ -19,14 +19,17 @@ using System.Collections;
 public class DebugMenu : MonoBehaviour {
 
 	GameMaster gm;				// Reference to GameMaster.
-
+	
 	public Slider fpsSlider;	// Reference to target frame setting slider.
 	public Text fpsText;		// Reference to accompanying text for target FPS slider.
 	public Toggle start;		// Reference to start toggle.
 	public Toggle play;			// Reference to play toggle.
 	public Toggle simple;		// Reference to simple animations toggle.
+	public RectTransform excon;	// Reference to expand/contact button.
+	public GameObject content;	// Reference to GameObject containing contents of debug menu.
 
 	bool manual;				// Whether a toggle was activated manually or not.
+	bool expanded = true;		// Whether menu is expanded or not.
 
 	// Awake - Called before anything else.
 	void Awake() {
@@ -40,6 +43,8 @@ public class DebugMenu : MonoBehaviour {
 		Application.targetFrameRate = 60;
 
 		if (fpsSlider) fpsSlider.value = Application.targetFrameRate;
+
+		ToggleExpansion();
 	}
 	
 	// Update - Called once per frame.
@@ -47,16 +52,14 @@ public class DebugMenu : MonoBehaviour {
 
 		if (fpsSlider) fpsText.text = "Target FPS: " + fpsSlider.value;	// Updates the text to the current target value.
 
+		manual = false;
 		if (gm.state == GameMaster.GameState.Start && !start.isOn) {
-			manual = false;
 			start.isOn = true;
-			manual = true;
 		}
 		if (gm.state == GameMaster.GameState.Playing && !play.isOn) {
-			manual = false;
 			play.isOn = true;
-			manual = true;
 		}
+		manual = true;
 	}
 
 	// DEBUG - ChangeFPS - Changes application's preferred FPS. Acts as a soft ceiling.
@@ -98,5 +101,13 @@ public class DebugMenu : MonoBehaviour {
 	// DEBUG - CheatFinish - Wins the level for you.
 	public void CheatFinish() {
 		gm.marble.transform.position = gm.finishLine.position;
+	}
+
+	// DEBUG - ToggleExpansion
+	public void ToggleExpansion() {
+		Vector3 buttonRot = (expanded)? new Vector3(0, 0, 90) : new Vector3(0, 0, -90);
+		excon.Rotate(buttonRot);
+		expanded = !expanded;
+		content.SetActive(expanded);
 	}
 }

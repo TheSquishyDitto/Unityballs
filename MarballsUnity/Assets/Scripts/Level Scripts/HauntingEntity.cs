@@ -2,7 +2,7 @@
 /// HauntingEntity.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 10, 2015
-/// Last Revision: Apr. 19, 2015
+/// Last Revision: Apr. 21, 2015
 /// 
 /// Class for Jerry. "I see."
 ///
@@ -56,7 +56,7 @@ public class HauntingEntity : Ghostable {
 	// Update - Called once per frame.
 	protected override void Update () {
 		// If visible and distant enough away...
-		if (!((Renderer)appearances[0]).isVisible && Vector3.Distance(myTransform.position, destination.position) > 0) {
+		if (gm.state == GameMaster.GameState.Playing && !((Renderer)appearances[0]).isVisible && Vector3.Distance(myTransform.position, destination.position) > 0) {
 			myTransform.position = new Vector3(myTransform.position.x, destination.position.y + 2, myTransform.position.z); // Stay on player's y-level.
 			myTransform.position += (destination.position - myTransform.position).normalized * Time.deltaTime * (gm.timer / 60); // Move towards player, quickly as time goes on.
 			myTransform.LookAt(gm.cam); // Face the camera.

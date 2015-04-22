@@ -2,7 +2,7 @@
 /// SpawnArea.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Apr.  9, 2015
+/// Last Revision: Apr. 21, 2015
 /// 
 /// Class that dictates how spawning pads should function.
 /// 
@@ -41,8 +41,7 @@ public class SpawnArea : MonoBehaviour {
 
 	// Start - Use this for initialization
 	void Start () {
-		//if (gm.marble && gm.cam)
-		//	gm.marble.Respawn(); // Makes sure marble is in the right spot once the spawn pad is out.
+
 	}
 	
 	// Update is called once per frame
@@ -54,7 +53,7 @@ public class SpawnArea : MonoBehaviour {
 	void OnTriggerStay(Collider other) {
 		if (other.attachedRigidbody)
 			// It turns out you can actually lock a rigidbody's position using binary flag presets. Behaves more nicely than turning gravity off.
-			other.attachedRigidbody.constraints = (gm.state == GameMaster.GameState.Start) ? RigidbodyConstraints.FreezePosition : RigidbodyConstraints.None;
+			other.attachedRigidbody.constraints = (gm.state != GameMaster.GameState.Playing) ? RigidbodyConstraints.FreezePosition : RigidbodyConstraints.None;
 		
 	}
 

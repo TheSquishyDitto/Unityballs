@@ -1,39 +1,46 @@
-﻿using UnityEngine;
+﻿/// <summary>
+/// ScriptedPath.cs
+/// Authors: Kyle Dawson, Charlie Sun
+/// Date Created:  Apr. 19, 2015
+/// Last Revision: Apr. 21, 2015
+/// 
+/// Class for moving and rotating any object over time to specific locations.
+/// 
+/// NOTES: - Point generation breaks prefab instance!
+/// 
+/// TO DO: - Tweak until behaves as desired.
+/// 	   - Add more options to make path creation nicer.
+/// 
+/// </summary>
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
 public class ScriptedPath : MonoBehaviour {
-	GameMaster gm;
 	
 	// Variables
 	#region Variables
 	[Range(0, 2)]
-	public float speed;				// How fast the object should go between these points.
+	public float speed = 0.2f;		// How fast the object should go between these points.
 	public bool loop;				// Whether this object should loop around to its first position.
 	public Transform pointParent;	// Optional parent of points for organization.
 
 	[Tooltip("Only applies to ring generation function.")]
-	public float ringSize = 1;		// The size of a generated ring.
+	public float ringSize = 100;	// The size of a generated ring.
 	public int ringPointCount = 45;	// Number of points to generate for ring.
 	
 	public List<Transform> points = new List<Transform>();	// The points to go between in order.
 
-	float distance;				// Distance between position and next point.
-	Transform myTransform;		// Cached transform.
-	Vector3 startPos;			// Initial position.
+	float distance;					// Distance between position and next point.
+	Transform myTransform;			// Cached transform.
+	Vector3 startPos;				// Initial position.
 
 	#endregion
 
-	void Awake () {
-		gm = GameMaster.CreateGM();
-		gm.panCam = this.GetComponent<Camera>();
-	}
-
 	// Use this for initialization
-	void Start () {		
-		gm.OnPreStart();
-		
+	protected virtual void Start () {		
 		myTransform = transform;
 
 		if (points.Count > 0 && !points.Contains(null)) {
@@ -45,15 +52,8 @@ public class ScriptedPath : MonoBehaviour {
 		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if(Input.GetKeyDown(KeyCode.Return) && gm.state == GameMaster.GameState.Prestart) {
-			gm.OnStart();
-		}
-	}
-	
 	// Move - Coroutine to consistently move between points.
-	IEnumerator Move() {
+	protected IEnumerator Move() {
 		distance = Vector3.Distance(startPos, points[0].position);	// Get distance between where camera starts at and first point.
 		Transform lastPoint = myTransform;	// Sets the last visited point to be the camera's position.
 
@@ -91,7 +91,7 @@ public class ScriptedPath : MonoBehaviour {
 
 	// CreatePoint - Adds a point with the object's current position and rotation.
 	[ContextMenu("Add Point")]
-	void CreatePoint() {
+	protected void CreatePoint() {
 		GameObject newPoint = new GameObject("Point " + (points.Count + 1));
 		newPoint.transform.position = transform.position;
 		newPoint.transform.rotation = transform.rotation;
@@ -103,7 +103,7 @@ public class ScriptedPath : MonoBehaviour {
 
 	// GenerateRing - Creates a circle of points around the origin, all facing the origin.
 	[ContextMenu("Generate Ring")]
-	void CreateRing() {
+	protected void CreateRing() {
 		for (int i = 0; i < ringPointCount; i++) {
 			transform.position = new Vector3(ringSize * Mathf.Cos((i * 2 * Mathf.PI)/ringPointCount), transform.position.y, ringSize * Mathf.Sin((i * 2 * Mathf.PI)/ringPointCount));
 			transform.LookAt(Vector3.zero);
@@ -113,7 +113,7 @@ public class ScriptedPath : MonoBehaviour {
 
 	// ClearPoints - Clears all points.
 	[ContextMenu("Clear All Points")]
-	void ClearPonts() {
+	protected void ClearPonts() {
 		foreach (Transform obj in points) {
 			if (Application.isPlaying)
 				Destroy(obj.gameObject);
@@ -125,7 +125,7 @@ public class ScriptedPath : MonoBehaviour {
 	}
 
 	// OnDrawGizmos - Draws the points to be pathed between in scene view.
-	void OnDrawGizmos() {
+	protected void OnDrawGizmos() {
 
 		if (points.Count > 0) {
 

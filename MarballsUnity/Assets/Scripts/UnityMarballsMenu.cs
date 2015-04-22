@@ -16,6 +16,7 @@ public class UnityMarballsMenu : MonoBehaviour {
 		PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/StartPlatform"));
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/Marble Prefabs/Base Marble")) as GameObject).transform.position = new Vector3(0, 3, 0);
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/KillZone")) as GameObject).transform.position = new Vector3(0, -20, 0);
+		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/PanCam")) as GameObject).transform.position = new Vector3(0, 50, 0);
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/FinishLine")) as GameObject).transform.position = new Vector3(0, 4, -8);
 		Camera.main.gameObject.AddComponent<CameraController>();
 		

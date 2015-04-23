@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Apr. 22, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -62,25 +62,27 @@ public class MainHUD : MonoBehaviour {
 	void Awake () {
 		gm = GameMaster.CreateGM();
 		gm.hud = this;
+		hud = GetComponent<Canvas>();
 	}
 
 	// OnEnable - Called when the HUD is activated.
 	void OnEnable() {
+		GameMaster.pan += HideHUD;
 		GameMaster.start += BeginCountdown;
-		GameMaster.start += HidePanCanvas;
 		GameMaster.play += HideCountdown;
+		Marble.die += ShowDeath;
 	}
 
 	// OnDisable - Called when the HUD is deactivated.	
 	void OnDisable() {
+		GameMaster.pan -= HideHUD;
 		GameMaster.start -= BeginCountdown;
-		GameMaster.start -= HidePanCanvas;
 		GameMaster.play -= HideCountdown;
+		Marble.die -= ShowDeath;
 	}
 
 	// Use this for initialization
 	void Start () {
-		hud = GetComponent<Canvas>();
 
 		goLength = Mathf.Clamp(goLength, 0.01f, 0.999f);
 
@@ -96,8 +98,9 @@ public class MainHUD : MonoBehaviour {
 					scores.text = (gm.levelData.bestTimes.Count > i)? scores.text + gm.levelData.bestTimes[i].ToString("F2") + " s" : scores.text + "-----";
 					scores.text = scores.text + "\n";
 				}
-			} else
+			} else {
 				best.enabled = false;
+			}
 
 			// Use level message settings.
 			if (gm.levelData.messageMode == LevelDataObject.MessageMode.Append) {
@@ -111,6 +114,8 @@ public class MainHUD : MonoBehaviour {
 				deathMessages = gm.levelData.deathMessages;
 				winMessages = gm.levelData.winMessages;
 			}
+		} else {
+			best.enabled = false;
 		}
 
 		if (gm.panCam == null)
@@ -161,13 +166,15 @@ public class MainHUD : MonoBehaviour {
 		}
 	}
 
-	// HidePanCanvas - Hides the pan screen canvas.
-	public void HidePanCanvas() {
-		panScreen.enabled = false;
+	// HideHUD - Hides HUD canvas.
+	public void HideHUD() {
+		hud.enabled = false;
+		panScreen.enabled = true;
 	}
 
 	// BeginCountdown - Sets up countdown.
 	public void BeginCountdown() {
+		panScreen.enabled = false;
 		hud.enabled = true;
 		timer.text = "0.0 s";
 		gm.timer += goLength - .1f;
@@ -195,6 +202,11 @@ public class MainHUD : MonoBehaviour {
 	public void HideActiveBuff() {
 		buffBox.SetActive(false);
 		// If we need to clear it, we can do so here.
+	}
+
+	// ShowDeath - Starts death coroutine.
+	public void ShowDeath() {
+		StartCoroutine("OnDeath");
 	}
 	
 	// Restart - Reloads the current level.

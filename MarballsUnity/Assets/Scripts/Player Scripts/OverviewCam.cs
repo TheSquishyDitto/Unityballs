@@ -18,7 +18,8 @@ public class OverviewCam : MonoBehaviour {
 	GameMaster gm; 			// Reference to the game master.
 	Transform myTransform;	// Reference to object's own transform.
 	Transform marble;		// Reference to marble
-	Vector3 startOffset;	// Initial distance from marble.
+
+	public Vector3 startOffset = new Vector3(0, 20, 0);	// Initial distance from marble.
 
 	void Awake () {
 		gm = GameMaster.CreateGM ();
@@ -28,7 +29,6 @@ public class OverviewCam : MonoBehaviour {
 	void Start () {
 		myTransform = transform;
 		marble = gm.marble.marform;
-		startOffset = myTransform.position - marble.position;
 	}
 	
 	// Update is called once per frame

@@ -6,7 +6,7 @@
 /// 
 /// Class that handles behavior of killzone boundaries.
 /// 
-/// NOTES: - Should be attached to objects with plane-like trigger colliders.
+/// NOTES: - Can be attached to anything with any collider.
 /// 	   - Currently respawns ball back at the spawn pad.
 /// 
 /// TO DO: - Allow the option for killzones to "destroy" the marble.
@@ -40,16 +40,26 @@ public class KillZone : MonoBehaviour {
 
 	// OnTriggerEnter - Called when an object collides with the trigger.
 	void OnTriggerEnter(Collider other) {
-		// Check if what fell into the killzone was a marble, since you wouldn't want a falling box to reset the player.
-		if (other.CompareTag("Marble") && gm.state == GameMaster.GameState.Playing) {
-			AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/WilhelmScream"), gm.cam.position);
-			gm.hud.StartCoroutine("OnDeath");	// Call gm.OnDeath instead.
-		}
+		Kill(other);
+	}
+
+	// OnCollisionEnter - Called when an object collides with the collider.
+	void OnCollisionEnter(Collision collision) {
+		Kill (collision.collider);
 	}
 
 	// OnDrawGizmosSelected - Used to draw things when selected in scene view exclusively: does not affect gameplay.
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Color.red;
 		Gizmos.DrawCube(transform.position, transform.localScale);	// Shows kill zone when the kill zone is selected.
+	}
+
+	// Kill - Lives up to its namesake.
+	void Kill(Collider other) {
+		// Check if what fell into the killzone was a marble, since you wouldn't want a falling box to reset the player.
+		if (other.CompareTag("Marble") && gm.state == GameMaster.GameState.Playing) {
+			AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/WilhelmScream"), gm.cam.position);
+			gm.marble.OnDie();
+		}
 	}
 }

@@ -52,14 +52,7 @@ public class DebugMenu : MonoBehaviour {
 
 		if (fpsSlider) fpsText.text = "Target FPS: " + fpsSlider.value;	// Updates the text to the current target value.
 
-		manual = false;
-		if (gm.state == GameMaster.GameState.Start && !start.isOn) {
-			start.isOn = true;
-		}
-		if (gm.state == GameMaster.GameState.Playing && !play.isOn) {
-			play.isOn = true;
-		}
-		manual = true;
+		RefreshState();
 	}
 
 	// DEBUG - ChangeFPS - Changes application's preferred FPS. Acts as a soft ceiling.
@@ -72,7 +65,7 @@ public class DebugMenu : MonoBehaviour {
 		Application.targetFrameRate = int.Parse(targetFPS);
 	}
 
-	// DEBUG - StartButton - Sets game state to the starting state.
+	// DEBUG - ForceStart - Sets game state to the starting state.
 	public void ForceStart (bool start = true){
 		if (start && manual) {
 			gm.CancelCoroutines();
@@ -80,17 +73,52 @@ public class DebugMenu : MonoBehaviour {
 		}
 	}
 	
-	// DEBUG - PlayButton - Sets game state to the playing state.
+	// DEBUG - ForcePlay - Sets game state to the playing state.
 	public void ForcePlay (bool play = true){
 		if (play && manual) {
 			gm.CancelCoroutines();
 			gm.OnPlay();
 		}
 	}
+
+	// DEBUG - ForcePan - Sets game state to the panning state.
+	public void ForcePan (bool pan = true){
+		if (pan && manual) {
+			gm.CancelCoroutines();
+			gm.OnPreStart();
+		}
+	}
+
+	// DEBUG - ForceWin - Sets game state to the winning state.
+	public void ForceWin (bool win = true){
+		if (win && manual) {
+			gm.CancelCoroutines();
+			gm.OnWin();
+		}
+	}
+
+	// RefreshState - Keeps state toggle group up to date.
+	void RefreshState() {
+		manual = false;
+		if (gm.state == GameMaster.GameState.Start && !start.isOn) {
+			start.isOn = true;
+			play.isOn = false;
+		} 
+		if (gm.state == GameMaster.GameState.Playing && !play.isOn) {
+			start.isOn = false;
+			play.isOn = true;
+		}
+		manual = true;
+	}
 	
 	// DEBUG - SimpleWin - Turns simple animations on or off.
 	public void SimpleAnim (bool simple) {
 		gm.simpleAnim = simple;
+	}
+
+	// DEBUG - GravFinish - Turns gravity finish on or off.
+	public void GravFinish(bool grav) {
+		gm.finishLine.GetComponent<FinishLine>().gravityFinish = grav;
 	}
 
 	// DEBUG - UseOnGrab - Automatically use picked up buffs.
@@ -109,5 +137,7 @@ public class DebugMenu : MonoBehaviour {
 		excon.Rotate(buttonRot);
 		expanded = !expanded;
 		content.SetActive(expanded);
+
+		if (expanded) RefreshState();
 	}
 }

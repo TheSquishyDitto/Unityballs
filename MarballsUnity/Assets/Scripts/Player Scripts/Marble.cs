@@ -34,6 +34,7 @@ public class Marble : MonoBehaviour {
 
 	public delegate void ApplyBuff(float intensity, float duration);	// This is declaring a sorta data type for a variable that can hold functions.
 	public delegate void ModifyBehavior();		// Datatype for most delegates that modify marble behavior.
+	public delegate void EventAction(); 		// Datatype that most event functions will use.
 
 	// Variables
 	#region Variables
@@ -83,6 +84,8 @@ public class Marble : MonoBehaviour {
 
 	[Header("Misc. Options")]
 	public bool flashLight;				// Whether marble should light up under certain scenarios.
+
+	public static event EventAction die;	// Container for actions when player dies.
 	
 	#endregion
 
@@ -94,6 +97,7 @@ public class Marble : MonoBehaviour {
 		gm.marble = this;	// Tells the Game Master that this is the currently controlled marble.
 		marform = transform;
 		marbody = GetComponent<Rigidbody>();
+		ballCol = GetComponent<SphereCollider>();
 	}
 
 	// OnEnable - Called when the marble is activated. Used to subscribe to events.
@@ -115,7 +119,6 @@ public class Marble : MonoBehaviour {
 	void Start () {
 		inputDirection = Vector3.zero;
 		cam = gm.cam;
-		ballCol = GetComponent<SphereCollider>();
 		ClearBuffs();	// Resets marble's properties to default.
 		marbody.maxAngularVelocity = maxAngVelocity;
 		transform.localScale = Vector3.one * defSize;
@@ -157,6 +160,22 @@ public class Marble : MonoBehaviour {
 	}
 
 	#endregion
+
+	// OnDie - Called when player should die.
+	public void OnDie() {
+		ClearBuffs();
+		marbody.isKinematic = true;
+		GetComponent<MeshRenderer>().enabled = false;
+		ballCol.enabled = false;
+		GameObject burst = (GameObject)(Instantiate(Resources.Load("Prefabs/Particle Prefabs/Deathburst")));
+		burst.transform.position = marform.position;
+		Destroy(burst, 2);
+
+		if (die != null) 
+			die();
+		else
+			Invoke("Respawn", 4f);
+	}
 
 	// PowerUp Functions - Functions that (de)buff the marble's behavior.
 	#region PowerUp Functions
@@ -320,9 +339,11 @@ public class Marble : MonoBehaviour {
 
 	// ResetState - Clears marble's conditions. 
 	public void ResetState() {
-		ClearAllBuffs();
 		marbody.isKinematic = false;
 		marbody.constraints = RigidbodyConstraints.None;
+		GetComponent<MeshRenderer>().enabled = true;
+		ballCol.enabled = true;
+		ClearAllBuffs();
 	}
 	
 	#endregion

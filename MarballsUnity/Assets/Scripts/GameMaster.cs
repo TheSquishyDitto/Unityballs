@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 19, 2015
+/// Last Revision: Apr. 22, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -52,7 +52,7 @@ public class GameMaster : MonoBehaviour {
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
-	public float timer;				// How much time has elapsed since the start of a level.
+	public float timer = 0;			// How much time has elapsed since the start of a level.
 	public float countdownLength;	// How long timer should countdown in the starting phase.
 	public int scoreCount = 5;		// How many of the player's scores should be kept.
 	public bool simpleAnim = false;	// Whether the victory animation should be excessive or not.
@@ -68,7 +68,6 @@ public class GameMaster : MonoBehaviour {
 	public static event EventAction pan;	// Container for actions before the game actually starts.
 	public static event EventAction start;	// Container for actions when game starts. 
 	public static event EventAction play;	// Container for actions when gameplay begins.
-	public static event EventAction die;	// Container for actions when player dies.
 	public static event EventAction win;	// Container for actions when winning.
 
 	#endregion
@@ -92,14 +91,13 @@ public class GameMaster : MonoBehaviour {
 			DontDestroyOnLoad(this); // GameMaster should exist forever.
 		}
 
+		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
 		LoadLevelData();
 	}
 
 	// Start - Use this for initialization.
 	void Start () {
 		name = "Game Master";
-		timer = 0;
-		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
 
 		Debug.Log("Save File Path: " + Application.persistentDataPath); // DEBUG - This is where data is saved to.
 	}
@@ -260,8 +258,7 @@ public class GameMaster : MonoBehaviour {
 	#region State Changers
 	// OnPreStart - Called before level starts.
 	public void OnPreStart(){
-		//hud.gameObject.SetActive(false);	// SUBSCRIBED EVENTABLE
-		levelData.firstTime = debug;		// If we aren't testing the game, panning shouldn't always happen.
+		if (levelData != null) levelData.firstTime = debug;	// If we aren't testing the game, panning shouldn't always happen.
 		state = GameState.Prestart;
 
 		if (pan != null) pan();
@@ -270,7 +267,6 @@ public class GameMaster : MonoBehaviour {
 	
 	// OnStart - Called when a level is to be started.
 	public void OnStart() {
-		//hud.gameObject.SetActive(true);		// SUBSCRIBED EVENTABLE
 		Time.timeScale = 1;
 		timer = countdownLength;
 		state = GameState.Start;
@@ -287,11 +283,6 @@ public class GameMaster : MonoBehaviour {
 		if (play != null) play();	// Activates any functions subscribed to the gameplay event.
 	}
 
-	// OnDeath - Called when the player dies.
-	public void OnDeath() {
-		if (die != null) die();	// Should subscribe the HUD's OnDeath functionality to this.
-	}
-
 	// OnWin - Called when a level is won.
 	public void OnWin() {
 		state = GameState.Win;
@@ -299,20 +290,23 @@ public class GameMaster : MonoBehaviour {
 
 		if (win != null) win(); // Should subscribe the various victory functions to this.
 
-		// Keeps player's five best times.
-		for (int i = 0; i < scoreCount; i++) {
-			// Checks if there's a vacant slot or if the current slot is a worse time.
-			if (levelData.bestTimes.Count == i || levelData.bestTimes[i] > timer) {
-				levelData.bestTimes.Insert(i, timer);	// If so, shoves it in.
+		// If this is a legitimate level...
+		if (levelData != null) {
+			// Keeps player's five best times.
+			for (int i = 0; i < scoreCount; i++) {
+				// Checks if there's a vacant slot or if the current slot is a worse time.
+				if (levelData.bestTimes.Count == i || levelData.bestTimes[i] > timer) {
+					levelData.bestTimes.Insert(i, timer);	// If so, shoves it in.
 
-				// Shaves off any times that go beyond the specified place.
-				if (levelData.bestTimes.Count > scoreCount) {
-					levelData.bestTimes.RemoveRange(scoreCount, levelData.bestTimes.Count - scoreCount);
+					// Shaves off any times that go beyond the specified place.
+					if (levelData.bestTimes.Count > scoreCount) {
+						levelData.bestTimes.RemoveRange(scoreCount, levelData.bestTimes.Count - scoreCount);
+					}
+
+					Save(); // Saves game.
+
+					break; // Breaks out of for loop once the entry is added.
 				}
-
-				Save(); // Saves game.
-
-				break; // Breaks out of for loop once the entry is added.
 			}
 		}
 	}

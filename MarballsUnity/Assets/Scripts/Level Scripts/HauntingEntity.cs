@@ -2,7 +2,7 @@
 /// HauntingEntity.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 10, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Apr. 22, 2015
 /// 
 /// Class for Jerry. "I see."
 ///

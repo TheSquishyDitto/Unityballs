@@ -44,6 +44,7 @@ public class Marble : MonoBehaviour {
 	public Transform marform;			// Reference to the marble's transform.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
+	public AudioSource ballin;			// Reference to the marble's rolling sound.
 
 	[Header("Starting Values")]
 	public float maxAngVelocity = 50;	// Default maximum angular velocity.
@@ -98,6 +99,7 @@ public class Marble : MonoBehaviour {
 		marform = transform;
 		marbody = GetComponent<Rigidbody>();
 		ballCol = GetComponent<SphereCollider>();
+		ballin = GetComponent<AudioSource>();
 	}
 
 	// OnEnable - Called when the marble is activated. Used to subscribe to events.
@@ -154,8 +156,11 @@ public class Marble : MonoBehaviour {
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
 			if (flashLight) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
+			ballin.enabled = true;
+			ballin.volume = marbody.velocity.magnitude/60f;
 		} else {			
 			if (flashLight) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
+			ballin.enabled = false;
 		}
 	}
 

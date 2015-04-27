@@ -71,6 +71,7 @@ public class MainHUD : MonoBehaviour {
 		GameMaster.start += BeginCountdown;
 		GameMaster.play += HideCountdown;
 		Marble.die += ShowDeath;
+		Marble.respawn += ClearTint;
 	}
 
 	// OnDisable - Called when the HUD is deactivated.	
@@ -79,6 +80,7 @@ public class MainHUD : MonoBehaviour {
 		GameMaster.start -= BeginCountdown;
 		GameMaster.play -= HideCountdown;
 		Marble.die -= ShowDeath;
+		Marble.respawn -= ClearTint;
 	}
 
 	// Use this for initialization
@@ -230,6 +232,16 @@ public class MainHUD : MonoBehaviour {
 
 	// Animation Coroutines - Display special GUI animations over time.
 	#region Animation Coroutines
+
+	// ClearTint - Clears all tint screens and removes any associated buttons.
+	public void ClearTint() {
+		deathScreen.color = new Color(1, 0, 0, 0);
+		deathMessage.color = new Color(1, 1, 1, 0);
+		winMessage.color = new Color(1, 1, 1, 0);
+		winScreen.color = new Color(0, 1, 0, 0);
+		winOptions.SetActive(false);
+	}
+
 	// OnDeath - Called when player falls off the stage or otherwise is killed.
 	public IEnumerator OnDeath() {
 
@@ -246,14 +258,6 @@ public class MainHUD : MonoBehaviour {
 			deathMessage.color = new Color(1, 1, 1, i/10.0f);
 			yield return new WaitForSeconds(0.05f);
 		}
-
-		yield return new WaitForSeconds(2); // Punishment waiting.
-
-		// Clears death screens.
-		deathScreen.color = new Color(1, 0, 0, 0);
-		deathMessage.color = new Color(1, 1, 1, 0);
-
-		gm.marble.Respawn(); // Finally respawns player.
 	}
 
 	// OnVictory - Displays winning text and buttons.

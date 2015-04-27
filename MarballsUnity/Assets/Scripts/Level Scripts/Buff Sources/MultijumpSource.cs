@@ -2,7 +2,7 @@
 /// MultijumpSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Apr. 26, 2015
 /// 
 /// Class for multi jump granting entities.
 /// 
@@ -36,8 +36,6 @@ public class MultijumpSource : BuffSource {
 		marble.jumpFunction = NewJump;
 
 		marble.midairJumps = (int)intensity;
-		//marble.maxJumps = (int)intensity;
-		//marble.jumpsLeft = (marble.grounded)? marble.maxJumps : marble.maxJumps - 1; // If the marble is in the air, their current jump count will only allow the additional midair jumps.
 	}
 
 	// NewJump - Allows marble to jump in midair.
@@ -47,6 +45,7 @@ public class MultijumpSource : BuffSource {
 
 			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
 			jumpDir += marble.inputDirection;	// Allows jumps in this state to be more directionally influenced.
+			jumpDir = jumpDir.normalized;
 
 			//marble.marbody.AddForce (marble.jumpHeight * jumpDir);
 			marble.marbody.velocity = new Vector3(marble.marbody.velocity.x, 0, marble.marbody.velocity.z) + (jumpDir * (marble.jumpHeight / 100));
@@ -60,7 +59,7 @@ public class MultijumpSource : BuffSource {
 				}
 			}
 
-			marble.Invoke("JumpCooldown", 0.25f);	// Forces the marble to wait a moment in midair before allowing it to jump again.
+			marble.Invoke("JumpCooldown", 0.3f);	// Forces the marble to wait a moment in midair before allowing it to jump again.
 		}
 	}
 

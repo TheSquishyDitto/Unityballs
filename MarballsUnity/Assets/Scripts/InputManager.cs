@@ -206,27 +206,27 @@ public class InputManager : MonoBehaviour {
 	void CameraControls() {
 		if (gm.cam) {
 			// These controls are relevant to moving the camera when the camera is in keyboard mode.
-			if (gm.cam.GetComponent<CameraController>().mode == CameraController.ControlMode.Keyboard) {
+			if (gm.cam.GetComponent<ICamera>().Mode == CameraController.ControlMode.Keyboard) {
 				// Move up.
 				if (Input.GetKey(keyBindings[(int)Keys.CamUp])) {
-					gm.cam.GetComponent<CameraController>().MoveUp();
+					gm.cam.GetComponent<ICamera>().MoveUp();
 				}
 				// Move down.
 				if (Input.GetKey(keyBindings[(int)Keys.CamDown])) {
-					gm.cam.GetComponent<CameraController>().MoveDown();
+					gm.cam.GetComponent<ICamera>().MoveDown();
 				}
 				// Move left.
 				if (Input.GetKey(keyBindings[(int)Keys.CamLeft])) {
-					gm.cam.GetComponent<CameraController>().MoveLeft();
+					gm.cam.GetComponent<ICamera>().MoveLeft();
 				}
 				// Move right.
 				if (Input.GetKey(keyBindings[(int)Keys.CamRight])) {
-					gm.cam.GetComponent<CameraController>().MoveRight();
+					gm.cam.GetComponent<ICamera>().MoveRight();
 				}
 			}
 			// Toggle whether the keyboard or mouse control the camera.
 			if (Input.GetKeyDown(keyBindings[(int)Keys.CamToggle])) {
-				gm.cam.GetComponent<CameraController>().ToggleControlMode();
+				gm.cam.GetComponent<ICamera>().ToggleControlMode();
 			}
 		}
 	}

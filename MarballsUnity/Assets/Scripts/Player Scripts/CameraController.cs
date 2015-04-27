@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 13, 2015
+/// Last Revision: Apr. 25, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -16,7 +16,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class CameraController : MonoBehaviour {
+public class CameraController : MonoBehaviour, ICamera {
 	
 	// Enum for determining how to control camera.
 	public enum ControlMode {
@@ -73,6 +73,16 @@ public class CameraController : MonoBehaviour {
 		mouseSensitivity = 0.05f;
 		keyboardSensitivity = 3f;
 	}
+
+	// OnEnable - Called when script is enabled.
+	void OnEnable() {
+		Marble.respawn += ResetPosition;
+	}
+
+	// OnDisable - Called when script is disabled.
+	void OnDisable() {
+		Marble.respawn -= ResetPosition;
+	}
 	
 	// Update - Called once per frame
 	void Update () {
@@ -91,7 +101,9 @@ public class CameraController : MonoBehaviour {
 		} else {
 			Debug.LogWarning("(CameraController.cs) Control mode not specified!");
 		}
-		
+
+		//Debug.Log(transform.forward.ToString());
+
 		// Allows zooming in and out.
 		if(Input.GetAxis("Mouse ScrollWheel") != 0) {
 			radius -= Input.GetAxis("Mouse ScrollWheel");
@@ -172,20 +184,16 @@ public class CameraController : MonoBehaviour {
 	// Moves camera down.
 	public void MoveDown() {
 		psy = Mathf.Clamp(psy - (keyboardSensitivity * Time.deltaTime), PSYMIN, PSYMAX);
-		
 	}
 	
 	// Moves camera left.
 	public void MoveLeft() {
 		theta -= keyboardSensitivity * Time.deltaTime;
-		
 	}
 	
 	// Moves camera right.
 	public void MoveRight() {
 		theta += keyboardSensitivity * Time.deltaTime;
-
-		
 	}
 	
 	// ToggleControlMode - Changes camera control style.
@@ -198,6 +206,22 @@ public class CameraController : MonoBehaviour {
 			//Screen.lockCursor = false;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
 		}
 	}
+
+	public ControlMode Mode {
+		get { return mode; }
+	}
 	
 	#endregion
+}
+
+// Interface for any type of camera setup class.
+public interface ICamera {
+	CameraController.ControlMode Mode { get; }
+
+	void MoveUp();
+	void MoveDown();
+	void MoveLeft();
+	void MoveRight();
+	void ResetPosition();
+	void ToggleControlMode();
 }

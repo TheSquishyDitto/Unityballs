@@ -2,7 +2,7 @@
 /// ScriptedPath.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Apr. 19, 2015
-/// Last Revision: Apr. 22, 2015
+/// Last Revision: Apr. 26, 2015
 /// 
 /// Class for moving and rotating any object over time to specific locations.
 /// 
@@ -24,6 +24,7 @@ public class ScriptedPath : MonoBehaviour {
 	#region Variables
 	[Range(0, 2)]
 	public float speed = 0.2f;		// How fast the object should go between these points.
+	public float waitTime = 0;		// How long object should dwell at a point before moving on.
 	public bool loop;				// Whether this object should loop around to its first position.
 	public Transform pointParent;	// Optional parent of points for organization.
 
@@ -32,10 +33,8 @@ public class ScriptedPath : MonoBehaviour {
 	public int ringPointCount = 45;	// Number of points to generate for ring.
 	
 	public List<Transform> points = new List<Transform>();	// The points to go between in order.
-
-	float distance;					// Distance between position and next point.
+	
 	Transform myTransform;			// Cached transform.
-	Vector3 startPos;				// Initial position.
 
 	#endregion
 
@@ -45,7 +44,6 @@ public class ScriptedPath : MonoBehaviour {
 
 		if (points.Count > 0 && !points.Contains(null)) {
 			myTransform.position = points[0].position;
-			startPos = myTransform.position;
 			StartCoroutine("Move");
 		} else {
 			Debug.LogWarning("(ScriptedPath.cs) Point list is empty or contains null elements!");
@@ -54,34 +52,28 @@ public class ScriptedPath : MonoBehaviour {
 	
 	// Move - Coroutine to consistently move between points.
 	protected IEnumerator Move() {
-		distance = Vector3.Distance(startPos, points[0].position);	// Get distance between where camera starts at and first point.
 		Transform lastPoint = myTransform;	// Sets the last visited point to be the camera's position.
 
 		// For each point as a target destination,
 		for (int i = 0; i < points.Count; i++) {
 
 			// Keep moving towards the next point while there is distance to be covered.
-			while(distance > speed) {
-
-				myTransform.position += (points[i].position - myTransform.position).normalized * speed;
+			while(myTransform.position != points[i].position) {
+				myTransform.position = Vector3.MoveTowards(myTransform.position, points[i].position, speed);
 
 				// Matches rotation of point gradually as well.
 				myTransform.rotation = Quaternion.Lerp(lastPoint.rotation, points[i].rotation, 
 				                                       Vector3.Distance(myTransform.position, lastPoint.position) / Vector3.Distance(lastPoint.position, points[i].position));
 
-				distance = Vector3.Distance(myTransform.position, points[i].position); // Refreshes distance.
 				yield return new WaitForFixedUpdate();
 			}
 
+			yield return new WaitForSeconds(waitTime);
+
 			lastPoint = points[i]; // Refreshes the last visited point once movement is done.
 
-			// If there are more points, set the distance to the next point.
-			if (i < points.Count - 1)
-				distance = Vector3.Distance(myTransform.position, points[i + 1].position);
-
 			// Otherwise, if looping is enabled, set the distance from the last point to the first and restart the for loop.
-			else if (loop) {
-				distance = Vector3.Distance(myTransform.position, points[0].position);
+			if (loop && i == points.Count - 1) {
 				i = -1;
 				yield return new WaitForFixedUpdate(); // Prevent infinite loops without any pause.
 			}

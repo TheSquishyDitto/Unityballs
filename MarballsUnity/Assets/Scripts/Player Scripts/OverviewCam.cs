@@ -2,7 +2,7 @@
 /// OverviewCam.cs
 /// Authors: Kyle Dawson, Chris Viqueira
 /// Date Created:  Apr. 22, 2015
-/// Last Revision: Apr. 22, 2015
+/// Last Revision: Apr. 26, 2015
 /// 
 /// Class that controls overview cam adjustments
 /// 
@@ -39,7 +39,7 @@ public class OverviewCam : MonoBehaviour {
 		RaycastHit hit;
 
 		// If marble cannot "see" the camera, moves the camera to a point on the radius that it CAN be seen.
-		if (Physics.Raycast (marble.position, (myTransform.position - marble.position).normalized, out hit, 100)) 
+		if (Physics.Raycast (marble.position, Vector3.up, out hit, 100)) 
 			myTransform.position = hit.point - (myTransform.position - marble.position).normalized;
 		else {
 			myTransform.position = marble.position + startOffset; // default value in editor

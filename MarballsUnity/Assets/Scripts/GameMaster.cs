@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 22, 2015
+/// Last Revision: Apr. 25, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -153,12 +153,8 @@ public class GameMaster : MonoBehaviour {
 		hud.StopCoroutine("OnDeath");
 		finishLine.GetComponent<FinishLine>().StopCoroutine("SwirlFinish");
 		hud.StopCoroutine("OnVictory");
-		hud.winOptions.SetActive(false);
+		hud.ClearTint();
 		marble.transform.localScale = new Vector3(marble.defSize, marble.defSize, marble.defSize);
-		hud.deathScreen.color = new Color(hud.deathScreen.color.r, hud.deathScreen.color.g, hud.deathScreen.color.b, 0);
-		hud.deathMessage.color = new Color(hud.deathMessage.color.r, hud.deathMessage.color.g, hud.deathMessage.color.b, 0);
-		hud.winScreen.color = new Color(hud.winScreen.color.r, hud.winScreen.color.g, hud.winScreen.color.b, 0);
-		hud.winMessage.color = new Color(hud.winMessage.color.r, hud.winMessage.color.g, hud.winMessage.color.b, 0);
 	}
 
 	// ResetVariables - Clears and sets variables to their initial states.

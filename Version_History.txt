@@ -2,6 +2,16 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 26, 2015:
+	- Kyle tweaked and added more things:
+		+ Added candidate Multijump tutorial level.
+		+ Added poppable/collectable balloons to small test level.
+		+ Added two experimental camera alternatives:
+			* Camera that doesn't rely on spherical position calculations, just manipulating an offset vector.
+				~ Allows easy upward rotation of camera when obstructed, otherwise identical if not more efficient.
+			* Camera that mainly relies on Rigidbody and spring components to get around.
+				~ Unorthodox movement, but follows player's direction of velocity.
+
 April 22, 2015:
 	- Brenton added textures and additional helisources to the heliball level.
 	- Chris made the overview cam more reliable through raycasting.

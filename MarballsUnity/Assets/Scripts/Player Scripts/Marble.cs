@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 19, 2015
+/// Last Revision: Apr. 25, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -86,7 +86,8 @@ public class Marble : MonoBehaviour {
 	[Header("Misc. Options")]
 	public bool flashLight;				// Whether marble should light up under certain scenarios.
 
-	public static event EventAction die;	// Container for actions when player dies.
+	public static event EventAction die;	 // Container for actions when player dies.
+	public static event EventAction respawn; // Container for actions when player respawns.
 	
 	#endregion
 
@@ -158,6 +159,7 @@ public class Marble : MonoBehaviour {
 			if (flashLight) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
 			ballin.enabled = true;
 			ballin.volume = marbody.velocity.magnitude/60f;
+			ballin.pitch = (Mathf.Sin(Time.time / 3) / 4f) + 0.75f;
 		} else {			
 			if (flashLight) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
 			ballin.enabled = false;
@@ -176,10 +178,9 @@ public class Marble : MonoBehaviour {
 		burst.transform.position = marform.position;
 		Destroy(burst, 2);
 
-		if (die != null) 
-			die();
-		else
-			Invoke("Respawn", 4f);
+		if (die != null) die();
+
+		Invoke("Respawn", 4f);	// Respawns in a few seconds.
 	}
 
 	// PowerUp Functions - Functions that (de)buff the marble's behavior.
@@ -331,14 +332,15 @@ public class Marble : MonoBehaviour {
 		
 		ForceBrake();
 		ResetState();
-		if (cam) cam.GetComponent<CameraController>().ResetPosition();
 
 		if (gm.respawn) {
-			transform.position = gm.respawn.transform.position + new Vector3(0,3,0);
+			marform.position = gm.respawn.transform.position + new Vector3(0,3,0);
 		} else {
 			Debug.LogWarning("(Marble.cs) No spawn point available! Placing in default location..."); // DEBUG
-			transform.position = new Vector3(0, 3, 0);
+			marform.position = new Vector3(0, 3, 0);
 		}
+
+		if (respawn != null) respawn();
 
 	}
 

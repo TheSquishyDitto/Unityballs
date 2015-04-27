@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Apr. 13, 2015
+/// Last Revision: Apr. 25, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -73,8 +73,8 @@ public class FinishLine : MonoBehaviour {
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
-			impactVelocity = gm.marble.marbody.velocity;	// Stores marble's velocity at the time of impact.
-			gm.marble.marbody.isKinematic = (!gravityFinish || gm.simpleAnim);	// Hands total control of marble position to scripts.
+			impactVelocity = other.attachedRigidbody.velocity;	// Stores marble's velocity at the time of impact.
+			other.attachedRigidbody.isKinematic = (!gravityFinish || gm.simpleAnim);	// Hands total control of marble position to scripts.
 			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
 			gm.OnWin(); // When player gets to finish they win!
 		}	
@@ -83,15 +83,11 @@ public class FinishLine : MonoBehaviour {
 	// FlameOn - Spews flames.
 	public void FlameOn() {
 		flames.SetActive(true);
-		//flame1.Play();
-		//flame2.Play();
 	}
 
 	// FlameOff - Ceases spewing flames.
 	public void FlameOff() {
 		flames.SetActive(false);
-		//flame1.Stop();
-		//flame2.Stop();
 	}
 
 	// SwirlFinish - Coroutine that makes the marble spiral after crossing the finish line.

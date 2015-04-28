@@ -2,7 +2,7 @@
 /// MobileSurface.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 26, 2015
-/// Last Revision: Apr. 26, 2015
+/// Last Revision: Apr. 27, 2015
 /// 
 /// Class that allows objects resting on a moving object to move with the object.
 /// 
@@ -19,7 +19,7 @@ public class MobileSurface : MonoBehaviour {
 
 	Transform myTransform;					// Cached transform reference.
 	Vector3 lastPos = Vector3.zero;			// Last position of surface.
-	public Vector3 deltaPos = Vector3.zero;	// Change in position since last checked.
+	Vector3 deltaPos = Vector3.zero;		// Change in position since last checked.
 
 	// Use this for initialization
 	void Start () {

@@ -2,14 +2,13 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 25, 2015
+/// Last Revision: Apr. 27, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
 /// NOTES: - This is a singleton class so only one of it should ever exist, if you need a reference to it, call GameMaster.CreateGM()
 /// 
-/// TO DO: - Add game conditions.
-/// 	   - Add more events to subscribe to?
+/// TO DO: - Add more events to subscribe to?
 /// 
 /// </summary>
 
@@ -34,7 +33,7 @@ public class GameMaster : MonoBehaviour {
 
 	// Variables
 	#region Variables
-	public string version = "0.7.0";// Which version of Marballs is currently running.
+	public string version = "0.7.1";// Which version of Marballs is currently running.
 
 	public static GameMaster GM;	// Reference to singleton.
 
@@ -52,6 +51,7 @@ public class GameMaster : MonoBehaviour {
 
 	public GameState state;			// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
+	public Transform checkpoint;	// Where the player should respawn if they die.
 	public float timer = 0;			// How much time has elapsed since the start of a level.
 	public float countdownLength;	// How long timer should countdown in the starting phase.
 	public int scoreCount = 5;		// How many of the player's scores should be kept.
@@ -215,7 +215,7 @@ public class GameMaster : MonoBehaviour {
 	void Save() {
 		// Creates/overwrites file.
 		BinaryFormatter converter = new BinaryFormatter();
-		FileStream file = File.Create(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat");
+		FileStream file = File.Create(GetFilePath());
 
 		// Writes level data to player record.
 		PlayerRecord record = new PlayerRecord();
@@ -233,10 +233,10 @@ public class GameMaster : MonoBehaviour {
 	// Load - Loads the player's time.
 	void Load() {
 		// Checks if file exists.
-		if (File.Exists(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat")) {
+		if (File.Exists(GetFilePath())) {
 			// Opens file.
 			BinaryFormatter converter = new BinaryFormatter();
-			FileStream file = File.Open(Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat", FileMode.Open);
+			FileStream file = File.Open(GetFilePath(), FileMode.Open);
 
 			// Reads what data is there and closes file.
 			PlayerRecord records = (PlayerRecord)converter.Deserialize(file);
@@ -248,6 +248,11 @@ public class GameMaster : MonoBehaviour {
 				levelData.bestTimes.Add(records.bestTimes[i]);
 			}
 		}
+	}
+
+	// GetFilePath - Returns location of where the loaded level's save data is or will be.
+	public string GetFilePath() {
+		return Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat";
 	}
 
 	// State Changers - Functions that change the game's conditions.

@@ -2,7 +2,7 @@
 /// MultijumpSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Apr. 26, 2015
+/// Last Revision: Apr. 27, 2015
 /// 
 /// Class for multi jump granting entities.
 /// 
@@ -43,8 +43,8 @@ public class MultijumpSource : BuffSource {
 	public void NewJump(){
 		if (marble.canJump && marble.midairJumps > 0) {
 
-			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
-			jumpDir += marble.inputDirection;	// Allows jumps in this state to be more directionally influenced.
+			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up * 2;
+			if (!marble.grounded) jumpDir += marble.inputDirection;	// Allows jumps in this state to be more directionally influenced.
 			jumpDir = jumpDir.normalized;
 
 			//marble.marbody.AddForce (marble.jumpHeight * jumpDir);

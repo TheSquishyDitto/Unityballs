@@ -18,7 +18,7 @@ public class UnityMarballsMenu : MonoBehaviour {
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/KillZone")) as GameObject).transform.position = new Vector3(0, -20, 0);
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/PanCam")) as GameObject).transform.position = new Vector3(0, 50, 0);
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/FinishLine")) as GameObject).transform.position = new Vector3(0, 4, -8);
-		Camera.main.gameObject.AddComponent<CameraController>();
+		Camera.main.gameObject.AddComponent<CameraController2>();
 		
 		// Attempts to save the new scene, and if saved, creates level data for it.
 		if (EditorApplication.SaveScene()) {

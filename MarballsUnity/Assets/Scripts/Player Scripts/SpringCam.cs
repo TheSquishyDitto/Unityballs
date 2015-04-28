@@ -7,6 +7,7 @@
 /// Class that provides a third approach to camera behavior. Relies mainly on rigidbody and springs.
 /// 
 /// NOTES: - This class is currently crudely put together as proof of concept.
+/// 	   - As decreed by Chris, this camera is probably not suited for this game as it stands.
 /// 
 /// TO DO: - Refine and tweak until desired.
 /// 
@@ -15,7 +16,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class SpringCam : MonoBehaviour, ICamera {
+public class SpringCam : MonoBehaviour/*, ICamera*/ {	// If using in Marballs, re-add the ICamera.
 
 	// Variables
 	#region Variables

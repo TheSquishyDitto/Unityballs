@@ -2,7 +2,7 @@
 /// DebugMenu.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Mar. 22, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Apr. 26, 2015
 /// 
 /// Class that controls our debug menu.
 /// 
@@ -14,6 +14,8 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.IO;
 using System.Collections;
 
 public class DebugMenu : MonoBehaviour {
@@ -126,9 +128,34 @@ public class DebugMenu : MonoBehaviour {
 		gm.useOnGrab = use;
 	}
 
+	// DEBUG - FreezeTimer - Stops the level timer.
+	public void FreezeTimer(bool freeze) {
+		gm.freezeTimer = freeze;
+	}
+
+	// DEBUG - Flashlight - Enables marble's kinetic-powered flashlight.
+	public void Flashlight(bool on) {
+		gm.marble.flashLight = on;
+
+		if (!on) gm.marble.GetComponent<Light>().enabled = false;
+	}
+
 	// DEBUG - CheatFinish - Wins the level for you.
 	public void CheatFinish() {
 		gm.marble.transform.position = gm.finishLine.position;
+	}
+
+	// DEBUG - EraseSave - Permanently deletes saved level data.
+	// NOTE: Data can be reclaimed if an old high score is beaten before the level data object resets.
+	public void EraseSave() {
+		if (gm.levelData != null) {
+			if(File.Exists(gm.GetFilePath())) {
+				File.Delete(gm.GetFilePath());
+				Debug.LogWarning("(DebugMenu.cs) Deleted level data at " + gm.GetFilePath());
+			} else {
+				Debug.LogWarning("(DebugMenu.cs) No saved data for this level found!");
+			}
+		}
 	}
 
 	// DEBUG - ToggleExpansion

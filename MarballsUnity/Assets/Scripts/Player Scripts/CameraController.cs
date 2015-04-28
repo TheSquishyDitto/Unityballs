@@ -2,7 +2,7 @@
 /// CameraController.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 25, 2015
+/// Last Revision: Apr. 26, 2015
 /// 
 /// Class that controls camera movement.
 /// 
@@ -26,8 +26,9 @@ public class CameraController : MonoBehaviour, ICamera {
 	
 	// Variables
 	#region Variables
-	public GameMaster gm;					// Reference to Game Master.
-	public Transform marble; 				// Reference to coordinates of marble
+	GameMaster gm;							// Reference to Game Master.
+	Transform marble; 						// Reference to coordinates of marble
+	bool frozen = false;					// Whether or not camera should stop moving.
 
 	public float defTheta = Mathf.PI / 2;   // Default value of theta.
 	public float defPsy = 0.5f;				// Default value of psy.
@@ -86,56 +87,58 @@ public class CameraController : MonoBehaviour, ICamera {
 	
 	// Update - Called once per frame
 	void Update () {
-		// Keyboard mode controls
-		if (mode == ControlMode.Keyboard) { 
-			// Moved to control functions, handled by input manager.
-			
-		// Mouse mode controls
-		} else if (mode == ControlMode.Mouse) {
-			// Moving the mouse moves the camera.
-			psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * mouseSensitivity), PSYMIN, PSYMAX);
-			theta -= Input.GetAxis("Mouse X") * mouseSensitivity;
-			
-			
-		// Unspecified case controls
-		} else {
-			Debug.LogWarning("(CameraController.cs) Control mode not specified!");
-		}
-
-		//Debug.Log(transform.forward.ToString());
-
-		// Allows zooming in and out.
-		if(Input.GetAxis("Mouse ScrollWheel") != 0) {
-			radius -= Input.GetAxis("Mouse ScrollWheel");
-			playerRadius = radius;	// Changes player preferred radius
-		} 
-
-		radius = playerRadius;	// Attempts to set radius at the player preferred distance.
-
-		// If radius is too small, pushes it out, and up if autorotate is enabled.
-		//if (radius < RADMIN) {
-		//	MoveUp();
-		//	Debug.Log("Movin' on up!");
-		//	radius = RADMIN;	} 
-
-		// Checks if marble can "see" the camera currently.
-		Debug.DrawRay(marble.position, transform.position - marble.position, Color.blue); // DEBUG
-		RaycastHit hit;
-		// If marble cannot "see" the camera, moves the camera to a point on the radius that it CAN be seen.
-		if (Physics.Raycast(marble.position, (transform.position - marble.position).normalized, out hit, radius)) {
-			transform.position = hit.point - (transform.position - marble.position).normalized;
-			radius = Vector3.Distance(transform.position, marble.position); // Currently ignores minimum radius.
-
-			// Moves camera up if stuck against wall, otherwise settles it back down.
-			// NOTE: Currently causes jitter!
-			/*
-			if (autoRotate) {
-				if (radius < RADMIN)
-					MoveUp();
-				else if (psy > playerPsy && radius > RADMIN + 3)
-					MoveDown();
+		if (!frozen) {
+			// Keyboard mode controls
+			if (mode == ControlMode.Keyboard) { 
+				// Moved to control functions, handled by input manager.
+				
+			// Mouse mode controls
+			} else if (mode == ControlMode.Mouse) {
+				// Moving the mouse moves the camera.
+				psy = Mathf.Clamp(psy + (Input.GetAxis("Mouse Y") * mouseSensitivity), PSYMIN, PSYMAX);
+				theta -= Input.GetAxis("Mouse X") * mouseSensitivity;
+				
+				
+			// Unspecified case controls
+			} else {
+				Debug.LogWarning("(CameraController.cs) Control mode not specified!");
 			}
-			*/
+
+			//Debug.Log(transform.forward.ToString());
+
+			// Allows zooming in and out.
+			if(Input.GetAxis("Mouse ScrollWheel") != 0) {
+				radius -= Input.GetAxis("Mouse ScrollWheel");
+				playerRadius = radius;	// Changes player preferred radius
+			} 
+
+			radius = playerRadius;	// Attempts to set radius at the player preferred distance.
+
+			// If radius is too small, pushes it out, and up if autorotate is enabled.
+			//if (radius < RADMIN) {
+			//	MoveUp();
+			//	Debug.Log("Movin' on up!");
+			//	radius = RADMIN;	} 
+
+			// Checks if marble can "see" the camera currently.
+			Debug.DrawRay(marble.position, transform.position - marble.position, Color.blue); // DEBUG
+			RaycastHit hit;
+			// If marble cannot "see" the camera, moves the camera to a point on the radius that it CAN be seen.
+			if (Physics.Raycast(marble.position, (transform.position - marble.position).normalized, out hit, radius)) {
+				transform.position = hit.point - (transform.position - marble.position).normalized;
+				radius = Vector3.Distance(transform.position, marble.position); // Currently ignores minimum radius.
+
+				// Moves camera up if stuck against wall, otherwise settles it back down.
+				// NOTE: Currently causes jitter!
+				/*
+				if (autoRotate) {
+					if (radius < RADMIN)
+						MoveUp();
+					else if (psy > playerPsy && radius > RADMIN + 3)
+						MoveDown();
+				}
+				*/
+			}
 		}
 	}
 	
@@ -150,9 +153,12 @@ public class CameraController : MonoBehaviour, ICamera {
 				MoveRight();
 		}*/
 
-		// Consider attempting to Lerp again if there's any jitter.
-		transform.position = GetSphericalPosition();
-		transform.LookAt(marble.position);
+		if (!frozen) {
+
+			// Consider attempting to Lerp again if there's any jitter.
+			transform.position = GetSphericalPosition();
+			transform.LookAt(marble.position);
+		}
 	}
 	
 	
@@ -172,6 +178,14 @@ public class CameraController : MonoBehaviour, ICamera {
 	public void ResetPosition() {
 		theta = defTheta;
 		psy = defPsy;
+	}
+	
+	public void Freeze(bool freeze){
+		frozen = freeze;
+	}
+
+	public void RecalculatePosition() {
+		// [CODE TO CONVERT WORLD COORDINATES AND ANGLES INTO PSY AND THETA AND RADIUS]
 	}
 	
 	// Control Functions
@@ -218,10 +232,12 @@ public class CameraController : MonoBehaviour, ICamera {
 public interface ICamera {
 	CameraController.ControlMode Mode { get; }
 
-	void MoveUp();
-	void MoveDown();
-	void MoveLeft();
-	void MoveRight();
-	void ResetPosition();
-	void ToggleControlMode();
+	void MoveUp();				// Function to rotate or move camera upward.
+	void MoveDown();			// Function to rotate or move camera downward.
+	void MoveLeft();			// Function to rotate or move camera to the left.
+	void MoveRight();			// Function to rotate or move camera to the right.
+	void ResetPosition();		// Function to reset camera to initial position.
+	void ToggleControlMode();	// Function to change how the camera is controlled.
+	void Freeze(bool frozen);	// Function to prevent camera from automatically moving around.
+	void RecalculatePosition();	// Function to update parameters to current location.
 }

@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 25, 2015
+/// Last Revision: Apr. 27, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -44,7 +44,7 @@ public class Marble : MonoBehaviour {
 	public Transform marform;			// Reference to the marble's transform.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
-	public AudioSource ballin;			// Reference to the marble's rolling sound.
+	public AudioSource[] ballin;		// Reference to the marble's rolling sound.
 
 	[Header("Starting Values")]
 	public float maxAngVelocity = 50;	// Default maximum angular velocity.
@@ -83,6 +83,11 @@ public class Marble : MonoBehaviour {
 	public float buffTimer;				// How much time until a buff expires.
 	public ModifyBehavior buffCleaner;	// Which function should be used to get rid of the buff.
 
+	[Header("Sounds")]
+	public AudioClip rollingSound;		// Sound the marble makes when rolling.
+	public AudioClip jumpSound;			// Sound the marble makes when jumping.
+	public AudioClip landSound;			// Sound the marble makes when hitting anything.
+
 	[Header("Misc. Options")]
 	public bool flashLight;				// Whether marble should light up under certain scenarios.
 
@@ -100,7 +105,7 @@ public class Marble : MonoBehaviour {
 		marform = transform;
 		marbody = GetComponent<Rigidbody>();
 		ballCol = GetComponent<SphereCollider>();
-		ballin = GetComponent<AudioSource>();
+		ballin = GetComponents<AudioSource>();
 	}
 
 	// OnEnable - Called when the marble is activated. Used to subscribe to events.
@@ -149,7 +154,7 @@ public class Marble : MonoBehaviour {
 	// NOTE: Time.deltaTime is unnecessary in FixedUpdate because it is integrated in physics calculations.
 	void FixedUpdate () {
 		// Check if marble is reasonably close to the ground.
-		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, ballCol.radius + 0.1f);
+		grounded = Physics.Raycast(transform.position, Vector3.down, out hit, (ballCol.radius * marform.localScale.x) + 0.1f);
 
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 		Move();	// Move the marble.
@@ -157,12 +162,14 @@ public class Marble : MonoBehaviour {
 		// Behavior is dependent on whether marble is in the air or on the ground.
 		if (grounded) {
 			if (flashLight) gameObject.GetComponent<Light>().enabled = true;	// Marble may light up when on the ground.
-			ballin.enabled = true;
-			ballin.volume = marbody.velocity.magnitude/60f;
-			ballin.pitch = (Mathf.Sin(Time.time / 3) / 4f) + 0.75f;
+			if (!ballin[0].isPlaying) ballin[0].Play();
+			ballin[0].volume = marbody.velocity.magnitude/60f;
+			//ballin[0].pitch = (Mathf.Sin(Time.time / 4) / 4f) + 1f;
 		} else {			
 			if (flashLight) gameObject.GetComponent<Light>().enabled = false;	// Marble's light turns off if it was on.
-			ballin.enabled = false;
+			//ballin.enabled = false;
+			ballin[0].Stop();
+			//ballin[0].volume = Mathf.MoveTowards(ballin[0].volume, 0, 0.1f);
 		}
 	}
 
@@ -274,6 +281,7 @@ public class Marble : MonoBehaviour {
 			if (grounded && canJump) {
 				// Directly set velocity to avoid excessively complicated checks.
 				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
+				//if (!ballin.isPlaying) ballin.PlayOneShot(jumpSound); // Keeps duplicating the sound for some reason
 			}
 		}
 	}
@@ -329,15 +337,31 @@ public class Marble : MonoBehaviour {
 	
 	// Respawn - Respawns the marble to roughly its starting position.
 	public void Respawn() {
-		
+		Vector3 respawnOffset = new Vector3(0, 3, 0);
+
 		ForceBrake();
 		ResetState();
 
-		if (gm.respawn) {
-			marform.position = gm.respawn.transform.position + new Vector3(0,3,0);
+		if (gm.checkpoint) {
+			marform.position = gm.checkpoint.position + respawnOffset;
+
+			// Rotates camera to match checkpoint's rotation.
+			ICamera camScript = cam.GetComponent<ICamera>();
+			camScript.ResetPosition();	// Makes sure camera is in right location.
+			camScript.Freeze(true);		// Prevents it from updating while changes are made.
+
+			// Rotates it to face the direction of the checkpoint.
+			cam.RotateAround(marform.position, Vector3.up, -Vector3.Angle(gm.checkpoint.forward, 
+			                                                             Vector3.Scale(cam.forward, new Vector3(1, 0, 1))));
+
+			camScript.RecalculatePosition();	// Forces it to update to new position.
+			camScript.Freeze(false);			// Unlocks.
+
+		} else if (gm.respawn) {
+			marform.position = gm.respawn.transform.position + respawnOffset;
 		} else {
 			Debug.LogWarning("(Marble.cs) No spawn point available! Placing in default location..."); // DEBUG
-			marform.position = new Vector3(0, 3, 0);
+			marform.position = respawnOffset;
 		}
 
 		if (respawn != null) respawn();
@@ -354,6 +378,11 @@ public class Marble : MonoBehaviour {
 	}
 	
 	#endregion
+
+	// OnCollisionEnter - Called when the marble bumps into anything.
+	void OnCollisionEnter(Collision col) {
+		ballin[1].PlayOneShot(landSound, col.relativeVelocity.sqrMagnitude / 10000);
+	}
 
 	/*	TANGENT MOVEMENT CODE
 

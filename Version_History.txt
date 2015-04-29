@@ -2,6 +2,9 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 28, 2015:
+	- Kyle polished the camera and added optional smoothing.
+
 April 27, 2015:
 	- Jacob updated the original powerup badges and added the beginnings of the growth badge.
 	- Chris updated/added better marble sounds.

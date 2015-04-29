@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 27, 2015
+/// Last Revision: Apr. 28, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -130,6 +130,7 @@ public class Marble : MonoBehaviour {
 		ClearBuffs();	// Resets marble's properties to default.
 		marbody.maxAngularVelocity = maxAngVelocity;
 		transform.localScale = Vector3.one * defSize;
+		marbody.interpolation = RigidbodyInterpolation.Interpolate; // Used for smooth damping.
 	}
 	
 	// Update - Called once per frame.

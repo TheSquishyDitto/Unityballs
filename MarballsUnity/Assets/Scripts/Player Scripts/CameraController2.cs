@@ -2,15 +2,15 @@
 /// CameraController2.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 24, 2015
-/// Last Revision: Apr. 27, 2015
+/// Last Revision: Apr. 28, 2015
 /// 
 /// Class that controls camera movement in a different way.
 /// 
-/// NOTES: - This class currently only supports keyboard movement.
+/// NOTES: - This class currently does not support vertical mouse movement.
 /// 	   - This class offers rotating the camera up when in close quarters.
 /// 
 /// TO DO: - Tweak movement until desired.
-/// 	   - Fix mouse movement to prevent gimbal lock.
+/// 	   - Fix vertical mouse movement to prevent gimbal lock.
 /// 
 /// </summary>
 
@@ -33,8 +33,8 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	CameraController.ControlMode mode;		// Which control scheme the camera is using.
 	bool frozen = false;					// Whether camera should stop moving or not.
 
-	//Vector3 velocity = Vector3.zero;		// Variable used exclusively for smooth damping.
-	//public float smoothDamp = 0.01f;		// How quickly positions should be smoothed.
+	Vector3 velocity = Vector3.zero;		// Variable used exclusively for smooth damping.
+	public float smoothDamp = 0.1f;			// How quickly positions should be smoothed.
 
 	public float radius = 15;				// Preferred distance away from marble.
 	public float sensitivity = 3f;			// How quickly the camera can move.
@@ -80,16 +80,16 @@ public class CameraController2 : MonoBehaviour, ICamera {
 				radius = Mathf.Clamp(radius - Input.GetAxis("Mouse ScrollWheel"), 3, 15);
 
 			// Moving the mouse moves the camera in Mouse control mode.
-			// NOTE: Commented out implementation due to issues with avoiding Gimbal Lock.
+			// NOTE: Commented out vertical implementation due to issues with avoiding Gimbal Lock.
 			if (mode == CameraController.ControlMode.Mouse) {
-			/*	offset = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, Vector3.up) * offset;
-				if (offSetOffset == Vector3.zero)
+				offset = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, Vector3.up) * offset;
+			/*	if (offSetOffset == Vector3.zero)
 					offset = Quaternion.AngleAxis(-Input.GetAxis("Mouse Y") * sensitivity / 2, myTransform.right) * offset;
 
 				float angle = Vector3.Angle(Vector3.forward, offset);
 				if (angle < 10 || angle > 80)
 					offset = Quaternion.AngleAxis(-angle, myTransform.right) * offset;*/
-				Debug.LogWarning("CameraExperiment.cs) Mouse Mode not currently supported!");
+				//Debug.LogWarning("CameraExperiment.cs) Mouse Mode not currently supported!");
 			}
 
 			// Recalculate ray and offset.
@@ -97,10 +97,16 @@ public class CameraController2 : MonoBehaviour, ICamera {
 			offset = ray.GetPoint(radius) - marble.position;
 
 			// Casts ray to detect obstructions.
-			if (Physics.Raycast(ray, out hit, radius)) {
+			if (Physics.Raycast(ray, out hit, radius + 1)) {
 				// If obstructed, cut the ray short and move the camera up based on how close obstruction is.
-				offSetOffset = ray.GetPoint(radius) - hit.point;
-				if (autoRotate) offSetOffset -= Vector3.up * Vector3.Distance(ray.GetPoint(radius), hit.point);
+				offSetOffset = ray.GetPoint(radius + 1) - hit.point;
+
+				// Prevent offSetOffset from being large enough to make the camera go through the marble.
+				if (offSetOffset.sqrMagnitude > offset.sqrMagnitude)
+					offSetOffset -= offSetOffset.normalized;
+
+				// Rotate camera upwards if automatic rotation is enabled.
+				if (autoRotate) offSetOffset -= Vector3.up * (Vector3.Distance(ray.GetPoint(radius + 1), hit.point) / 2f);
 			} else {
 				// Otherwise, everything proceeds normally.
 				offSetOffset = Vector3.zero;
@@ -112,8 +118,8 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	void LateUpdate() {
 		if (!frozen) {
 			// Apply changes to camera.
-			myTransform.position = marble.position + offset - offSetOffset; // Comment this out if using SmoothDamp.
-			//myTransform.position = Vector3.SmoothDamp(myTransform.position, marble.position + offset - offSetOffset, ref velocity, smoothDamp);
+			//myTransform.position = marble.position + offset - offSetOffset; // Uncomment this out if never using SmoothDamp.
+			myTransform.position = Vector3.SmoothDamp(myTransform.position, marble.position + offset - offSetOffset, ref velocity, smoothDamp);
 			myTransform.LookAt(marble.position);
 		}
 	}
@@ -140,14 +146,23 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	#region Control Functions
 	// Moves camera up.
 	public void MoveUp() {
-		if (myTransform.eulerAngles.x < 90 - sensitivity && offSetOffset == Vector3.zero)
+		if (myTransform.eulerAngles.x < 90 - sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
 			offset = Quaternion.AngleAxis(sensitivity * Time.deltaTime * ampSense, myTransform.right) * offset;
+			//Debug.Log("Before: " + offset);
+			if (offset.y > radius - 3) {
+				//offset.y = radius - 1;//radius - 1;
+				offset = new Vector3(offset.x, radius - 3, offset.z);
+			}
+			//Debug.Log("After: " + offset);
+		}
 	}
 	
 	// Moves camera down.
 	public void MoveDown() {
-		if (myTransform.eulerAngles.x > 0 + sensitivity && offSetOffset == Vector3.zero)
+		if (myTransform.eulerAngles.x > sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
 			offset = Quaternion.AngleAxis(-sensitivity * Time.deltaTime * ampSense, myTransform.right) * offset;
+			if (offset.y < 0) offset.y = 0;
+		}
 	}
 	
 	// Moves camera left.
@@ -162,15 +177,17 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	
 	// ToggleControlMode - Changes camera control style.
 	public void ToggleControlMode() {
-		/*if (mode == CameraController.ControlMode.Keyboard) {
+		if (mode == CameraController.ControlMode.Keyboard) {
 			mode = CameraController.ControlMode.Mouse;
-			Cursor.lockState = CursorLockMode.Locked;	// When true, cursor is hidden and constantly centered.
+			Cursor.lockState = CursorLockMode.Locked;	// Hides and locks cursor in the center.
+			Cursor.visible = false;
 		} else if (mode == CameraController.ControlMode.Mouse) {
 			mode = CameraController.ControlMode.Keyboard;
 			Cursor.lockState = CursorLockMode.None;	// Undoes lock. Lock always undone by Escape due to Unity implementation.
-		}*/
+			Cursor.visible = true;
+		}
 
-		mode = CameraController.ControlMode.Keyboard;
+		//mode = CameraController.ControlMode.Keyboard;
 	}
 	
 	#endregion

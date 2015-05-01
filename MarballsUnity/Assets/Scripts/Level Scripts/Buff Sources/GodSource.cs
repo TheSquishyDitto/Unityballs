@@ -2,7 +2,7 @@
 /// GodSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 18, 2015
-/// Last Revision: Apr. 18, 2015
+/// Last Revision: Apr. 30, 2015
 /// 
 /// Class for debug god granting entities.
 /// 
@@ -21,7 +21,7 @@ public class GodSource : BuffSource {
 	// Initialize - Any initialization the given source should have should be done here.
 	protected override void Initialize() {
 		duration = Mathf.Infinity;
-		gameObject.SetActive(gm.debug);
+		//gameObject.SetActive(gm.debug);
 	}
 
 	// GiveBuff - Gives a specific buff to the specified marble.

@@ -2,7 +2,7 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Apr. 30, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
@@ -82,7 +82,8 @@ public class BuffSource : MonoBehaviour {
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
 	protected virtual void TakeBuff() {
-		Invoke("Respawn", respawnTime);	// If buff source is collected, respawns it after the time has passed.
+		if (collectable)
+			Invoke("Respawn", respawnTime);	// If buff source is collected, respawns it after the time has passed.
 	}
 
 	// Respawn - Regenerates buff.

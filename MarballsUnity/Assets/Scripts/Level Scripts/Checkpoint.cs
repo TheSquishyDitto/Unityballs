@@ -2,9 +2,11 @@
 /// Checkpoint.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 27, 2015
-/// Last Revision: Apr. 27, 2015
+/// Last Revision: Apr. 30, 2015
 /// 
 /// Class that handles passing checkpoints.
+/// 
+/// TODO: - Add fancy animation and/or indicator of currently active checkpoint?
 /// 
 /// </summary>
 
@@ -21,17 +23,7 @@ public class Checkpoint : MonoBehaviour {
 	void Awake() {
 		gm = GameMaster.CreateGM();
 	}
-
-	// Start - Use this for initialization.
-	void Start () {
 	
-	}
-	
-	// Update - Called once per frame.
-	void Update () {
-	
-	}
-
 	// OnTriggerEnter - Called when player touches the checkpoint trigger.
 	void OnTriggerEnter(Collider other) {
 		if (other.CompareTag("Marble") && pristine) {

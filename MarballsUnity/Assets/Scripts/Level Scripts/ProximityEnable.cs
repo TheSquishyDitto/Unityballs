@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(BoxCollider))]
+//[RequireComponent(typeof(BoxCollider))]
 public class ProximityEnable : MonoBehaviour {
 
 	public GameObject[] objects;		// Array of objects to be enabled/disabled.

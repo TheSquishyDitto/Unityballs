@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 28, 2015
+/// Last Revision: Apr. 29, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -11,6 +11,7 @@
 /// 
 /// TO DO: - Tweak movement until desired.
 /// 	   - Getters and setters may be nice to have soon!
+/// 	   - Fix sounds: marble doesn't play sound if not technically grounded, even if rolling along.
 /// 
 /// </summary>
 
@@ -18,7 +19,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-public class Marble : MonoBehaviour {
+public class Marble : MonoBehaviour, IKillable {
 
 	// Enum for what powerup the marble has.
 	public enum PowerUp {
@@ -176,8 +177,10 @@ public class Marble : MonoBehaviour {
 
 	#endregion
 
-	// OnDie - Called when player should die.
-	public void OnDie() {
+	// Die - Called when player should die.
+	public void Die() {
+
+		AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/WilhelmScream"), gm.cam.position);
 		ClearBuffs();
 		marbody.isKinematic = true;
 		GetComponent<MeshRenderer>().enabled = false;

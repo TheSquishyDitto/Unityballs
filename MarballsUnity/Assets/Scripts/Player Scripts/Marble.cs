@@ -50,6 +50,7 @@ public class Marble : MonoBehaviour, IKillable {
 	[Header("Starting Values")]
 	public float maxAngVelocity = 50;	// Default maximum angular velocity.
 	public float defSize = 1;			// Default marble size.
+	public float defMass = 1;			// Default marble mass
 	
 	[Header("Movement Values")]
 	public float speedMultiplier = 1;	// How speedy the variety of marble should be. Changes are now highly noticeable.

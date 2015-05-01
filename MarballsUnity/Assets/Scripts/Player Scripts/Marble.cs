@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Apr. 29, 2015
+/// Last Revision: May   1, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -80,7 +80,7 @@ public class Marble : MonoBehaviour, IKillable {
 	[Header("Active Buff Values")]
 	[Tooltip("Read-only: Does not give buffs.")] // <- This lets you add tooltips to the Unity inspector!
 	public PowerUp buff = PowerUp.None;	// What buff the marble currently has.
-	public ParticleSystem buffParticles;// Reference to aesthetic particles for buffs.
+	public GameObject buffParticles;	// Reference to aesthetic particles for buffs.
 	public float buffTimeMax;			// How much time the buff timer had at the beginning.
 	public float buffTimer;				// How much time until a buff expires.
 	public ModifyBehavior buffCleaner;	// Which function should be used to get rid of the buff.
@@ -317,7 +317,7 @@ public class Marble : MonoBehaviour, IKillable {
 			if (gm.hud) { gm.hud.ShowActiveBuff(); }
 
 			if (heldParticles) {
-				buffParticles = Instantiate(heldParticles).GetComponent<ParticleSystem>();
+				buffParticles = Instantiate(heldParticles);
 				heldParticles = null;
 			}
 		}

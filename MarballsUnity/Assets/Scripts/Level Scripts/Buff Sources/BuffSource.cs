@@ -2,7 +2,7 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Apr. 30, 2015
+/// Last Revision: May   1, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
@@ -48,7 +48,7 @@ public class BuffSource : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (badge) badge.Rotate(Vector3.left, rotationSpeed * Time.deltaTime);
+		if (badge) badge.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
 	}
 
 	// OnTriggerEnter - Called when an object enters the trigger collider.

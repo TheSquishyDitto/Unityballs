@@ -2,6 +2,11 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+May 1, 2015:
+	- Brenton modified spike ball texture and added helihat model.
+	- Charlie and Kyle modified size change mechanics to allow big ball to do useful things.
+	- Kyle added helihat functionality, and changed wonky rotation scheme on buff source badges.
+
 April 30, 2015:
 	- Kyle fleshed out the Heliball level and tweaked things along the way:
 		+ Heliball level is now volcanically themed.

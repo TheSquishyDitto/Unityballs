@@ -31,6 +31,8 @@ public class SizeChangeSource : BuffSource {
 		marble.buff = Marble.PowerUp.SizeChange;
 		//size = marble.defSize;
 		marble.transform.localScale *= newSize; //new Vector3(newSize, newSize, newSize);
+		marble.marbody.mass *= intensity * 10;
+		marble.moveFunction = NewMove;
 	}
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
@@ -38,6 +40,23 @@ public class SizeChangeSource : BuffSource {
 		base.TakeBuff();
 		
 		marble.transform.localScale = Vector3.one * marble.defSize;
+		marble.marbody.mass = marble.defMass;
+		marble.moveFunction = null;
+	}
+	
+	// NewMove - Compensate for larger mass
+	public void NewMove(){
+		
+		marble.marbody.AddTorque(Vector3.Cross(Vector3.up, marble.inputDirection) * marble.speedMultiplier * marble.revSpeed * marble.shackle, ForceMode.Acceleration);
+		
+		if (marble.grounded) {
+			marble.marbody.drag = 0.5f;
+			marble.marbody.AddForce(marble.inputDirection * marble.speedMultiplier * marble.marbody.angularVelocity.magnitude * marble.shackle, ForceMode.VelocityChange);
+			marble.inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
+		}
+		else {
+			marble.marbody.drag = 0.1f;
+		}
 	}
 
 }

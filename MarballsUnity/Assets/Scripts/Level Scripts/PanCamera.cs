@@ -2,7 +2,7 @@
 /// PanCamera.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Apr. 21, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Apr. 30, 2015
 /// 
 /// Class for Marballs' specific camera panning action.
 /// 
@@ -18,8 +18,8 @@ using System.Collections;
 
 public class PanCamera : ScriptedPath {
 
-	GameMaster gm;
-	Camera cam;
+	GameMaster gm;	// Reference to GameMaster.
+	Camera cam;		// Reference to attached camera component.
 
 	// OnEnable - Called when script is enabled. Used to subscribe to events.
 	void OnEnable() {
@@ -48,19 +48,19 @@ public class PanCamera : ScriptedPath {
 		else
 			gm.OnStart();
 	}
-	
-	// Update - Called once per frame.
-	void Update () {
-
-	}
 
 	// Activate - Enables camera component.
 	void Activate() {
+		StopCoroutine("Move");
+		StartCoroutine("Move");
 		cam.enabled = true;
+		gm.cam.GetComponent<Camera>().enabled = false;
 	}
 
 	// Deactivate - Disables camera component.
 	void Deactivate() {
+		StopCoroutine("Move");
+		gm.cam.GetComponent<Camera>().enabled = true;
 		cam.enabled = false;
 	}
 }

@@ -2,7 +2,7 @@
 /// Balloon.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 26, 2015
-/// Last Revision: Apr. 27, 2015
+/// Last Revision: Apr. 30, 2015
 /// 
 /// Class for collectable balloons.
 /// 
@@ -18,8 +18,8 @@ using System.Collections;
 public class Balloon : MonoBehaviour {
 
 	Transform myTransform;
-	Vector3 startPos;
-	//float startHeight;
+	//Vector3 startPos;
+	float startHeight;
 	float timeOffset;
 
 	public bool collectable = true;
@@ -27,14 +27,15 @@ public class Balloon : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myTransform = transform;
-		startPos = myTransform.position;
-		//startHeight = myTransform.position.y;
+		//startPos = myTransform.position;
+		startHeight = myTransform.position.y;
 		timeOffset = Random.Range(0, 10.0f);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		myTransform.position = startPos + (Vector3.up * Mathf.Sin(Time.time + timeOffset));
+		//myTransform.position = startPos + (Vector3.up * Mathf.Sin(Time.time + timeOffset));
+		myTransform.position = new Vector3(myTransform.position.x, Mathf.Sin(Time.time + timeOffset) + startHeight, myTransform.position.z);
 	}
 
 	void OnTriggerEnter(Collider other) {

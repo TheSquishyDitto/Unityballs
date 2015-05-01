@@ -2,7 +2,7 @@
 /// CameraController2.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 24, 2015
-/// Last Revision: Apr. 28, 2015
+/// Last Revision: Apr. 29, 2015
 /// 
 /// Class that controls camera movement in a different way.
 /// 
@@ -11,6 +11,7 @@
 /// 
 /// TO DO: - Tweak movement until desired.
 /// 	   - Fix vertical mouse movement to prevent gimbal lock.
+/// 	   - Fix miscellaneous bizarre behavior.
 /// 
 /// </summary>
 
@@ -95,6 +96,8 @@ public class CameraController2 : MonoBehaviour, ICamera {
 			// Recalculate ray and offset.
 			ray = new Ray(marble.position, offset.normalized);
 			offset = ray.GetPoint(radius) - marble.position;
+
+			Debug.DrawLine(marble.position, marble.position + offset, Color.blue);
 
 			// Casts ray to detect obstructions.
 			if (Physics.Raycast(ray, out hit, radius + 1)) {

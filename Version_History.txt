@@ -2,6 +2,16 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+April 30, 2015:
+	- Kyle fleshed out the Heliball level and tweaked things along the way:
+		+ Heliball level is now volcanically themed.
+		+ There is now a beginning area to acquaint the player with the powerup slowly.
+		+ Flaming boulders.
+
+April 29, 2015:
+	- Charlie added spike ball obstacles to the Heliball level.
+	- Brenton and Chris added music to the main menu.
+
 April 28, 2015:
 	- Kyle polished the camera and added optional smoothing.
 

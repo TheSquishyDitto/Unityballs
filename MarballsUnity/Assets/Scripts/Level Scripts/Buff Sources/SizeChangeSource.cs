@@ -1,8 +1,8 @@
 ﻿/// <summary>
 /// SizeChangeSource.cs
-/// Authors: Kyle Dawson
+/// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Mar. 31, 2015
+/// Last Revision: May   4, 2015
 /// 
 /// Class for size change granting entities.
 /// 
@@ -31,7 +31,7 @@ public class SizeChangeSource : BuffSource {
 		marble.buff = Marble.PowerUp.SizeChange;
 		//size = marble.defSize;
 		marble.transform.localScale *= newSize; //new Vector3(newSize, newSize, newSize);
-		marble.marbody.mass *= intensity * 10;
+		marble.marbody.mass *= Mathf.Pow(intensity, 4);
 		marble.moveFunction = NewMove;
 	}
 

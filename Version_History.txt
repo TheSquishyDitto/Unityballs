@@ -2,6 +2,19 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+May 6, 2015:
+	- Kyle polished some features and added very basic multiplayer:
+		+ Main menu now has all 8 existing levels.
+		+ Platforms on Super Jump level are now clouds.
+		+ Currently objectiveless, stripped down multiplayer in weird sumo ring.
+		+ Reorganized files to make building the executable faster.
+
+May 5, 2015:
+	- Kyle modified and fleshed out the size change level a bit.
+
+May 4, 2015:
+	- Charlie added a prototype size change level.
+
 May 1, 2015:
 	- Brenton modified spike ball texture and added helihat model.
 	- Charlie and Kyle modified size change mechanics to allow big ball to do useful things.

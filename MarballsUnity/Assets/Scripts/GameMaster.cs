@@ -2,7 +2,7 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 27, 2015
+/// Last Revision: May   6, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
@@ -26,7 +26,8 @@ public class GameMaster : MonoBehaviour {
 		Prestart,	// State where the camera pans around the level.
 		Start,		// The state immediately before the timer begins.
 		Playing,	// The part of the game where mechanics matter.
-		Win			// State immediately after player wins a level.
+		Win,		// State immediately after player wins a level.
+		//Sumo		// Multiplayer mode.
 	}
 
 	public delegate void EventAction(); // Datatype that most event functions will use.
@@ -58,6 +59,7 @@ public class GameMaster : MonoBehaviour {
 	public bool simpleAnim = false;	// Whether the victory animation should be excessive or not.
 	public bool useOnGrab = false;	// If true, picked up powerups are used immediately and automatically.
 	public bool guides = false;		// If true, arrows pop up to help the player.
+	public int buildLevelCap = 9;	// The last level accessible through standard progression.
 
 	public bool debug = true;		// If true, game is currently in general debug mode. DEBUG
 	public bool freezeTimer = false;// If true, timer will not change.

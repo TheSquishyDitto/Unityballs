@@ -16,7 +16,12 @@ public class LevelButton : MonoBehaviour {
 	void Start () {
 		//self = GetComponent<Button>();
 		//self.onClick.AddListener(ButtonLoadLevel);
-		if (levelData != null) highScore.text = "High Score: " + levelData.bestTimes[0].ToString("F2") + " s";
+		if (levelData != null) {
+			highScore.text = "High Score: ";
+			highScore.text = (levelData.bestTimes.Count > 0)? highScore.text + levelData.bestTimes[0].ToString("F2") + " s" :
+															  highScore.text + "---";
+
+		}
 	}
 	
 	/*

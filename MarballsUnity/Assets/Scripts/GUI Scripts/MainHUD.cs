@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: Apr. 22, 2015
+/// Last Revision: May   6, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -281,7 +281,7 @@ public class MainHUD : MonoBehaviour {
 
 		// Makes sure there's a subsequent level, or else disables the Next Level button.
 		GameObject nextLevelButton = winOptions.transform.FindChild("Next Level").gameObject;		
-		nextLevelButton.GetComponent<Button>().interactable = (Application.loadedLevel + 1 < Application.levelCount);
+		nextLevelButton.GetComponent<Button>().interactable = (Application.loadedLevel + 1 <= gm.buildLevelCap);
 
 		// Enables victory options.
 		winOptions.SetActive(true);

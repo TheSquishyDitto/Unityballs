@@ -2,7 +2,7 @@
 /// ScriptedPath.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Apr. 19, 2015
-/// Last Revision: Apr. 26, 2015
+/// Last Revision: May   6, 2015
 /// 
 /// Class for moving and rotating any object over time to specific locations.
 /// 
@@ -13,8 +13,11 @@
 /// 
 /// </summary>
 
-using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -82,6 +85,7 @@ public class ScriptedPath : MonoBehaviour {
 		}
 	}
 
+#if UNITY_EDITOR
 	// CreatePoint - Adds a point with the object's current position and rotation.
 	[ContextMenu("Add Point")]
 	protected void CreatePoint() {
@@ -116,6 +120,7 @@ public class ScriptedPath : MonoBehaviour {
 
 		points.Clear();
 	}
+#endif
 
 	// OnDrawGizmos - Draws the points to be pathed between in scene view.
 	protected void OnDrawGizmos() {
@@ -148,8 +153,6 @@ public class ScriptedPath : MonoBehaviour {
 					Gizmos.DrawSphere(points[i].position, 0.5f);
 				}
 			}
-
-
 		}
 	}
 }

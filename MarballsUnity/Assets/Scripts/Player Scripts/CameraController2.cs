@@ -11,6 +11,7 @@
 /// 
 /// TO DO: - Tweak movement until desired.
 /// 	   - Fix vertical mouse movement to prevent gimbal lock.
+/// 	   - Fix cursor lock behavior with menus and such.
 /// 	   - Fix miscellaneous bizarre behavior.
 /// 
 /// </summary>

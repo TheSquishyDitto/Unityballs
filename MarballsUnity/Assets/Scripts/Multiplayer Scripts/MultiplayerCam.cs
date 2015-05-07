@@ -19,7 +19,6 @@ public class MultiplayerCam : MonoBehaviour {
 	
 	Transform myTransform;			// Cached reference to transform.
 	Transform parent;				// Reference to parent object that is being viewed.
-	NetworkView netView;			// Reference to network view.
 
 	public float sensitivity = 3;	// Speed of rotation.
 
@@ -27,8 +26,6 @@ public class MultiplayerCam : MonoBehaviour {
 	void Awake() {
 		myTransform = transform;
 		parent = myTransform.parent;
-		netView = GetComponent<NetworkView>();
-		gameObject.SetActive(netView.isMine);
 	}
 
 	// Start - Use this for initialization.

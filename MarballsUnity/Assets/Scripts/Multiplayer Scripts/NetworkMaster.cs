@@ -2,7 +2,7 @@
 /// NetworkMaster.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May   6, 2015
+/// Last Revision: May   7, 2015
 /// 
 /// Class for managing network behavior.
 /// 
@@ -23,12 +23,14 @@ public class NetworkMaster : MonoBehaviour {
 	const string GAME_NAME = "MarballsSumo";	// Unique name of this game.
 	const string ROOM_NAME = "COSC 426 Demo";	// Name of room.
 	const int PORT = 7777;						// Port used for connection.
-	const int MAX_PLAYERS = 2;					// Maximum players per room.
+	const int MAX_PLAYERS = 8;					// Maximum players per room.
 	
-	HostData[] hostList;						// List of hosts, which might mean servers?
+	HostData[] hostList;						// List of hosts, which might mean servers/rooms?
+	//float playerCount = 0;
 	
 	public GameObject playerPrefab;				// Reference to player prefab to spawn.
 	public GameObject panCam;					// Reference to panning camera.
+	public Transform[] spawnPoints;				// Array of spawn points.
 
 	#endregion
 
@@ -49,8 +51,10 @@ public class NetworkMaster : MonoBehaviour {
 	// SpawnPlayer - Creates a player instance across all clients.
 	void SpawnPlayer() {
 		panCam.SetActive(false);
-		int spawnMod = (Network.connections.Length == 2)? 1 : -1;
-		Network.Instantiate(playerPrefab, new Vector3(0, 20, 50 * spawnMod), Quaternion.identity, 0);
+
+		int spawnIndex = (Network.connections.Length)/*MultiplayerMarble.quantity*/ % spawnPoints.Length;
+		//Debug.Log("Quantity: " + MultiplayerMarble.quantity);
+		Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
 	}
 
 	// RefreshHostList - Requests the most up-to-date host list from the Master Server.
@@ -79,6 +83,25 @@ public class NetworkMaster : MonoBehaviour {
 	void OnConnectedToServer() {
 		Debug.Log("Server joined!");
 		SpawnPlayer();
+	}
+
+	// OnDisconnectedFromServer - Called basically everywhere when server goes down.
+	void OnDisconnectedFromServer() {
+		Application.LoadLevel(0);
+	}
+
+	// OnPlayerDisconnected - Called when a player disconnects.
+	void OnPlayerDisconnected(NetworkPlayer player) {
+		Network.RemoveRPCs(player);
+		Network.DestroyPlayerObjects(player);
+	}
+
+	// Update - Called every frame.
+	void Update() {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			Network.Disconnect();
+			//Application.LoadLevel(0);
+		}
 	}
 	
 	// OnGUI - Used for UI elements temporarily.

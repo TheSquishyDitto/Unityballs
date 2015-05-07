@@ -2,7 +2,7 @@
 /// MultiplayerMarble.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May   6, 2015
+/// Last Revision: May   7, 2015
 /// 
 /// Class for networked instances of the marble class.
 /// 
@@ -61,6 +61,8 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	
 //	public static event EventAction die;	 // Container for actions when player dies.
 //	public static event EventAction respawn; // Container for actions when player respawns.
+
+	//public static int quantity;// = 0;
 	
 	#endregion
 	
@@ -73,6 +75,9 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		marbody = GetComponent<Rigidbody>();
 		ballCol = GetComponent<SphereCollider>();
 		ballin = GetComponents<AudioSource>();
+		cam.gameObject.SetActive(netView.isMine);
+		//quantity++;
+		//netView.RPC("UpdateQuantity", RPCMode.Server, 1);
 	}
 	
 	// Start - Use this for initialization. If a reference from the Game Master is needed, make it here.
@@ -97,6 +102,17 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		
 		inputDirection = Vector3.Normalize(inputDirection); // Makes sure the magnitude of the direction is 1.
 		Move();	// Move the marble.
+
+		// Behavior is dependent on whether marble is in the air or on the ground.
+		if (grounded) {
+			if (!ballin[0].isPlaying) ballin[0].Play();
+			ballin[0].volume = marbody.velocity.magnitude/60f;
+			//ballin[0].pitch = (Mathf.Sin(Time.time / 4) / 4f) + 1f;
+		} else {			
+			//ballin.enabled = false;
+			ballin[0].Stop();
+			//ballin[0].volume = Mathf.MoveTowards(ballin[0].volume, 0, 0.1f);
+		}
 	}
 	
 	#endregion
@@ -107,7 +123,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		marbody.isKinematic = true;
 		GetComponent<MeshRenderer>().enabled = false;
 		ballCol.enabled = false;
-		//deathBurst = (GameObject)(Network.Instantiate(deathBurst, marform.position, Quaternion.identity, 0));
+		Destroy(Instantiate(Resources.Load("Prefabs/Particle Prefabs/Deathburst"), marform.position, Quaternion.identity), 4);
 		
 		//if (die != null) die();
 		
@@ -256,34 +272,30 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		ballCol.enabled = true;
 		//ClearAllBuffs();
 	}
+
+	//[RPC]
+	//public void UpdateQuantity(int i) {
+		//quantity += i;
+		//Debug.Log("Quantity: " + quantity);
+	//}
 	
 	#endregion
 	
 	// OnCollisionEnter - Called when the marble bumps into anything.
 	void OnCollisionEnter(Collision col) {
 		ballin[1].PlayOneShot(landSound, col.relativeVelocity.sqrMagnitude / 10000);
+
+		// Amplifies marble collisions.
+		if (col.collider.GetComponent<MultiplayerMarble>() != null) {
+			marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+			col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+		}
 	}
-	
-	/*	TANGENT MOVEMENT CODE
 
-	variables:
-
-	//public Vector3 tangent;			// Tangent vector to terrain.
-	//public Vector3 cross;				// Holds cross products temporarily.
-
-	start:
-	//tangent = new Vector3();
-
-	fixedupdate:
-	//tangent = Vector3.zero; // See above
-	...
-	cross = Vector3.Cross(inputDirection, hit.normal);
-	float angle = Vector3.Angle(cross, inputDirection);
-	tangent = Quaternion.AngleAxis(angle, hit.normal) * cross;
-	tangent *= inputDirection.magnitude;
-
-	// Force is only applied on the ground, and is dependent on how much the ball is spinning.
-	//rigidbody.AddForce(tangent * speedMultiplier * rigidbody.angularVelocity.magnitude * Time.deltaTime, ForceMode.Impulse); // Applies force.
-
-	*/
+	// OnDestroy - Called when marble is destroyed.
+	void OnDestroy() {
+		//quantity--;
+		//netView.RPC("UpdateQuantity", RPCMode.Server, -1);
+		Destroy(transform.parent.gameObject);
+	}
 }

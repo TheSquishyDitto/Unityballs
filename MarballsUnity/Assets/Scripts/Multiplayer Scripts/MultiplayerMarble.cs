@@ -27,6 +27,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
 	public GameObject deathBurst;		// Reference to the marble's death particles.
+	public TextMesh nametag;			// Reference to nametag.
 	public AudioSource[] ballin;		// Reference to the marble's rolling sound.
 	
 	[Header("Starting Values")]
@@ -287,8 +288,13 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 
 		// Amplifies marble collisions.
 		if (col.collider.GetComponent<MultiplayerMarble>() != null) {
-			marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
-			col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+			if (marbody.velocity.sqrMagnitude > col.rigidbody.velocity.sqrMagnitude) {
+				marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+				col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude * 5, col.transform.position, 5);
+			} else {
+				marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude * 5, col.transform.position, 5);
+				col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+			}
 		}
 	}
 

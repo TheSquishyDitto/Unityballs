@@ -31,6 +31,7 @@ public class NetworkMaster : MonoBehaviour {
 	public GameObject playerPrefab;				// Reference to player prefab to spawn.
 	public GameObject panCam;					// Reference to panning camera.
 	public Transform[] spawnPoints;				// Array of spawn points.
+	//string username = "Username";
 
 	#endregion
 
@@ -54,7 +55,8 @@ public class NetworkMaster : MonoBehaviour {
 
 		int spawnIndex = (Network.connections.Length)/*MultiplayerMarble.quantity*/ % spawnPoints.Length;
 		//Debug.Log("Quantity: " + MultiplayerMarble.quantity);
-		Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
+		/*GameObject marble = (GameObject)*/Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
+		//marble.GetComponentInChildren<MultiplayerMarble>().nametag.text = username;
 	}
 
 	// RefreshHostList - Requests the most up-to-date host list from the Master Server.
@@ -99,14 +101,18 @@ public class NetworkMaster : MonoBehaviour {
 	// Update - Called every frame.
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
-			Network.Disconnect();
-			//Application.LoadLevel(0);
+			if (Network.isClient || Network.isServer)
+				Network.Disconnect();
+			else
+				Application.LoadLevel(0);
 		}
 	}
 	
 	// OnGUI - Used for UI elements temporarily.
 	void OnGUI() {
 		if (!Network.isClient && !Network.isServer) {
+			//username = GUI.TextField(new Rect(100, 20, 200, 20), username, 25);
+
 			// Start a server.
 			if (GUI.Button(new Rect(100, 100, 250, 100), "Start Server"))
 				StartServer();

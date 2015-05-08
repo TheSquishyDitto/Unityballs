@@ -2,7 +2,7 @@
 /// InputManager.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Apr. 18, 2015
+/// Last Revision: May   7, 2015
 /// 
 /// Class that handles all game input.
 /// 
@@ -197,9 +197,9 @@ public class InputManager : MonoBehaviour {
 			gm.marble.Brake();
 		}
 		// Respawning. May be better to consider it a debug control instead.
-		if (Input.GetKeyDown (keyBindings[(int)Keys.Respawn])) {
-			gm.marble.Respawn();
-		}
+		//if (Input.GetKeyDown (keyBindings[(int)Keys.Respawn]) && gm.debug) {
+			//gm.marble.Die();//Respawn();
+		//}
 	}
 	
 	// CameraControls - Controls for the camera.

@@ -2,13 +2,14 @@
 /// MultiplayerMarble.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May   7, 2015
+/// Last Revision: May  10, 2015
 /// 
 /// Class for networked instances of the marble class.
 /// 
 /// NOTES: - Currently only supports basic movement; no buffs or fancy events.
 /// 
 /// TO DO: - Re-add offline features.
+/// 	   - Finetune super collision.
 /// 
 /// </summary>
 
@@ -27,7 +28,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
 	protected SphereCollider ballCol;	// Reference to the marble's collider.
 	public GameObject deathBurst;		// Reference to the marble's death particles.
-	public TextMesh nametag;			// Reference to nametag.
+	public Transform nametag;			// Reference to nametag.
 	public AudioSource[] ballin;		// Reference to the marble's rolling sound.
 	
 	[Header("Starting Values")]
@@ -69,7 +70,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	
 	// Monobehaviour Functions - Typical Unity-provided functions.
 	#region Monobehaviour Functions
-	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
+	// Awake - Called before anything else.
 	void Awake () {
 		netView = GetComponent<NetworkView>();
 		marform = transform;
@@ -77,11 +78,12 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		ballCol = GetComponent<SphereCollider>();
 		ballin = GetComponents<AudioSource>();
 		cam.gameObject.SetActive(netView.isMine);
+		if (netView.isMine) MultiplayerCam.activeCam = cam;
 		//quantity++;
 		//netView.RPC("UpdateQuantity", RPCMode.Server, 1);
 	}
 	
-	// Start - Use this for initialization. If a reference from the Game Master is needed, make it here.
+	// Start - Use this for initialization.
 	void Start () {
 		inputDirection = Vector3.zero;
 		marbody.maxAngularVelocity = maxAngVelocity;
@@ -93,6 +95,10 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	void Update () {
 		if (netView.isMine)
 			MoveControls();
+
+		// Makes player's nametag always stare at client's active camera.
+		if (MultiplayerCam.activeCam == null) Debug.Log("No active cam!");
+		else nametag.LookAt(2 * nametag.transform.position - MultiplayerCam.activeCam.position);
 	}
 	
 	// FixedUpdate - Called once per physics calculation. This happens independently of frames.
@@ -125,7 +131,8 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		GetComponent<MeshRenderer>().enabled = false;
 		ballCol.enabled = false;
 		Destroy(Instantiate(Resources.Load("Prefabs/Particle Prefabs/Deathburst"), marform.position, Quaternion.identity), 4);
-		
+		nametag.gameObject.SetActive(false);
+
 		//if (die != null) die();
 		
 		Invoke("Respawn", 4f);	// Respawns in a few seconds.
@@ -271,6 +278,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		marbody.constraints = RigidbodyConstraints.None;
 		GetComponent<MeshRenderer>().enabled = true;
 		ballCol.enabled = true;
+		nametag.gameObject.SetActive(true);
 		//ClearAllBuffs();
 	}
 
@@ -279,7 +287,31 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		//quantity += i;
 		//Debug.Log("Quantity: " + quantity);
 	//}
-	
+
+	// SetUsername - Changes a player's username across the network.
+	[RPC] public void SetUsername(string name) {
+		nametag.GetComponent<TextMesh>().text = name;
+
+		if (netView.isMine) {
+			netView.RPC("SetUsername", RPCMode.OthersBuffered, name); // Buffered means anyone who joins later will see the change.
+		}
+	}
+
+	// SuperCollision - Adds actual force for marble-marble collisions across the network.
+	[RPC] public void SuperCollision(Vector3 velocity, Vector3 position) {
+		//marbody.AddExplosionForce(velocity.magnitude * 5, position, 2, 0.25f, ForceMode.Impulse);
+		marbody.AddForceAtPosition(velocity, position - (Vector3.up * 0.25f), ForceMode.Impulse);
+	}
+
+	// ChangeColor - Changes a marble's color. Currently used for debugging.
+	[RPC] public void ChangeColor(Vector3 color) {
+		GetComponent<Renderer>().material.color = new Color(color.x, color.y, color.z);
+		
+		if (netView.isMine) {
+			netView.RPC("ChangeColor", RPCMode.OthersBuffered, color);
+		}
+	}
+
 	#endregion
 	
 	// OnCollisionEnter - Called when the marble bumps into anything.
@@ -287,21 +319,20 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		ballin[1].PlayOneShot(landSound, col.relativeVelocity.sqrMagnitude / 10000);
 
 		// Amplifies marble collisions.
-		if (col.collider.GetComponent<MultiplayerMarble>() != null) {
+		// NOTE: * IDEALLY YOU CALL THE SUPERCOLLISION RPC ON THE ENEMY'S NETVIEW, NOT YOUR OWN *
+		//		 However, due to physics inaccuracies over network, cannot easily achieve consistent desired effect.
+		//       Thus, for the time being I'm leaving it in a state where the gameplay is still fun.   
+		if (col.collider.GetComponent<MultiplayerMarble>() != null/* && netView.isMine*/) {
+			// If this marble's velocity is greater than the foe's, induce super collision.
 			if (marbody.velocity.sqrMagnitude > col.rigidbody.velocity.sqrMagnitude) {
-				marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
-				col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude * 5, col.transform.position, 5);
-			} else {
-				marbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude * 5, col.transform.position, 5);
-				col.rigidbody.AddExplosionForce(col.relativeVelocity.sqrMagnitude, col.transform.position, 5);
+				//col.collider.GetComponent<NetworkView>().RPC("SuperCollision", RPCMode.All, marbody.velocity, col.contacts[0].point);
+				netView.RPC("SuperCollision", RPCMode.All, marbody.velocity, col.collider.transform.position);
 			}
 		}
 	}
 
 	// OnDestroy - Called when marble is destroyed.
 	void OnDestroy() {
-		//quantity--;
-		//netView.RPC("UpdateQuantity", RPCMode.Server, -1);
 		Destroy(transform.parent.gameObject);
 	}
 }

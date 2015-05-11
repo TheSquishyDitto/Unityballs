@@ -2,6 +2,27 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+May 10, 2015:
+	- Kyle made various tweaks and additions:
+		+ Every level now has collectable balloons which only serve to help guide the player.
+			* Every level now also has an exceptionally hard to reach Golden Balloon that may give a reward in the future.
+		+ Multiplayer now has a proper beta connection window, along with usernames and randomly-colored marbles.
+		+ Multiplayer collisions now behave somewhat differently due to unforeseen issues:
+			* Head-on collisions will behave as expected.
+			* Collisions with sides ("sideswipe") will cause the aggressor to accelerate away.
+		+ Fixed Level 3 kill zone size and added disco finish.
+		+ Decreased volume of countdown sounds.
+		+ [WIP] Secret level from Level 2 may involve a balloon-themed obstacle course.
+
+May 8, 2015:
+	- Kyle updated level select menu with level screenshots and made multiplayer collisions explosive.
+	- Level 3 was straightened out.
+	- Brenton, Chris, and Kyle added thematically appropriate placeholder music to the levels.
+	- Brenton, Chris, Kyle, and Charlie created the poster for the presentation.
+
+May 7, 2015:
+	- Charlie tweaked the controls menu to try to fix a display issue.
+
 May 6, 2015:
 	- Kyle polished some features and added very basic multiplayer:
 		+ Main menu now has all 8 existing levels.

@@ -2,7 +2,7 @@
 /// Balloon.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 26, 2015
-/// Last Revision: Apr. 30, 2015
+/// Last Revision: May   9, 2015
 /// 
 /// Class for collectable balloons.
 /// 
@@ -35,7 +35,7 @@ public class Balloon : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//myTransform.position = startPos + (Vector3.up * Mathf.Sin(Time.time + timeOffset));
-		myTransform.position = new Vector3(myTransform.position.x, Mathf.Sin(Time.time + timeOffset) + startHeight, myTransform.position.z);
+		myTransform.position = new Vector3(myTransform.position.x, (Mathf.Sin(Time.time + timeOffset) / 2) + startHeight, myTransform.position.z);
 	}
 
 	void OnTriggerEnter(Collider other) {

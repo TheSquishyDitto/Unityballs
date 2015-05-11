@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: May   1, 2015
+/// Last Revision: May   8, 2015
 /// 
 /// Class that controls marble properties and actions.
 /// 
@@ -186,7 +186,7 @@ public class Marble : MonoBehaviour, IKillable {
 		marbody.isKinematic = true;
 		GetComponent<MeshRenderer>().enabled = false;
 		ballCol.enabled = false;
-		GameObject burst = (GameObject)(Instantiate(Resources.Load("Prefabs/Particle Prefabs/Deathburst")));
+		GameObject burst = (GameObject)(Instantiate(Resources.Load("Prefabs/Particle Prefabs/Deathburst"), marform.position, Quaternion.identity));
 		burst.transform.position = marform.position;
 		Destroy(burst, 2);
 
@@ -284,9 +284,16 @@ public class Marble : MonoBehaviour, IKillable {
 		// Otherwise, use the vanilla conditions. Marble may only jump when on the ground.
 		} else {
 			if (grounded && canJump) {
+				Vector3 jumpDir = hit.normal;
+				jumpDir += inputDirection * Mathf.Clamp(1 / (marbody.velocity.magnitude + 0.001f), 0, 1);	// Allows jumps in this state to be more directionally influenced.
+				jumpDir = jumpDir.normalized;
+				
+				//marble.marbody.AddForce (marble.jumpHeight * jumpDir);
+				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (jumpDir * (jumpHeight / 100));
+
 				// Directly set velocity to avoid excessively complicated checks.
-				marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
-				//if (!ballin.isPlaying) ballin.PlayOneShot(jumpSound); // Keeps duplicating the sound for some reason
+				//marbody.velocity = new Vector3(marbody.velocity.x, 0, marbody.velocity.z) + (hit.normal * (jumpHeight / 100));
+				//if (!ballin[1].isPlaying) ballin[1].PlayOneShot(jumpSound); // Keeps duplicating the sound for some reason
 			}
 		}
 	}

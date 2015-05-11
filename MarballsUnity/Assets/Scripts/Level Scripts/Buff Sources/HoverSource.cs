@@ -2,7 +2,7 @@
 /// HoverSource.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Mar. 24, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: May  10, 2015
 /// 
 /// Class for hover/heliball granting entities.
 /// 
@@ -29,8 +29,8 @@ public class HoverSource : BuffSource {
 	public void HeliBall(float intensity, float duration = Mathf.Infinity) {
 		marble.buff = Marble.PowerUp.HeliBall;
 		
-		ConstantForce hover = marble.gameObject.AddComponent<ConstantForce>();
-		hover.force = new Vector3(0,20,0);
+		//ConstantForce hover = marble.gameObject.AddComponent<ConstantForce>();
+		//hover.force = new Vector3(0,20,0);
 		marble.jumpFunction = NewJump;
 		marble.moveFunction = NewMove;
 	}
@@ -46,6 +46,9 @@ public class HoverSource : BuffSource {
 
 	// NewMove - Should allow mid-air movement.
 	public void NewMove(){
+		// Constant force.
+		marble.marbody.AddForce((Vector3.up * -Physics.gravity.y * 2) / 3.0f);
+
 		// Applies force if marble is in the air
 		if (!marble.grounded) {
 			marble.marbody.drag = 0.5f;
@@ -58,8 +61,8 @@ public class HoverSource : BuffSource {
 	protected override void TakeBuff() {
 		base.TakeBuff();
 		
-		if (marble.GetComponent<ConstantForce>())
-			Destroy (marble.GetComponent<ConstantForce>());
+		//if (marble.GetComponent<ConstantForce>())
+		//	Destroy (marble.GetComponent<ConstantForce>());
 
 		marble.jumpFunction = null;
 		marble.moveFunction = null;

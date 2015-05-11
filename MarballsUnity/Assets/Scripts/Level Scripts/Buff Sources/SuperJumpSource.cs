@@ -43,7 +43,9 @@ public class SuperJumpSource : BuffSource {
 	// NewJump - Allows the marble to perform a single powerful jump regardless of conditions.
 	public void NewJump(){
 		if (marble.canJump) {
-			Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
+			Vector3 jumpDir = (marble.grounded)? marble.hit.normal * 2 : Vector3.up * 2;
+			jumpDir += marble.inputDirection * Mathf.Clamp(1 / (marble.marbody.velocity.magnitude + 0.001f), 0, 1);	// Allows jumps in this state to be more directionally influenced.
+			jumpDir = jumpDir.normalized;
 			
 			marble.marbody.AddForce (marble.jumpHeight * jumpDir);
 			marble.canJump = false;	// This prevents the marble from immediately using its original jump afterwards.

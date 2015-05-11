@@ -1,6 +1,9 @@
 =================
 UNITYBALLS README
 =================
+
+~ TO PLAY/TEST THE MULTIPLAYER, BUILD THE PROJECT INTO AN EXECUTABLE ON YOUR OWN COMPUTER UNDER FILE > BUILD SETTINGS ~
+
 This is the actual game of Marballs we will be creating through the Unity game engine.
 This readme will be updated as relevant information comes up.
 

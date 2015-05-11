@@ -22,6 +22,8 @@ public class MultiplayerCam : MonoBehaviour {
 
 	public float sensitivity = 3;	// Speed of rotation.
 
+	public static Transform activeCam;	// Reference to which cam on the network is currently active.
+
 	// Awake - Called before anything else.
 	void Awake() {
 		myTransform = transform;

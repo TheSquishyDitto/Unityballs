@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: May   6, 2015
+/// Last Revision: May   9, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
@@ -141,9 +141,9 @@ public class MainHUD : MonoBehaviour {
 				// Sound effect should play at the beginning and when the numbers change.
 				if (lastFrame != countdown.sprite) {
 					if (countdown.sprite != nums[0])
-						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), gm.cam.position);
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), gm.cam.position, 0.5f);
 					else 
-						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/gong"), gm.cam.position);
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/gong"), gm.cam.position, 0.5f);
 				}
 
 				// Makes number shrink as the timer goes down to the next number, with special conditions for "GO!".

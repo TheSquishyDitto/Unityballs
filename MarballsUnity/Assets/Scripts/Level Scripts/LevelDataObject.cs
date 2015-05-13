@@ -17,6 +17,7 @@ public class LevelDataObject : ScriptableObject {
 	public int difficulty = 0;								// Scale of 1-5 or 1-10 of how hard the level is.
 	public AudioClip music;									// The BGM for the level.
 	//public bool unlocked = true;							// Whether the player has unlocked this level.
+	//public bool goldBalloon = false;						// Whether the player has obtained this level's gold balloon, if any.
 	public bool firstTime = true;							// Whether the player has been on this level before.
 
 	//public string nextLevelName;		// File name of next level's data. Unnecessary if we adopt naming conventions.
@@ -36,4 +37,5 @@ public class PlayerRecord {
 	public List<float> bestTimes = new List<float>();	 // The 5 best scores the player has achieved.
 
 	//public bool unlocked = true;						 // Whether player has unlocked this level.
+	//public bool goldBalloon = false;					 // Whether player has gotten the gold balloon.
 }

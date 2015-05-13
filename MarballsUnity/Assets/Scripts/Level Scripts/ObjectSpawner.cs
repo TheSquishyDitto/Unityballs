@@ -2,7 +2,7 @@
 /// ObjectSpawner.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 29, 2015
-/// Last Revision: Apr. 29, 2015
+/// Last Revision: May  12, 2015
 /// 
 /// Class that spawns objects using an object pool.
 /// 
@@ -23,8 +23,8 @@ public class ObjectSpawner : MonoBehaviour {
 	protected Transform myTransform;		// Cached reference to transform.
 	protected BoxCollider spawnZone;		// Area to spawn objects within.
 	protected ObjectPooler pool;			// Pool of objects to be drawn from.
-	protected GameObject focus;			// The object currently being spawned.
-	protected float spawnCountdown;		// Time remaining until next spawn.
+	protected GameObject focus;				// The object currently being spawned.
+	protected float spawnCountdown = 0;		// Time remaining until next spawn.
 	
 	public Vector2 frequency = new Vector2(1, 1);	// How quickly objects should spawn.
 
@@ -36,7 +36,6 @@ public class ObjectSpawner : MonoBehaviour {
 		pool = GetComponent<ObjectPooler>();
 		spawnZone = GetComponent<BoxCollider>();
 		spawnZone.isTrigger = true;
-		ResetCountdown();
 	}
 	
 	// Update - Called once per frame.
@@ -55,11 +54,13 @@ public class ObjectSpawner : MonoBehaviour {
 	// NOTE: This spawns an object anywhere randomly inside the bounding box.
 	protected virtual void Spawn() {
 		focus = pool.GetObject();
-		focus.transform.position = new Vector3(Random.Range(-spawnZone.bounds.extents.x, spawnZone.bounds.extents.x),
-		                                       Random.Range(-spawnZone.bounds.extents.y, spawnZone.bounds.extents.y),
-		                                       Random.Range(-spawnZone.bounds.extents.z, spawnZone.bounds.extents.z)) + myTransform.position;
-		
-		focus.SetActive(true);
+		if (focus != null) {
+			focus.transform.position = new Vector3(Random.Range(-spawnZone.bounds.extents.x, spawnZone.bounds.extents.x),
+			                                       Random.Range(-spawnZone.bounds.extents.y, spawnZone.bounds.extents.y),
+			                                       Random.Range(-spawnZone.bounds.extents.z, spawnZone.bounds.extents.z)) + myTransform.position;
+			
+			focus.SetActive(true);
+		}
 	}
 
 	// ResetCountdown - Sets the spawning countdown up again.

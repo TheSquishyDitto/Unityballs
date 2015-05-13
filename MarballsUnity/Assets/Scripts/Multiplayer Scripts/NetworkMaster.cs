@@ -2,7 +2,7 @@
 /// NetworkMaster.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May  10, 2015
+/// Last Revision: May  12, 2015
 /// 
 /// Class for managing network behavior.
 /// 
@@ -31,6 +31,7 @@ public class NetworkMaster : MonoBehaviour {
 	string roomDesc = string.Empty;				// Used when leaving a comment about the room.
 	string username = string.Empty;				// Used to create a username.
 	HostData[] hostList;						// List of hosts, which might mean servers/rooms?
+	HostData currentHost;						// Which host is currently connected to.
 
 	[Header("References")]
 	public GameObject netWindow;				// Reference to connection window.
@@ -77,8 +78,7 @@ public class NetworkMaster : MonoBehaviour {
 		panCam.SetActive(false);
 		netWindow.SetActive(false);
 
-		int spawnIndex = (Network.connections.Length)/*MultiplayerMarble.quantity*/ % spawnPoints.Length;
-		//Debug.Log("Quantity: " + MultiplayerMarble.quantity);
+		int spawnIndex = (currentHost == null || currentHost.connectedPlayers == 0)? 0 : (currentHost.connectedPlayers) % spawnPoints.Length;
 		GameObject obj = (GameObject)Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
 		MultiplayerMarble marble = obj.GetComponentInChildren<MultiplayerMarble>();
 		marble.SetUsername(username);
@@ -125,7 +125,11 @@ public class NetworkMaster : MonoBehaviour {
 
 	// JoinServer - Joins a server.
 	void JoinServer(HostData hostData) {
-		Network.Connect(hostData);
+		if (Network.Connect(hostData) == NetworkConnectionError.NoError) {
+			currentHost = hostData;
+		} else {
+			Debug.LogWarning("(NetworkMaster.cs) There was an error connecting to the host!");
+		}
 	}
 
 	// OnServerInitialized - Called when server starts. Generally only called by the server host.

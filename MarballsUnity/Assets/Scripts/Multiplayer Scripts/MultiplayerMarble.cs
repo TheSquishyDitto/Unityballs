@@ -2,7 +2,7 @@
 /// MultiplayerMarble.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May  10, 2015
+/// Last Revision: May  12, 2015
 /// 
 /// Class for networked instances of the marble class.
 /// 
@@ -89,6 +89,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		marbody.maxAngularVelocity = maxAngVelocity;
 		marform.localScale = Vector3.one * defSize;
 		spawnPoint = marform.position;
+
 	}
 	
 	// Update - Called once per frame.
@@ -236,16 +237,14 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	
 	// Respawn - Respawns the marble to roughly its starting position.
 	public void Respawn() {
-		//Vector3 respawnOffset = new Vector3(0, 3, 0);
-		
-		ForceBrake();
+
 		ResetState();
-
-		//Network.Destroy(deathBurst);
-
-		marform.position = spawnPoint;//respawnOffset;
-		//cam.position = new Vector3(marform.position.x, 0, marform.position.z).normalized * (marform.position.magnitude + 10);
+		ForceBrake();
 		
+		Vector3 moved = spawnPoint - marform.position; // Distance that marble will move when respawning,
+		marform.position = spawnPoint;	// Puts marble at spawn points.
+		cam.position = (spawnPoint.normalized * (spawnPoint.magnitude + 10)) - moved; // Moves and adjusts cam due to child status.
+
 		/*if (gm.checkpoint) {
 			marform.position = gm.checkpoint.position + respawnOffset;
 			

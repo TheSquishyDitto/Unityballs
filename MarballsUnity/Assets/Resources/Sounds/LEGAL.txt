@@ -3,6 +3,7 @@ If we aim to commercialize this game, we need to check the licensing on these so
 Known sounds with license issues:
 - static
 - ShortCircuit
+- All the songs ripped from youtube as placeholder
 
 Sounds that belong to us:
 - CreepyAmbience
@@ -14,3 +15,6 @@ Sounds that belong to us:
 - TempTip2
 - WinsplosionBluhBluh
 - WinsplosionTemp
+
+Sounds made by Jacob Moore:
+- MultijumpBGM

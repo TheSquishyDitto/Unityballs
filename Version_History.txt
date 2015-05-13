@@ -2,6 +2,13 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+May 12, 2015:
+	- Kyle did some more things:
+		+ Secret level is now a full scale level, with difficulty suiting the secret.
+		+ Multijump level has new, original music, courtesy of a friend.
+		+ Multiplayer spawning positions now differentiate players on the same IP.
+		+ Multiplayer cam resets position on respawn.
+
 May 10, 2015:
 	- Kyle made various tweaks and additions:
 		+ Every level now has collectable balloons which only serve to help guide the player.

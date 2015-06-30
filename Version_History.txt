@@ -39,6 +39,8 @@ June 29, 2015:
 		+ Level tweaks.
 			* Final multijump level checkpoint moved onto elevator.
 			* Helilevel cannon toned down, because it became extra powerful for some reason.
+		+ Multiplayer temporarily scrapped.
+			* Unity 5.1 updated networking code, rendering our multiplayer code obsolete.
 		+ Significant amount of refactoring.
 			* Added free-to-use messaging system class that enables script-to-script communication without actually knowing about the other script.
 			* Split up Game Master to be less all-knowing:

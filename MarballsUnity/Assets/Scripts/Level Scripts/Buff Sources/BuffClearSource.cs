@@ -2,7 +2,7 @@
 /// BuffClearSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Mar. 24, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class for buff/powerup clearing entities.
 /// 
@@ -16,16 +16,6 @@ using System.Collections;
 public class BuffClearSource : MonoBehaviour {
 
 	public bool collectable;	// Whether or not this buff source should disappear when collected.
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {

@@ -2,6 +2,53 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+June 29, 2015:
+	- Overhaul:
+		+ Updated project to Unity 5.1. You will need to update before opening Marballs.
+		+ Added RPG elements - Health (HP), Marble Power (MP), Charm Points (CP), etc.
+			* HP works as expected; marble takes damage, it loses health. At 0 it dies. Can be increased by 5 upon leveling.
+				~ Damage is taken from the new HitBox class. It's like a killzone, but less lethal.
+			* MP is like mana; expend it to use special abilities. Can be increased by 5 upon leveling.
+			* CP is the capacity to add charms. Charms modify marble features and can grant abilities. Can be increased by 3 upon leveling.
+				~ Currently existing charms (for testing/later rebalancing):
+					> Power Dash: Grants a dashing ability that provides instant speed bursts. Costs 1 MP to use.
+					> Steadfast: Increases marble's defense by 1, reducing damage to HP.
+					> Recharge: Gradually restores MP.
+					> Craftsmanship: Increases max HP by 5. (Does not increase current HP)
+					> Bomb: Grants explosion ability, damaging and/or flinging anything within range with relevant components. Costs 2 MP to use.
+			* Added a little support for leveling up. (Experience and level variables have been added, but no actual functions.)
+				~ Balloons may be a future source of experience for leveling up.
+		+ Revised HUD.
+			* New status bar that displays HP, MP, time taken, and the powerup box.
+				~ Elements blink when updated.
+			* Overview cam has been replaced by ability box, used to show the active ability and scroll through them.
+				~ Abilities darken when cooling down.
+			* In-game menu that can be used to view and equip charms.
+			* Control menu now swaps attempted duplicate keys, rather than setting the old one to null.
+		+ New controls:
+			* Tab to use the active special ability.
+			* Q and E to cycle through special abilities if there is more than one.
+			* V to open in-game menu.
+		+ Added game settings object.
+			* Stores many of the variables the Game Master did previously.
+			* Audio controls: master, music, and sound effects volumes.
+			* No in-game menu for these options currently. (Except debug menu)
+		+ Added models for possible future enemies. Functionality not yet implemented.
+			* Pig: Minds its own business, but tries to ram player if they get too close.
+			* Cannon Turtle: Turtle with a cannon bolted to its back. Turtle meanders aimlessly while cannon tries to fire.
+		+ Level tweaks.
+			* Final multijump level checkpoint moved onto elevator.
+			* Helilevel cannon toned down, because it became extra powerful for some reason.
+		+ Significant amount of refactoring.
+			* Added free-to-use messaging system class that enables script-to-script communication without actually knowing about the other script.
+			* Split up Game Master to be less all-knowing:
+				~ Most relevant classes now manage as much as possible on their own.
+			+ Split up HUD; most individual HUD elements now manage themselves.
+			+ Level music now maintained by Music Manager.
+			+ Powerups are now placed into "slots" to allow future support for holding more powerups easily.
+			+ Marble's movement functions have been split into a new sibling class.
+				~ Marble now has getters and setters, which the powerup scripts have been updated to use.
+			
 May 12, 2015:
 	- Kyle did some more things:
 		+ Secret level is now a full scale level, with difficulty suiting the secret.

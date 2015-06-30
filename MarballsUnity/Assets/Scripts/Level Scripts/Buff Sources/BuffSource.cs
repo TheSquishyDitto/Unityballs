@@ -2,7 +2,7 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: May   1, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
@@ -15,11 +15,24 @@ using System.Collections;
 
 public class BuffSource : MonoBehaviour {
 
+	// Enum for what powerups exist in this game.
+	public enum PowerUp {
+		None,		// Normal marble state.
+		SpeedBoost,	// Marble is faster
+		MultiJump,	// Marble can jump multiple times
+		SuperJump,  // Marble jumps very high
+		Ghost,		// Transparent marble can clip through certain objects
+		SizeChange, // Changes marble size
+		HeliBall, 	// Make the marble a helicopter
+		God			// Debug ball that can go anywhere.
+	}
+
 	#region Variables
 	protected GameMaster gm;		// Reference to the Game Master.
+	protected Settings settings;	// Reference to the game settings.
 	protected Marble marble;		// Reference to the marble being modified.
-
-	//public Marble.Powerup buff;		// Which buff this source gives.
+	
+	public PowerUp buffType;			// Which buff this source gives.
 	public float intensity;				// How strong the buff is. Acceptable values vary by type.
 	public float duration;				// How long the given buff should last.
 	public Sprite icon;					// What icon should be displayed for this buff.
@@ -29,6 +42,9 @@ public class BuffSource : MonoBehaviour {
 	public GameObject particles;		// What type of particle system this buff should give.
 	public bool collectable;			// Whether this source disappears when collected. Respawns when used.
 	public float respawnTime = 0;		// How long after using this buff it should respawn. Mainly for jump-based buffs.
+	public AudioClip buffCollect;		// Sound made when a buff is collected.
+
+	protected BuffSlot buffSlot;		// The slot to be passed.
 
 	#endregion
 
@@ -38,11 +54,11 @@ public class BuffSource : MonoBehaviour {
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		settings = GameMaster.LoadSettings();
 	}
 
 	// Use this for initialization
 	void Start () {
-		//marble = gm.marble;
 		Initialize();
 	}
 	
@@ -56,7 +72,7 @@ public class BuffSource : MonoBehaviour {
 		if (other.CompareTag("Marble")) {	// Only grants buffs to marbles.
 			marble = other.GetComponent<Marble>();
 
-			if (marble.heldBuff == Marble.PowerUp.None) {
+			if (marble.buffs[/*marble.buffs.Count - */1] == null || marble.buffs[/*marble.buffs.Count - */1].buff == PowerUp.None) {
 				GiveBuff(marble);	// Gives the buff to the marble.
 				if (collectable) gameObject.SetActive(false);	// Disappears if collectable.
 			}
@@ -67,17 +83,18 @@ public class BuffSource : MonoBehaviour {
 	protected virtual void GiveBuff(Marble marble) {
 
 		// Adds icon to holding GUI box.
-		if (gm.hud) {
-			gm.hud.heldPowerup.sprite = icon;
-			gm.hud.heldPowerup.color = iconTint;
-		}
+		Messenger<Sprite, Color>.Broadcast("SetHeldSprite", icon, iconTint);
 
 		// Passes information about the buff to the marble.
-		marble.heldParticles = particles;
-		marble.heldIntensity = intensity;
-		marble.heldDuration = duration;
-		marble.heldCleaner = TakeBuff;
-		AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/swordClash"), gm.marble.transform.position);
+		buffSlot = new BuffSlot(buffType, intensity, duration, particles, TakeBuff, BuffFunction);
+		marble.buffs[1] = buffSlot;
+		//marble.buffs.Add(buffSlot);
+		AudioSource.PlayClipAtPoint(buffCollect, Vector3.zero, settings.FXScaler);
+	}
+
+	// BuffFunction - The function that applies the buff.
+	protected virtual void BuffFunction() {
+		Debug.LogWarning("(BuffSource.cs) You shouldn't see this.");
 	}
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.

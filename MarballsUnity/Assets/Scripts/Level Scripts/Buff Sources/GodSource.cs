@@ -1,8 +1,8 @@
-﻿/// <summary>
+/// <summary>
 /// GodSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 18, 2015
-/// Last Revision: Apr. 30, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class for debug god granting entities.
 /// 
@@ -24,26 +24,17 @@ public class GodSource : BuffSource {
 		//gameObject.SetActive(gm.debug);
 	}
 
-	// GiveBuff - Gives a specific buff to the specified marble.
-	protected override void GiveBuff(Marble marble) {
-		base.GiveBuff(marble);
-		marble.buffFunction = GodBall; // Basically gives the marble the buff function to use.
-		marble.heldBuff = Marble.PowerUp.God;
-	}
-	
-	// SuperJump - Modifies marble's jumping height.
-	public void GodBall(float intensity, float duration = Mathf.Infinity) {
-		marble.buff = Marble.PowerUp.God;
-
-		marble.jumpFunction = NewJump;
-		marble.moveFunction = NewMove;
+	// BuffFunction - Applies the buff to the marble.
+	protected override void BuffFunction () {
+		marble.JumpFunction = NewJump;
+		marble.MoveFunction = NewMove;
 	}
 	
 	// NewJump - Allows marble to float in midair.
 	public void NewJump(){			
-		Vector3 jumpDir = (marble.grounded)? marble.hit.normal : Vector3.up;
+		Vector3 jumpDir = (marble.Grounded)? marble.GroundInfo.normal : Vector3.up;
 
-		marble.marbody.velocity = new Vector3(marble.marbody.velocity.x, 0, marble.marbody.velocity.z) + (jumpDir * (marble.jumpHeight / 100));
+		marble.marbody.velocity = new Vector3(marble.marbody.velocity.x, 0, marble.marbody.velocity.z) + (jumpDir * (marble.JumpHeight / 100));
 	}
 	
 	
@@ -51,20 +42,19 @@ public class GodSource : BuffSource {
 	public void NewMove(){
 
 		// Spins marble to appropriate amount of spin speed.
-		marble.marbody.AddTorque(Vector3.Cross(Vector3.up, marble.inputDirection) * marble.speedMultiplier * marble.revSpeed * marble.shackle);
-		
+		marble.marbody.AddTorque(Vector3.Cross(Vector3.up, marble.Direction) * marble.SpeedMultiplier * marble.RevSpeed * marble.Shackle);
+
 		// Applies force if marble is on the ground.
 		marble.marbody.drag = 0.5f;
-		marble.marbody.AddForce(marble.inputDirection * marble.speedMultiplier * marble.marbody.angularVelocity.magnitude * marble.shackle, ForceMode.Impulse);
-		marble.inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
+		marble.marbody.AddForce(marble.Direction * marble.SpeedMultiplier * marble.marbody.angularVelocity.magnitude * marble.Shackle, ForceMode.Impulse);
 	}
 	
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
 	protected override void TakeBuff() {
 		base.TakeBuff();
-		
-		marble.jumpFunction = null;
-		marble.moveFunction = null;
+
+		marble.JumpFunction = null;
+		marble.MoveFunction = null;
 	}
 
 }

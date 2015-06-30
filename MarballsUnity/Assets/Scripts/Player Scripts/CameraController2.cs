@@ -2,7 +2,7 @@
 /// CameraController2.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr. 24, 2015
-/// Last Revision: Apr. 29, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class that controls camera movement in a different way.
 /// 
@@ -49,7 +49,7 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	void Awake() {
 		gm = GameMaster.CreateGM();
 		myTransform = transform;
-		gm.cam = transform;
+		//gm.cam = transform;
 	}
 
 	// Start - Use this for initialization.
@@ -62,19 +62,33 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	// OnEnable - Called when script is enabled.
 	void OnEnable() {
 		Marble.respawn += ResetPosition;
+
+		Messenger.AddListener("CamUp", MoveUp);
+		Messenger.AddListener("CamDown", MoveDown);
+		Messenger.AddListener("CamLeft", MoveLeft);
+		Messenger.AddListener("CamRight", MoveRight);
+		Messenger.AddListener("CamModeToggle", ToggleControlMode);
+		Messenger<float>.AddListener("CameraShake", DoCameraShake);
 	}
 	
 	// OnDisable - Called when script is disabled.
 	void OnDisable() {
 		Marble.respawn -= ResetPosition;
+
+		Messenger.RemoveListener("CamUp", MoveUp);
+		Messenger.RemoveListener("CamDown", MoveDown);
+		Messenger.RemoveListener("CamLeft", MoveLeft);
+		Messenger.RemoveListener("CamRight", MoveRight);
+		Messenger.RemoveListener("CamModeToggle", ToggleControlMode);
+		Messenger<float>.RemoveListener("CameraShake", DoCameraShake);
 	}
 	
 	// Update - Called once per frame.
 	void Update () {
-
-		if (Input.GetKeyDown(KeyCode.Z)) {
-			Freeze(!frozen);
-		}
+		// DEBUG - Forgot this was here. Probably safe to remove.
+		//if (Input.GetKeyDown(KeyCode.Z)) {
+		//	Freeze(!frozen);
+		//}
 
 		if (!frozen) {
 			// Allow zooming in and out.
@@ -146,11 +160,31 @@ public class CameraController2 : MonoBehaviour, ICamera {
 		defOffset = offset;	// Not sure if this belongs here but it's needed at the moment.
 	}
 
+	// DoCameraShake - Initiates camera shaking coroutine.
+	public void DoCameraShake(float intensity) {
+		StopCoroutine("CameraShake");
+		StartCoroutine("CameraShake", intensity);
+	}
+
+	// CameraShake - Jostles the camera a little bit.
+	public IEnumerator CameraShake(float intensity) {
+		int duration = 25;
+
+		for (int i = 0; i < duration; i++) {
+			myTransform.position += new Vector3(Random.Range(-intensity, intensity), 
+			                                    Random.Range(-intensity, intensity), 
+			                                    Random.Range(-intensity, intensity));
+
+			yield return new WaitForFixedUpdate();
+		}
+	}
+
 	// Control Functions - Rotates the offset around and/or changes camera mode.
 	#region Control Functions
+
 	// Moves camera up.
 	public void MoveUp() {
-		if (myTransform.eulerAngles.x < 90 - sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
+		if (mode == CameraController.ControlMode.Keyboard && myTransform.eulerAngles.x < 90 - sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
 			offset = Quaternion.AngleAxis(sensitivity * Time.deltaTime * ampSense, myTransform.right) * offset;
 			//Debug.Log("Before: " + offset);
 			if (offset.y > radius - 3) {
@@ -163,7 +197,7 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	
 	// Moves camera down.
 	public void MoveDown() {
-		if (myTransform.eulerAngles.x > sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
+		if (mode == CameraController.ControlMode.Keyboard && myTransform.eulerAngles.x > sensitivity/* && !(autoRotate && offSetOffset != Vector3.zero)*/) {
 			offset = Quaternion.AngleAxis(-sensitivity * Time.deltaTime * ampSense, myTransform.right) * offset;
 			if (offset.y < 0) offset.y = 0;
 		}
@@ -171,12 +205,14 @@ public class CameraController2 : MonoBehaviour, ICamera {
 	
 	// Moves camera left.
 	public void MoveLeft() {
-		offset = Quaternion.AngleAxis(sensitivity * Time.deltaTime * ampSense, Vector3.up) * offset;
+		if (mode == CameraController.ControlMode.Keyboard)
+			offset = Quaternion.AngleAxis(sensitivity * Time.deltaTime * ampSense, Vector3.up) * offset;
 	}
 	
 	// Moves camera right.
 	public void MoveRight() {
-		offset = Quaternion.AngleAxis(-sensitivity * Time.deltaTime * ampSense, Vector3.up) * offset;
+		if (mode == CameraController.ControlMode.Keyboard)
+			offset = Quaternion.AngleAxis(-sensitivity * Time.deltaTime * ampSense, Vector3.up) * offset;
 	}
 	
 	// ToggleControlMode - Changes camera control style.

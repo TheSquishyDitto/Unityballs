@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Apr. 25, 2015
+/// Last Revision: Jun. 25, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
@@ -21,15 +21,14 @@ public class FinishLine : MonoBehaviour {
 	// Variables
 	#region Variables
 	GameMaster gm;					// Reference to Game Master.
-
-	//public Transform marble;		// Reference to the marble.
+	Settings settings;				// Reference to game settings.
+	public static Transform finish;	// Global reference to the location of the active finish line.
+	
 	public GameObject flames;		// Reference to parent object of flame particles.
-	//public ParticleSystem flame1;	// Reference to first flame particles. Currently unnecessary.
-	//public ParticleSystem flame2;	// Reference to second flame particles. Currently unnecessary.
 	public Transform swirlPoint;	// Reference to the point the marble should swirl around.
-	public GameObject arrow;		// Reference to the indicator arrow.
+	public GameObject arrows;		// Reference to the indicator arrow.
 	public AudioClip explodeSound;	// Reference to a sound to use when exploding.
-	public bool gravityFinish;		// Whether crazy Christmas swirl or a black hole-like thing is used.
+	//public bool gravityFinish;		// Whether crazy Christmas swirl or a black hole-like thing is used.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
 
@@ -38,7 +37,9 @@ public class FinishLine : MonoBehaviour {
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM ();
-		gm.finishLine = this.transform;
+		settings = GameMaster.LoadSettings();
+		finish = transform;
+		//gm.finishLine = this.transform;
 	}
 
 	// OnEnable - Called when the object is enabled.
@@ -46,6 +47,8 @@ public class FinishLine : MonoBehaviour {
 		GameMaster.start += FlameOff;
 		GameMaster.play += FlameOff;
 		GameMaster.win += FlameOn;
+
+		Messenger.AddListener("ToggleArrows", ToggleArrows);
 	}
 
 	// OnDisable - Called when the object is disabled.
@@ -53,31 +56,29 @@ public class FinishLine : MonoBehaviour {
 		GameMaster.start -= FlameOff;
 		GameMaster.play -= FlameOff;
 		GameMaster.win -= FlameOn;
+
+		Messenger.RemoveListener("ToggleArrows", ToggleArrows);
 	}
 
 	// Start - Use this for initialization
 	void Start () {
-		//marble = gm.marble;
+		if (settings.guideArrows != arrows.activeSelf)
+			ToggleArrows();
 	}
 
-	// Update is called once per frame
-	void Update () {
-		arrow.SetActive(gm.guides);	// Lazy way of dealing with it at the moment.
-	}
-
-	// FixedUpdate is called every physics frame
-	void FixedUpdate () {
-
-	}
-	
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
 		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
 			impactVelocity = other.attachedRigidbody.velocity;	// Stores marble's velocity at the time of impact.
-			other.attachedRigidbody.isKinematic = (!gravityFinish || gm.simpleAnim);	// Hands total control of marble position to scripts.
+			other.attachedRigidbody.isKinematic = (!settings.gravityFinish || settings.simpleAnim);	// Hands total control of marble position to scripts.
 			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
 			gm.OnWin(); // When player gets to finish they win!
 		}	
+	}
+
+	// ToggleArrows - Enables/disables helper arrows.
+	public void ToggleArrows() {
+		arrows.SetActive(!arrows.activeSelf);
 	}
 
 	// FlameOn - Spews flames.
@@ -99,8 +100,8 @@ public class FinishLine : MonoBehaviour {
 
 		// [insert code to smoothly get timer into position, maybe separate coroutine? ]
 
-		if (!gm.simpleAnim) {
-			if (!gravityFinish) {
+		if (!settings.simpleAnim) {
+			if (!settings.gravityFinish) {
 				// CRAZY WIN ANIMATION
 
 				// [insert code to smoothly get the marble into the starting position of swirl without teleporting, maybe separate coroutine? ]
@@ -144,7 +145,7 @@ public class FinishLine : MonoBehaviour {
 
 				// Insane explosion.
 				explosion = ((GameObject)Instantiate(Resources.Load ("Prefabs/Particle Prefabs/Explosion"))).GetComponent<ParticleSystem>();
-				AudioSource.PlayClipAtPoint(explodeSound, gm.cam.position, 2.0f);
+				AudioSource.PlayClipAtPoint(explodeSound, Camera.main.transform.position, 2.0f);
 				yield return new WaitForSeconds(2f); // Wait until explosion is partially finished.
 			}
 
@@ -168,7 +169,8 @@ public class FinishLine : MonoBehaviour {
 			yield return new WaitForSeconds(0.3f);
 		}
 
-		gm.hud.StartCoroutine("OnVictory");	// Shows victory screen.
+		//References.hud.StartCoroutine("OnVictory");	// Shows victory screen.
+		Messenger.Broadcast("Victory");
 
 		// Destroys particles once they're done.
 		if (explosion) {

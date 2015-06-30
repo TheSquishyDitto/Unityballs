@@ -1,13 +1,12 @@
 ﻿/// <summary>
-/// FinishLine.cs
+/// MainHUD.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Mar. 11, 2015
-/// Last Revision: May   9, 2015
+/// Last Revision: Jun. 29, 2015
 /// 
 /// Class that controls the Heads Up Display (HUD) and associated menus.
 /// 
-/// TO DO: - Add other features.
-/// 	   - Refactor to use events, and possibly only one tint screen and text display!
+/// TO DO: - Split functionality into multiple parts so the HUD is easier to maintain.
 /// 
 /// </summary>
 
@@ -18,32 +17,23 @@ using System.Collections.Generic;
 
 public class MainHUD : MonoBehaviour {
 
-		// Variables
+	// Variables
 	#region Variables
 	GameMaster gm;					// Reference to Game Master.
+	Settings settings;				// Reference to game settings.
 	Canvas hud;						// Reference to own canvas.
 
 	public Canvas panScreen;		// Reference to pan screen canvas.
 	public Text levelName;			// Reference to test displaying level name.
 	public Text scores;				// Reference to text displaying all high scores.
-	public Text timer;				// Reference to timer text.
-	public Text best;				// Reference to high score text.
-	public Text speed;				// Reference to speed gauge text.
-	public Text rps;				// Reference to rps (rotations per second) gauge text.
 	public Image countdown;			// Reference to countdown image container.
-	public Image powerup;			// Reference to image of currently active powerup.
-	public Image heldPowerup;		// Reference to held powerup picture.
 	public Image deathScreen;		// Reference to death tint.
 	public Text deathMessage;		// Reference to death message text.
 	public Image winScreen;			// Reference to win tint.
 	public Text winMessage;			// Reference to win message text.
 	//public Image tintScreen;		// Reference to the panel that tints the screen.
 	//public Text statusMessage;	// Reference to the text that displays during certain events.
-	public Image tipBox;			// Reference to the background panel of tip windows.
-	public Text tipMessage;			// Reference to the text in a tip window.
 
-	public GameObject tipWindow;  	// Reference to the active tip window.
-	public GameObject buffBox;	  	// Reference to the active buff indicator.
 	public GameObject winOptions; 	// Reference to win options.
 	public GameObject debugSet;	  	// Reference to debug buttons and info display.
 
@@ -56,12 +46,17 @@ public class MainHUD : MonoBehaviour {
 	float remainder;			// Decimal portion of timer.
 	public float goLength;		// Desired duration of "GO!" Should be between 0 and 1.
 
+	//public StatUpdater statBar;	// Reference to the bar on top of the screen.
+	//public BuffBox buffBox;		// Reference to the buff box on the star bar. Unnecessary?
+	//public TipBox tipBox;			// Reference to the tip box?
+	//public AbilityBox abilityBox;	// Reference to the ability box?
+
 	#endregion
 	
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM();
-		gm.hud = this;
+		settings = GameMaster.LoadSettings();
 		hud = GetComponent<Canvas>();
 	}
 
@@ -72,6 +67,9 @@ public class MainHUD : MonoBehaviour {
 		GameMaster.play += HideCountdown;
 		Marble.die += ShowDeath;
 		Marble.respawn += ClearTint;
+
+		Messenger.AddListener("ClearHUDTint", ClearTint);
+		Messenger.AddListener("Victory", PlayVictory);
 	}
 
 	// OnDisable - Called when the HUD is deactivated.	
@@ -81,6 +79,9 @@ public class MainHUD : MonoBehaviour {
 		GameMaster.play -= HideCountdown;
 		Marble.die -= ShowDeath;
 		Marble.respawn -= ClearTint;
+
+		Messenger.RemoveListener("ClearHUDTint", ClearTint);
+		Messenger.RemoveListener("Victory", PlayVictory);
 	}
 
 	// Use this for initialization
@@ -94,14 +95,14 @@ public class MainHUD : MonoBehaviour {
 
 			// Display high scores.
 			if (gm.levelData.bestTimes.Count > 0) {
-				best.text = "Best: " + gm.levelData.bestTimes[0].ToString("F1") + " s";
-				for (int i = 0; i < gm.scoreCount; i++) {
+				//best.text = "Best: " + gm.levelData.bestTimes[0].ToString("F1") + " s";
+				for (int i = 0; i < settings.highScoreCount; i++) {
 					scores.text = scores.text + (i + 1) + ".) ";
 					scores.text = (gm.levelData.bestTimes.Count > i)? scores.text + gm.levelData.bestTimes[i].ToString("F2") + " s" : scores.text + "-----";
 					scores.text = scores.text + "\n";
 				}
 			} else {
-				best.enabled = false;
+				//best.enabled = false;
 			}
 
 			// Use level message settings.
@@ -117,14 +118,13 @@ public class MainHUD : MonoBehaviour {
 				winMessages = gm.levelData.winMessages;
 			}
 		} else {
-			best.enabled = false;
+			//best.enabled = false;
 		}
 
-		if (gm.panCam == null)
+		if (/*References.panCam == null*/gm.panCam == null)
 			gm.OnStart();	// Begins the gameplay sequence when the HUD is ready.
 
-		buffBox.SetActive((gm.marble.buff != Marble.PowerUp.None));
-		debugSet.SetActive(gm.debug);
+		debugSet.SetActive(settings.debug);
 	}
 	
 	// Update is called once per frame
@@ -141,9 +141,9 @@ public class MainHUD : MonoBehaviour {
 				// Sound effect should play at the beginning and when the numbers change.
 				if (lastFrame != countdown.sprite) {
 					if (countdown.sprite != nums[0])
-						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), gm.cam.position, 0.5f);
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/countdown"), Camera.main.transform.position, 0.5f * settings.FXScaler);
 					else 
-						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/gong"), gm.cam.position, 0.5f);
+						AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Sounds/gong"), Camera.main.transform.position, 0.5f * settings.FXScaler);
 				}
 
 				// Makes number shrink as the timer goes down to the next number, with special conditions for "GO!".
@@ -151,19 +151,6 @@ public class MainHUD : MonoBehaviour {
 				if (remainder >= 1) remainder = remainder % 1;
 				countdown.rectTransform.localScale = (gm.timer >= goLength) ? new Vector3(1, 1, 1) + new Vector3(remainder, remainder, remainder) : new Vector3(3, 3, 3);
 
-			} else if (gm.state == GameMaster.GameState.Playing) {
-				//countdown.enabled = false;
-				timer.text = gm.timer.ToString("F1") + " s";	// Displays timer to one decimal place.
-
-				// Cuts away active buff icon based on time remaining.
-				if (buffBox.activeSelf)
-					powerup.fillAmount = (gm.marble.buffTimer != Mathf.Infinity)? gm.marble.buffTimer / gm.marble.buffTimeMax : 1;
-			}
-		
-			if (gm.marble != null) {
-				// Speed gauges.
-				speed.text = Mathf.Round(gm.marble.marbody.velocity.magnitude) + " m/s";
-				rps.text = Mathf.Round(gm.marble.marbody.angularVelocity.magnitude) + " rps";
 			}
 		}
 	}
@@ -178,7 +165,7 @@ public class MainHUD : MonoBehaviour {
 	public void BeginCountdown() {
 		panScreen.enabled = false;
 		hud.enabled = true;
-		timer.text = "0.0 s";
+		//timer.text = "0.0 s";
 		gm.timer += goLength - .1f;
 		countdown.gameObject.SetActive(true);
 		countdown.sprite = null;
@@ -187,23 +174,6 @@ public class MainHUD : MonoBehaviour {
 	// HideCountdown - Hides countdown.
 	public void HideCountdown() {
 		countdown.gameObject.SetActive(false);
-	}
-
-	// ShowActiveBuff - Shows the active buff box and places the previously "held" buff into the active slot.
-	public void ShowActiveBuff() {
-		buffBox.SetActive(true);
-		powerup.sprite = heldPowerup.sprite;
-		powerup.color = heldPowerup.color;
-		powerup.type = UnityEngine.UI.Image.Type.Filled;
-		powerup.fillMethod = UnityEngine.UI.Image.FillMethod.Radial360;
-		heldPowerup.sprite = null;
-		heldPowerup.color = Color.clear;
-	}
-
-	// HideActiveBuff - Hides and clears the active buff box.
-	public void HideActiveBuff() {
-		buffBox.SetActive(false);
-		// If we need to clear it, we can do so here.
 	}
 
 	// ShowDeath - Starts death coroutine.
@@ -258,6 +228,11 @@ public class MainHUD : MonoBehaviour {
 			deathMessage.color = new Color(1, 1, 1, i/10.0f);
 			yield return new WaitForSeconds(0.05f);
 		}
+	}
+
+	// PlayVictory - Shows victory screen.
+	void PlayVictory() {
+		StartCoroutine("OnVictory");
 	}
 
 	// OnVictory - Displays winning text and buttons.

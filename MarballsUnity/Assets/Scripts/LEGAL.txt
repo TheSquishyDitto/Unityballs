@@ -1,0 +1,5 @@
+[ATTRIBUTIONS]
+
+Messenger.cs created by Magnus Wolffelt, updated by Julie Iaccarino, and inspired/based on the work of Rob Hyde.
+Messenger.cs is licensed under CC BY-SA 3.0
+http://wiki.unity3d.com/index.php?title=CSharpMessenger_Extended

@@ -1,8 +1,8 @@
-﻿/// <summary>
+/// <summary>
 /// SizeChangeSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: May   4, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class for size change granting entities.
 /// 
@@ -18,41 +18,33 @@ using System.Collections;
 public class SizeChangeSource : BuffSource {
 
 	//float size;	// Marble's original size.
+	float mass;		// Marble's original mass.
 
-	// GiveBuff - Gives a specific buff to the specified marble.
-	protected override void GiveBuff(Marble marble) {
-		base.GiveBuff(marble);
-		marble.buffFunction = SizeChange; // Basically gives the marble the buff function to use.
-		marble.heldBuff = Marble.PowerUp.SizeChange;
-	}
-
-	// SizeChange - Modifies marble's size.
-	public void SizeChange(float newSize, float duration) {
-		marble.buff = Marble.PowerUp.SizeChange;
-		//size = marble.defSize;
-		marble.transform.localScale *= newSize; //new Vector3(newSize, newSize, newSize);
+	// BuffFunction - Applies the buff to the marble.
+	protected override void BuffFunction() {
+		mass = marble.marbody.mass;
 		marble.marbody.mass *= Mathf.Pow(intensity, 4);
-		marble.moveFunction = NewMove;
+		marble.marform.localScale *= intensity; // alternative is Vector3.one * intensity, current version multiplies marble form's normal size
+		marble.MoveFunction = NewMove;
 	}
 
 	// TakeBuff - Any special conditions that must be fixed to remove the buff.
 	protected override void TakeBuff() {
 		base.TakeBuff();
 		
-		marble.transform.localScale = Vector3.one * marble.defSize;
-		marble.marbody.mass = marble.defMass;
-		marble.moveFunction = null;
+		marble.marform.localScale = Vector3.one * marble.data.size;
+		marble.marbody.mass = mass;
+		marble.MoveFunction = null;
 	}
 	
 	// NewMove - Compensate for larger mass
 	public void NewMove(){
 		
-		marble.marbody.AddTorque(Vector3.Cross(Vector3.up, marble.inputDirection) * marble.speedMultiplier * marble.revSpeed * marble.shackle, ForceMode.Acceleration);
-		
-		if (marble.grounded) {
+		marble.marbody.AddTorque(Vector3.Cross(Vector3.up, marble.Direction) * marble.SpeedMultiplier * marble.RevSpeed * marble.Shackle, ForceMode.Acceleration);
+
+		if (marble.Grounded) {
 			marble.marbody.drag = 0.5f;
-			marble.marbody.AddForce(marble.inputDirection * marble.speedMultiplier * marble.marbody.angularVelocity.magnitude * marble.shackle, ForceMode.VelocityChange);
-			marble.inputDirection = Vector3.zero; // Clears direction so force doesn't accumulate even faster.
+			marble.marbody.AddForce(marble.Direction * marble.SpeedMultiplier * marble.marbody.angularVelocity.magnitude * marble.Shackle, ForceMode.VelocityChange);
 		}
 		else {
 			marble.marbody.drag = 0.1f;

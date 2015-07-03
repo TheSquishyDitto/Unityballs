@@ -2,7 +2,7 @@
 /// MainMenu.cs
 /// Authors: Kyle Dawson, Charlie Sun, Brenton Brown
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Mar.  9, 2015
+/// Last Revision: Jun. 25, 2015
 /// 
 /// Class that displays the main menu and gives it function.
 /// 
@@ -32,11 +32,11 @@ public class MainMenu : MonoBehaviour {
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
-		gm.mainMenu = this;
+		//gm.mainMenu = this;
 	}
 
 	void Start() {
-		GetComponent<Text>().text = " Version " + gm.version;
+		GetComponent<Text>().text = " Version " + GameMaster.LoadSettings().version;
 
 		foreach(GameObject obj in marbles) {
 			if (GetComponent<Rigidbody>()) obj.GetComponent<Rigidbody>().maxAngularVelocity = 10000;

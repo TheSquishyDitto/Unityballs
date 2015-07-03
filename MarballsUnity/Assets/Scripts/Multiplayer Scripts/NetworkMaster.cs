@@ -29,9 +29,9 @@ public class NetworkMaster : MonoBehaviour {
 
 	string roomName = string.Empty;				// Used when creating a room's name.
 	string roomDesc = string.Empty;				// Used when leaving a comment about the room.
-	string username = string.Empty;				// Used to create a username.
+	//string username = string.Empty;				// Used to create a username.
 	HostData[] hostList;						// List of hosts, which might mean servers/rooms?
-	HostData currentHost;						// Which host is currently connected to.
+	//HostData currentHost;						// Which host is currently connected to.
 
 	[Header("References")]
 	public GameObject netWindow;				// Reference to connection window.
@@ -78,13 +78,13 @@ public class NetworkMaster : MonoBehaviour {
 		panCam.SetActive(false);
 		netWindow.SetActive(false);
 
-		int spawnIndex = (currentHost == null || currentHost.connectedPlayers == 0)? 0 : (currentHost.connectedPlayers) % spawnPoints.Length;
-		GameObject obj = (GameObject)Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
-		MultiplayerMarble marble = obj.GetComponentInChildren<MultiplayerMarble>();
-		marble.SetUsername(username);
+		//int spawnIndex = (currentHost == null || currentHost.connectedPlayers == 0)? 0 : (currentHost.connectedPlayers) % spawnPoints.Length;
+		//GameObject obj = (GameObject)Network.Instantiate(playerPrefab, spawnPoints[spawnIndex].position + (Vector3.up * 3), spawnPoints[spawnIndex].rotation, 0);
+		//MultiplayerMarble marble = obj.GetComponentInChildren<MultiplayerMarble>();
+		//marble.SetUsername(username);
 
-		Vector3 color = new Vector3(Random.Range(0f, 1.0f), Random.Range(0f, 1.0f), Random.Range(0f, 1.0f));
-		marble.ChangeColor(color);
+		//Vector3 color = new Vector3(Random.Range(0f, 1.0f), Random.Range(0f, 1.0f), Random.Range(0f, 1.0f));
+		//marble.ChangeColor(color);
 	}
 
 	// RefreshHostList - Requests the most up-to-date host list from the Master Server.
@@ -126,7 +126,7 @@ public class NetworkMaster : MonoBehaviour {
 	// JoinServer - Joins a server.
 	void JoinServer(HostData hostData) {
 		if (Network.Connect(hostData) == NetworkConnectionError.NoError) {
-			currentHost = hostData;
+			;//currentHost = hostData;
 		} else {
 			Debug.LogWarning("(NetworkMaster.cs) There was an error connecting to the host!");
 		}
@@ -175,7 +175,7 @@ public class NetworkMaster : MonoBehaviour {
 
 	#region UI Setter Functions
 	public void UpdateUsername(string name) {
-		username = name;
+		;//username = name;
 	}
 	
 	public void UpdateRoomName(string name) {

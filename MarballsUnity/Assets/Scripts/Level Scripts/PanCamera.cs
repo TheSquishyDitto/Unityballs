@@ -18,8 +18,9 @@ using System.Collections;
 
 public class PanCamera : ScriptedPath {
 
-	GameMaster gm;	// Reference to GameMaster.
-	Camera cam;		// Reference to attached camera component.
+	GameMaster gm;		// Reference to GameMaster.
+	Transform mainCam;	// Reference to main camera.
+	Camera cam;			// Reference to attached camera component.
 
 	// OnEnable - Called when script is enabled. Used to subscribe to events.
 	void OnEnable() {
@@ -36,8 +37,10 @@ public class PanCamera : ScriptedPath {
 	// Awake - Called before anything else.
 	void Awake () {
 		gm = GameMaster.CreateGM();
+		mainCam = Camera.main.transform;
 		cam = GetComponent<Camera>();
 		gm.panCam = cam;
+		//References.panCam = cam;
 	}
 
 	// Start - Use this for initialization.
@@ -49,18 +52,24 @@ public class PanCamera : ScriptedPath {
 			gm.OnStart();
 	}
 
+	// OnDestroy - Called when this object is destroyed.
+	void OnDestroy() {
+		//References.panCam = null;
+		gm.panCam = null;
+	}
+
 	// Activate - Enables camera component.
 	void Activate() {
 		StopCoroutine("Move");
 		StartCoroutine("Move");
 		cam.enabled = true;
-		gm.cam.GetComponent<Camera>().enabled = false;
+		mainCam.GetComponent<Camera>().enabled = false;
 	}
 
 	// Deactivate - Disables camera component.
 	void Deactivate() {
 		StopCoroutine("Move");
-		gm.cam.GetComponent<Camera>().enabled = true;
+		mainCam.GetComponent<Camera>().enabled = true;
 		cam.enabled = false;
 	}
 }

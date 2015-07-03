@@ -2,7 +2,7 @@
 /// KillZone.cs
 /// Authors: Kyle Dawson, Charlie Sun, Chris Viqueira
 /// Date Created:  Feb. 16, 2015
-/// Last Revision: Apr. 30, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class that handles behavior of deadly objects and zones.
 /// 
@@ -37,12 +37,15 @@ public class KillZone : MonoBehaviour {
 		}
 	}
 
-	// Kill - Lives up to its namesake.
-	void Kill(Collider other) {
+	// Kill - Lives up to its namesake. Returns true if it killed something.
+	protected virtual bool Kill(Collider other) {
 		// Check if what fell into the killzone was a marble, since you wouldn't want a falling box to reset the player.
 		if (other.GetComponent<IKillable>() != null) {
 			other.GetComponent<IKillable>().Die();
+			return true;
 		}
+
+		return false;
 	}
 }
 

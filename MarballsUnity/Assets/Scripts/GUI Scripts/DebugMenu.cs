@@ -21,6 +21,7 @@ using System.Collections;
 public class DebugMenu : MonoBehaviour {
 
 	GameMaster gm;				// Reference to GameMaster.
+	Settings settings;			// Reference to game settings.
 	
 	public Slider fpsSlider;	// Reference to target frame setting slider.
 	public Text fpsText;		// Reference to accompanying text for target FPS slider.
@@ -36,17 +37,20 @@ public class DebugMenu : MonoBehaviour {
 	// Awake - Called before anything else.
 	void Awake() {
 		gm = GameMaster.CreateGM();
+		settings = GameMaster.LoadSettings();
 	}
 
 	// Start - Use this for initialization.
 	void Start () {
-		simple.isOn = gm.simpleAnim;
+		simple.isOn = settings.simpleAnim;//gm.simpleAnim;
 
-		Application.targetFrameRate = 60;
+		Application.targetFrameRate = settings.targetFPS;//60;
 
 		if (fpsSlider) fpsSlider.value = Application.targetFrameRate;
 
 		ToggleExpansion();
+
+		// RESET TOGGLE BUTTONS BASED ON SETTINGSS AS WELL
 	}
 	
 	// Update - Called once per frame.
@@ -115,22 +119,23 @@ public class DebugMenu : MonoBehaviour {
 	
 	// DEBUG - SimpleWin - Turns simple animations on or off.
 	public void SimpleAnim (bool simple) {
-		gm.simpleAnim = simple;
+		//gm.simpleAnim = simple;
+		settings.simpleAnim = simple;
 	}
 
 	// DEBUG - GravFinish - Turns gravity finish on or off.
 	public void GravFinish(bool grav) {
-		gm.finishLine.GetComponent<FinishLine>().gravityFinish = grav;
+		settings.gravityFinish = grav;
 	}
 
 	// DEBUG - UseOnGrab - Automatically use picked up buffs.
 	public void UseOnGrab (bool use) {
-		gm.useOnGrab = use;
+		settings.useOnGrab = use;
 	}
 
 	// DEBUG - FreezeTimer - Stops the level timer.
 	public void FreezeTimer(bool freeze) {
-		gm.freezeTimer = freeze;
+		settings.freezeTimer = freeze;
 	}
 
 	// DEBUG - Flashlight - Enables marble's kinetic-powered flashlight.
@@ -142,7 +147,7 @@ public class DebugMenu : MonoBehaviour {
 
 	// DEBUG - CheatFinish - Wins the level for you.
 	public void CheatFinish() {
-		gm.marble.transform.position = gm.finishLine.position;
+		gm.marble.transform.position = FinishLine.finish.position;
 	}
 
 	// DEBUG - EraseSave - Permanently deletes saved level data.

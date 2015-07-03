@@ -2,7 +2,7 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Apr. 21, 2015
+/// Last Revision: Jun. 28, 2015
 /// 
 /// Class that controls the pause menu canvas.
 /// 
@@ -25,13 +25,23 @@ public class PauseMenu : MonoBehaviour {
 	void Awake () {
 		gm = GameMaster.CreateGM();
 		canvas = GetComponent<Canvas>();
-		gm.pauseMenu = this;
+		//gm.pauseMenu = this;
 		canvas.enabled = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	// OnEnable - Called when object is enabled.
+	void OnEnable() {
+		Messenger<bool>.AddListener("SetPauseActive", SetPauseActive);
+	}
+
+	// OnDisable - Called when object is disabled.
+	void OnDisable() {
+		Messenger<bool>.RemoveListener("SetPauseActive", SetPauseActive);
+	}
+
+	// SetPauseActive - Enables/disables pause menu.
+	void SetPauseActive(bool active) {
+		canvas.enabled = active;
 	}
 
 	// Resume - Resumes gameplay.
@@ -56,7 +66,8 @@ public class PauseMenu : MonoBehaviour {
 		pauseSet.SetActive (!pauseSet.activeSelf);
 		optionSet.SetActive (!optionSet.activeSelf);
 	}
-	
+
+	// ToggleControls - Activates control menu.
 	public void ToggleControls() {
 		gm.input.allowInput = !gm.input.allowInput;
 		optionSet.SetActive (!optionSet.activeSelf);
@@ -64,8 +75,7 @@ public class PauseMenu : MonoBehaviour {
 	}
 
 	// QuitRequest - Quits the game.
-	public void QuitRequest()
-	{
+	public void QuitRequest() {
 		Application.Quit ();
 	}
 }

@@ -2,7 +2,7 @@
 /// SuperJumpSource.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Apr. 16, 2015
+/// Last Revision: Jun. 26, 2015
 /// 
 /// Class for super jump granting entities.
 /// 
@@ -24,32 +24,24 @@ public class SuperJumpSource : BuffSource {
 		duration = Mathf.Infinity;
 	}
 
-	// GiveBuff - Gives a specific buff to the specified marble.
-	protected override void GiveBuff(Marble marble) {
-		base.GiveBuff(marble);
-		marble.buffFunction = SuperJump; // Basically gives the marble the SuperJump function to use.
-		marble.heldBuff = Marble.PowerUp.SuperJump;
-	}
-
-	// SuperJump - Modifies marble's jumping height.
-	public void SuperJump(float intensity, float duration = Mathf.Infinity) {
-		marble.buff = Marble.PowerUp.SuperJump;
-		jumpHeight = marble.jumpHeight;
-		marble.jumpHeight *= intensity;
-		marble.canJump = true;
-		marble.jumpFunction = NewJump;
+	// BuffFunction - Applies the buff to the marble.
+	protected override void BuffFunction() {
+		jumpHeight = marble.JumpHeight;
+		marble.JumpHeight *= intensity;
+		marble.CanJump = true;
+		marble.JumpFunction = NewJump;
 	}
 
 	// NewJump - Allows the marble to perform a single powerful jump regardless of conditions.
 	public void NewJump(){
-		if (marble.canJump) {
-			Vector3 jumpDir = (marble.grounded)? marble.hit.normal * 2 : Vector3.up * 2;
-			jumpDir += marble.inputDirection * Mathf.Clamp(1 / (marble.marbody.velocity.magnitude + 0.001f), 0, 1);	// Allows jumps in this state to be more directionally influenced.
+		if (marble.CanJump) {
+			Vector3 jumpDir = (marble.Grounded)? marble.GroundInfo.normal * 2 : Vector3.up * 2;
+			jumpDir += marble.Direction * Mathf.Clamp(1 / (marble.marbody.velocity.magnitude + 0.001f), 0, 1);	// Allows jumps in this state to be more directionally influenced.
 			jumpDir = jumpDir.normalized;
-			
-			marble.marbody.AddForce (marble.jumpHeight * jumpDir);
-			marble.canJump = false;	// This prevents the marble from immediately using its original jump afterwards.
-			marble.Invoke("JumpCooldown", 1f);
+
+			marble.marbody.AddForce (marble.JumpHeight * jumpDir);
+			marble.CanJump = false;	// This prevents the marble from immediately using its original jump afterwards.
+			marble.mover.Invoke("JumpCooldown", 1f);
 			marble.ClearBuffs();
 		}
 	}
@@ -58,7 +50,7 @@ public class SuperJumpSource : BuffSource {
 	protected override void TakeBuff() {
 		base.TakeBuff();
 
-		marble.jumpHeight = jumpHeight;
-		marble.jumpFunction = null;
+		marble.JumpHeight = jumpHeight;
+		marble.JumpFunction = null;
 	}
 }

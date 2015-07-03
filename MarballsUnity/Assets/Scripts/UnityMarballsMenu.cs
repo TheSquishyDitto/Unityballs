@@ -13,7 +13,7 @@ public class UnityMarballsMenu : MonoBehaviour {
 		EditorApplication.NewScene();						// Creates a new scene.
 		
 		// Instantiates everything a typical level will have.
-		PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/LevelGUI"));
+		PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/UI Prefabs/LevelGUI"));
 		PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/StartPlatform"));
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/Marble Prefabs/Base Marble")) as GameObject).transform.position = new Vector3(0, 3, 0);
 		(PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/KillZone")) as GameObject).transform.position = new Vector3(0, -20, 0);
@@ -36,7 +36,7 @@ public class UnityMarballsMenu : MonoBehaviour {
 		
 		// Create level data object.
 		LevelDataObject newData = ScriptableObject.CreateInstance<LevelDataObject>();
-		AssetDatabase.CreateAsset(newData, "Assets/Resources/Data/" + fileName + "Data.asset");
+		AssetDatabase.CreateAsset(newData, "Assets/Resources/Data/Level Data" + fileName + "Data.asset");
 		AssetDatabase.SaveAssets();
 		
 		// Select and highlight it in the editor.

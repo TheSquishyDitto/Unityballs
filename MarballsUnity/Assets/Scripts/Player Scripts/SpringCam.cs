@@ -35,7 +35,7 @@ public class SpringCam : MonoBehaviour/*, ICamera*/ {	// If using in Marballs, r
 	void Awake() {
 		gm = GameMaster.CreateGM();
 		myTransform = transform;
-		gm.cam = myTransform;
+		//gm.cam = myTransform;
 		//myBody = GetComponent<Rigidbody>();
 		startPos = myTransform.position;
 	}

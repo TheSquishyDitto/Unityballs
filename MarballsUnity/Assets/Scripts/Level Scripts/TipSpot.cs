@@ -2,7 +2,7 @@
 /// TipSpot.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Apr.  6, 2015
-/// Last Revision: Apr.  6, 2015
+/// Last Revision: Jun. 25, 2015
 /// 
 /// Class for zones that should cause tips to pop up.
 ///
@@ -33,6 +33,8 @@ public class TipSpot : MonoBehaviour {
 	public AudioClip sound;	// The sound to be played when this tip pops up.
 	public Collider zone;	// The trigger zone of this tip spot.
 
+	TipBoxInfo info;
+
 	#endregion
 
 	// Awake - Called before anything else.	
@@ -42,28 +44,19 @@ public class TipSpot : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
+		info = new TipBoxInfo(tip, textColor, backColor, duration);
+		info.text = Substitute(info.text);
 	}
 
 	// OnTriggerEnter - Display tip.
 	void OnTriggerEnter(Collider other) {
 		if (other.GetComponent<Marble>()) {
 			if (!(showOnce && displayCount > 0)) {
-				CancelInvoke("HideTip");
-				gm.hud.tipBox.color = backColor;
-				gm.hud.tipMessage.text = Substitute(tip);
-				gm.hud.tipMessage.color = textColor;
-				gm.hud.tipWindow.SetActive(true);
+				Messenger<TipBoxInfo>.Broadcast("DisplayTip", info);
 
-				if (sound) AudioSource.PlayClipAtPoint(sound, gm.cam.position);
+				if (sound) AudioSource.PlayClipAtPoint(sound, Camera.main.transform.position);
 
 				displayCount++;
-				Invoke("HideTip", duration);
 			}
 		}
 	}
@@ -82,13 +75,9 @@ public class TipSpot : MonoBehaviour {
 		}
 	}
 
-	// HideTip - Hides the tip window.
-	void HideTip() {
-		gm.hud.tipWindow.SetActive(false);
-	}
-
 	// Substitute - Replaces certain words and phrases with their intended meaning.
 	// NOTE: Most likely not the most efficient way to do this, but it doesn't lag the game (yet).
+	// REPLACE VARIOUS REFERENCES THROUGH GAMEMASTER BY MAKING INPUTMANAGER A SINGLETON.
 	string Substitute(string tipText) {
 		string result;
 
@@ -107,5 +96,20 @@ public class TipSpot : MonoBehaviour {
 		result = result.Replace("&guide", gm.input.keyBindings[13].ToString());
 
 		return result;
+	}
+}
+
+[System.Serializable]
+public class TipBoxInfo {
+	public string text;
+	public Color textColor;
+	public Color boxColor;
+	public float duration;
+	
+	public TipBoxInfo(string tip, Color tC, Color bC, float time = 5) {
+		text = tip;
+		textColor = tC;
+		boxColor = bC;
+		duration = time;
 	}
 }

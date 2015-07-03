@@ -2,13 +2,14 @@
 /// MultiplayerMarble.cs
 /// Authors: Kyle Dawson
 /// Date Created:  May   5, 2015
-/// Last Revision: May  12, 2015
+/// Last Revision: Jun. 22, 2015
 /// 
 /// Class for networked instances of the marble class.
 /// 
 /// NOTES: - Currently only supports basic movement; no buffs or fancy events.
 /// 
-/// TO DO: - Re-add offline features.
+/// TO DO: - UPGRADE TO UNITY 5.1'S NETWORKING FUNCTIONALITY; NETWORKVIEW AND RPCS DEPRECATED
+/// 	   - Re-add offline features.
 /// 	   - Finetune super collision.
 /// 
 /// </summary>
@@ -22,7 +23,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	#region Variables
 	[Header("References")]
 	public NetworkMaster net;			// Reference to the Network Master.
-	public NetworkView netView;			// Reference to the network view.
+	//public NetworkView netView;			// Reference to the network view.
 	public Transform cam;				// Reference to the main camera.
 	public Transform marform;			// Reference to the marble's transform.
 	public Rigidbody marbody;			// Reference to the marble's rigidbody.
@@ -72,13 +73,13 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	#region Monobehaviour Functions
 	// Awake - Called before anything else.
 	void Awake () {
-		netView = GetComponent<NetworkView>();
+		//netView = GetComponent<NetworkView>();
 		marform = transform;
 		marbody = GetComponent<Rigidbody>();
 		ballCol = GetComponent<SphereCollider>();
 		ballin = GetComponents<AudioSource>();
-		cam.gameObject.SetActive(netView.isMine);
-		if (netView.isMine) MultiplayerCam.activeCam = cam;
+		//cam.gameObject.SetActive(netView.isMine);
+		//if (netView.isMine) MultiplayerCam.activeCam = cam;
 		//quantity++;
 		//netView.RPC("UpdateQuantity", RPCMode.Server, 1);
 	}
@@ -94,7 +95,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	
 	// Update - Called once per frame.
 	void Update () {
-		if (netView.isMine)
+		//if (netView.isMine)
 			MoveControls();
 
 		// Makes player's nametag always stare at client's active camera.
@@ -288,7 +289,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 	//}
 
 	// SetUsername - Changes a player's username across the network.
-	[RPC] public void SetUsername(string name) {
+	/*[RPC] public void SetUsername(string name) {
 		nametag.GetComponent<TextMesh>().text = name;
 
 		if (netView.isMine) {
@@ -309,7 +310,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 		if (netView.isMine) {
 			netView.RPC("ChangeColor", RPCMode.OthersBuffered, color);
 		}
-	}
+	}*/
 
 	#endregion
 	
@@ -325,7 +326,7 @@ public class MultiplayerMarble : MonoBehaviour, IKillable {
 			// If this marble's velocity is greater than the foe's, induce super collision.
 			if (marbody.velocity.sqrMagnitude > col.rigidbody.velocity.sqrMagnitude) {
 				//col.collider.GetComponent<NetworkView>().RPC("SuperCollision", RPCMode.All, marbody.velocity, col.contacts[0].point);
-				netView.RPC("SuperCollision", RPCMode.All, marbody.velocity, col.collider.transform.position);
+				//netView.RPC("SuperCollision", RPCMode.All, marbody.velocity, col.collider.transform.position);
 			}
 		}
 	}

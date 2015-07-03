@@ -58,7 +58,7 @@ public class CameraController : MonoBehaviour, ICamera {
 	// Awake - Called before anything else. Use this to find the Game Master and tell it this exists.
 	void Awake () {
 		gm = GameMaster.CreateGM();
-		gm.cam = this.transform;
+		//gm.cam = this.transform;
 	}
 	
 	// Start - Use this for initialization

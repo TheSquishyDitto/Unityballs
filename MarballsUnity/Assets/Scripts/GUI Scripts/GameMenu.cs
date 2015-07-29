@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// GameMenu.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Jun. 28, 2015
@@ -60,7 +60,7 @@ public class GameMenu : MonoBehaviour {
 		// Refreshes available charm points.
 		// NOTE: THIS CAN BE OPTIMIZED BY ONLY DOING IT ON CHARM EQUIP/DEQUIP
 		if (pointsRemaining != null && gm.marble != null)
-			pointsRemaining.text = "Charm Points: " + gm.marble.charmPoints;
+			pointsRemaining.text = "Charm Capacity: " + gm.marble.charmCapacity;
 	}
 
 	// ToggleGameMenu - Enables/disables in-game menu.

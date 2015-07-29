@@ -25,7 +25,7 @@ public class MainMenu : MonoBehaviour {
 	public GameObject levelSet;		// Reference to select level submenu buttons.
 	public GameObject controlSet;	// Reference to select controls
 	
-	public GameObject props;		// Reference to marbles holder on the menu.
+	public GameObject props;		// Reference to marble holder on the menu.
 	public GameObject[] marbles;	// Reference to actual marble objects.
 	public GameObject title;		// Reference to title text.
 

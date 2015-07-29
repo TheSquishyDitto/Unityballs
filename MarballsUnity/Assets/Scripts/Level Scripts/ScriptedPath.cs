@@ -2,7 +2,7 @@
 /// ScriptedPath.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Apr. 19, 2015
-/// Last Revision: May   6, 2015
+/// Last Revision: July 24, 2015
 /// 
 /// Class for moving and rotating any object over time to specific locations.
 /// 
@@ -41,10 +41,13 @@ public class ScriptedPath : MonoBehaviour {
 
 	#endregion
 
-	// Use this for initialization
-	protected virtual void Start () {		
+	// Awake - Called before anything else.
+	protected virtual void Awake() {
 		myTransform = transform;
+	}
 
+	// Start - Use this for initialization.
+	protected virtual void Start () {		
 		if (points.Count > 0 && !points.Contains(null)) {
 			myTransform.position = points[0].position;
 			StartCoroutine("Move");
@@ -56,6 +59,7 @@ public class ScriptedPath : MonoBehaviour {
 	// Move - Coroutine to consistently move between points.
 	protected IEnumerator Move() {
 		Transform lastPoint = myTransform;	// Sets the last visited point to be the camera's position.
+		lastPoint.rotation = Quaternion.identity;
 
 		// For each point as a target destination,
 		for (int i = 0; i < points.Count; i++) {
@@ -65,6 +69,10 @@ public class ScriptedPath : MonoBehaviour {
 				myTransform.position = Vector3.MoveTowards(myTransform.position, points[i].position, speed);
 
 				// Matches rotation of point gradually as well.
+				//Debug.Log(myTransform.position);
+				//Debug.Log(myTransform.rotation);
+				//Debug.Log("LastPoint Pos: " + lastPoint.position + " - Rot: " + lastPoint.rotation);
+				//Debug.Log("NextPoint Pos: " + points[i].position + " - Rot: " + points[i].rotation);
 				myTransform.rotation = Quaternion.Lerp(lastPoint.rotation, points[i].rotation, 
 				                                       Vector3.Distance(myTransform.position, lastPoint.position) / Vector3.Distance(lastPoint.position, points[i].position));
 

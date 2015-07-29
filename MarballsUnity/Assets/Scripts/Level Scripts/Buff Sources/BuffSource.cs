@@ -2,7 +2,7 @@
 /// BuffSource.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Feb. 23, 2015
-/// Last Revision: Jun. 26, 2015
+/// Last Revision: July 28, 2015
 /// 
 /// General class for granting/clearing buffs via trigger.
 /// 
@@ -72,7 +72,8 @@ public class BuffSource : MonoBehaviour {
 		if (other.CompareTag("Marble")) {	// Only grants buffs to marbles.
 			marble = other.GetComponent<Marble>();
 
-			if (marble.buffs[/*marble.buffs.Count - */1] == null || marble.buffs[/*marble.buffs.Count - */1].buff == PowerUp.None) {
+			// If marble still has room to hold on to new buffs...
+			if (marble.buffs.Count <= marble.maxHeldBuffs) {
 				GiveBuff(marble);	// Gives the buff to the marble.
 				if (collectable) gameObject.SetActive(false);	// Disappears if collectable.
 			}
@@ -87,8 +88,8 @@ public class BuffSource : MonoBehaviour {
 
 		// Passes information about the buff to the marble.
 		buffSlot = new BuffSlot(buffType, intensity, duration, particles, TakeBuff, BuffFunction);
-		marble.buffs[1] = buffSlot;
-		//marble.buffs.Add(buffSlot);
+		//marble.buffs[1] = buffSlot;
+		marble.buffs.Add(buffSlot);
 		AudioSource.PlayClipAtPoint(buffCollect, Vector3.zero, settings.FXScaler);
 	}
 

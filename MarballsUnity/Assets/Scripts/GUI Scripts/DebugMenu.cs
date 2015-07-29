@@ -2,13 +2,13 @@
 /// DebugMenu.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Mar. 22, 2015
-/// Last Revision: Apr. 26, 2015
+/// Last Revision: July 19, 2015
 /// 
 /// Class that controls our debug menu.
 /// 
 /// NOTES: - Changing the FPS only works if VSync is disabled in quality settings!
 /// 	   - FPS slider value may not be correct if other classes modify the target framerate.
-/// 	   - FPS slider may be useful as an actual menu option.
+/// 	   - FPS slider will be useful as an actual menu option.
 /// 
 /// </summary>
 
@@ -58,7 +58,7 @@ public class DebugMenu : MonoBehaviour {
 
 		if (fpsSlider) fpsText.text = "Target FPS: " + fpsSlider.value;	// Updates the text to the current target value.
 
-		RefreshState();
+		//RefreshState();
 	}
 
 	// DEBUG - ChangeFPS - Changes application's preferred FPS. Acts as a soft ceiling.
@@ -71,7 +71,7 @@ public class DebugMenu : MonoBehaviour {
 		Application.targetFrameRate = int.Parse(targetFPS);
 	}
 
-	// DEBUG - ForceStart - Sets game state to the starting state.
+	/*// DEBUG - ForceStart - Sets game state to the starting state.
 	public void ForceStart (bool start = true){
 		if (start && manual) {
 			gm.CancelCoroutines();
@@ -115,7 +115,7 @@ public class DebugMenu : MonoBehaviour {
 			play.isOn = true;
 		}
 		manual = true;
-	}
+	}*/
 	
 	// DEBUG - SimpleWin - Turns simple animations on or off.
 	public void SimpleAnim (bool simple) {
@@ -170,6 +170,6 @@ public class DebugMenu : MonoBehaviour {
 		expanded = !expanded;
 		content.SetActive(expanded);
 
-		if (expanded) RefreshState();
+		//if (expanded) RefreshState();
 	}
 }

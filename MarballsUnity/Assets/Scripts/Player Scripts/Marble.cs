@@ -2,7 +2,7 @@
 /// Marble.cs
 /// Authors: Kyle Dawson, Chris Viqueira, Charlie Sun
 /// Date Created:  Jan. 28, 2015
-/// Last Revision: Jun. 29, 2015
+/// Last Revision: July 28, 2015
 /// 
 /// Class that controls marble game logic.
 /// 
@@ -27,7 +27,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	[Header("References")]
 	GameMaster gm;						// Reference to the Game Master.
 	Settings settings;					// Reference to the game settings.
-
+	
 	public MarbleData data;				// Reference to data holding typical values of this marble form.
 	public Transform cam;				// Reference to the main camera.
 	public Transform marform;			// Reference to the marble's transform.
@@ -37,6 +37,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	public AudioSource[] ballin;		// Reference to the marble's rolling sound.
 	public Transform spawnPoint;		// Reference to location where marble should respawn.
 	public GameObject deathParticle;	// Reference to particle that shows up when player dies.
+	public GameObject hudPrefab;		// Reference to prefab for the heads up display.
 	public HitBox hitbox;				// Reference to marble's damaging component.
 	
 	[Header("Stats")]
@@ -45,15 +46,18 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	public int health = 10;				// HP - How much damage the marble can take before critical existence failure.
 	public int defense = 0;				// 		Mitigates damage taken.
 	public int marblePower = 5; 		// MP - Resource used to perform special abilities. 
-	public int charmPoints = 3;			// CP - Resource held by equipped charms. Can be increased by 3 per level.
+	public int charmCapacity = 3;		// CC - Resource held by equipped charms. Can be increased by 3 per level.
 
 	public int maxHP = 10;				// The maximum amount of HP the marble can have. Can be increased by 5 per level.
 	public int maxMP = 5;				// The maximum amount of MP the marble can have. Can be increased by 5 per level.
-	public int maxCP = 3;				// The maximum amount of CP the marble can have. Can be increased by 3 per level.
+	public int maxCC = 3;				// The maximum amount of CP the marble can have. Can be increased by 3 per level.
+
+	public float damageThreshold = 20;	// Minimum velocity to begin inflicting damage.
+	public float damageInterval = 15;	// How quickly damage stacks at velocities higher than the threshold.
 
 	[Header("Buff Slots")]
-	public float buffTimer;				// How much time until the active buff expires.
-	[Tooltip("Read-only: Does not give buffs.")]
+	public TimeEvent buffTimer;				// Stopwatch tracking active buff duration.
+	public int maxHeldBuffs = 1;			// How many buffs the marble can hold on backup.
 	public List<BuffSlot> buffs = new List<BuffSlot>();	// List of buffs the player has collected/activated.
 
 	[Header("Charms & Abilities")]
@@ -86,6 +90,8 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 		gm.marble = this;	// Tells the Game Master that this is the currently controlled marble.
 		settings = GameMaster.LoadSettings();
 
+		Instantiate(hudPrefab).transform.SetParent(GameObject.FindGameObjectWithTag("GUI").transform);
+
 		marform = transform;
 		marbody = GetComponent<Rigidbody>();
 		mover = GetComponent<MarbleMover>();
@@ -105,10 +111,6 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 
 	// OnEnable - Called when the marble is activated. Used to subscribe to events.
 	void OnEnable() {
-		//GameMaster.pan += Respawn; 	// When the game starts, marble should respawn.
-		GameMaster.start += Respawn; 	// When the game starts, marble should respawn.
-		GameMaster.play += ResetState;	// When the gameplay begins, marble should be fresh.
-
 		Messenger.AddListener("UseBuff", UseBuff);
 		Messenger.AddListener("UseAbility", UseAbility);
 		Messenger.AddListener("ScrollLeft", ScrollLeft);
@@ -118,10 +120,6 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	// OnDisable - Called when the marble is deactivated. Used to unsubscribe from events.
 	// NOTE: Anything subscribed to in OnEnable should be unsubscribed from here to prevent memory leaks.
 	void OnDisable() {
-		//GameMaster.pan -= Respawn;
-		GameMaster.start -= Respawn;
-		GameMaster.play -= ResetState;
-
 		Messenger.RemoveListener("UseBuff", UseBuff);
 		Messenger.RemoveListener("UseAbility", UseAbility);
 		Messenger.RemoveListener("ScrollLeft", ScrollLeft);
@@ -131,6 +129,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	// Start - Use this for initialization. If a reference from the Game Master is needed, make it here.
 	void Start () {
 		cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
+		ResetState();
 	}
 	
 	// Update - Called once per frame.
@@ -141,18 +140,8 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 		if (settings.useOnGrab && (buffs[1] != null && buffs[1].buff != BuffSource.PowerUp.None))
 			UseBuff();
 
-		// Counts down until a buff runs out.
-		if (buffTimer > 0 && !gm.paused) {
-			buffTimer -= Time.deltaTime;
-
-			if (buffTimer <= 0) {
-				buffTimer = 0;
-				ClearBuffs();
-			}
-		}
-
-		// Marble's own hitbox's damage is based on how fast the marble is moving. More speed, more damage.
-		hitbox.damage = (int)((marbody.velocity.magnitude - 20) / 15);
+		// Updates marble's own hitbox's damage is based on how fast the marble is moving. More speed, more damage.
+		hitbox.damage = (int)Mathf.Max((marbody.velocity.magnitude - damageThreshold) / damageInterval, 0);
 
 	}
 
@@ -189,7 +178,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 		abilityIndex = (abilityIndex >= abilities.Count)? abilities.Count - 1 : abilityIndex;
 
 		// Checks if cooldown has finished.
-		if (timeStamp <= Time.time) {
+		if (timeStamp <= Time.time && abilityIndex >= 0) {
 			// If the ability's cost can be afforded,
 			if (abilities[abilityIndex].cost <= marblePower) {
 				// Uses it and starts cooldown.
@@ -240,7 +229,11 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 			buffs[0] = null;
 		}
 
-		buffTimer = 0;
+		if (buffTimer != null && buffTimer.routine != null) {
+			TimeManager.CreateTimer().StopCoroutine(buffTimer.routine);
+			buffTimer = null;
+		}
+
 		Messenger<bool>.Broadcast("ShowActiveBuff", false);
 	}
 
@@ -254,19 +247,21 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	// UseBuff - Applies the marble's currently held powerup. Currently overwrites any existing one.
 	public void UseBuff() {
 
-		if (buffs[1] != null && buffs[1].buff != BuffSource.PowerUp.None) {
+		if (buffs.Count > 1/*buffs[1] != null && buffs[1].buff != BuffSource.PowerUp.None*/) {
 			ClearBuffs();
 
 			// Moves held buff into active buff slot.
 			buffs[0] = buffs[1];
-			buffs[1] = null;
+			buffs.RemoveAt(1);
+			//buffs[1] = null;
 
 			// Activates the buff.
-			buffs[0].heldActive = "Active";
+			buffs[0].heldActive = "Active: " + buffs[0].buff.ToString();
 			if (buffs[0].particles != null) buffs[0].particles = Instantiate(buffs[0].particles);
 			if (buffs[0].buffFunction != null) buffs[0].buffFunction();
-			buffTimer = buffs[0].duration;
+			buffTimer = new TimeEvent(buffs[0].duration, ClearBuffs);
 
+			TimeManager.CreateTimer().StartStopwatch(buffTimer);
 			Messenger<bool>.Broadcast("ShowActiveBuff", true);
 		}
 	}
@@ -278,7 +273,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	// TakeDamage - Called when player should take damage.
 	public void TakeDamage(int damage) {
 		// Damage can only be taken during gameplay, and not constantly.
-		if (!invulnerable && gm.state == GameMaster.GameState.Playing) {
+		if (!invulnerable/* && gm.state == GameMaster.GameState.Playing*/) {
 			
 			// If the damage done is greater than 0, do something.
 			if (damage - defense > 0) {
@@ -307,7 +302,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 	
 	// Die - Called when player should die.
 	public void Die() {
-		if (gm.state == GameMaster.GameState.Playing) {
+		//if (gm.state == GameMaster.GameState.Playing) {
 			AudioSource.PlayClipAtPoint(deathSound, marform.position, settings.FXScaler);
 			ClearBuffs();
 			marbody.isKinematic = true;
@@ -320,7 +315,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 			if (die != null) die();
 			
 			Invoke("Respawn", 4f);	// Respawns in a few seconds.
-		}
+		//}
 	}
 
 	// Respawn - Respawns the marble to roughly its starting position.
@@ -354,7 +349,7 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 
 	}
 
-	// ResetState - Clears marble's conditions. 
+	// ResetState - Returns marble to normal conditions.
 	public void ResetState() {
 		ResetStats();
 		marbody.isKinematic = false;
@@ -386,8 +381,53 @@ public class Marble : MonoBehaviour, IDamageable, IKillable {
 
 	// Getters/Setters - If something is requesting marble internals, use these instead.
 	#region Getters/Setters
+
 	// Stat Properties
-	// ADD GETTERS AND SETTERS FOR HP, MP, ETC.
+	public int HP {
+		get { return health; }
+		set { health = value; }
+	}
+
+	public int MaxHP {
+		get { return maxHP; }
+		set { maxHP = value; }
+	}
+
+	public int MP {
+		get { return marblePower; }
+		set { marblePower = value; }
+	}
+	
+	public int MaxMP {
+		get { return maxMP; }
+		set { maxMP = value; }
+	}
+
+	public int CC {
+		get { return charmCapacity; }
+		set { charmCapacity = value; }
+	}
+	
+	public int MaxCC {
+		get { return maxCC; }
+		set { maxCC = value; }
+	}
+
+	public int XP {
+		get { return exp; }
+		set { exp = value; }
+	}
+
+	public int Level {
+		get { return level; }
+		set { level = value; }
+	}
+
+	// Buff Properties
+	public float BuffTimer {
+		get { return buffTimer.duration; }
+		set { buffTimer.duration = value; }
+	}
 
 	// Movement Properties
 	public float Speed {
@@ -495,7 +535,7 @@ public class BuffSlot {
 	// icons and stuff?
 	
 	public BuffSlot(BuffSource.PowerUp buff, float intensity, float duration, GameObject particles, UnityAction cleaner, UnityAction buffFunction) {
-		heldActive = "Held";
+		heldActive = "Held: " + buff.ToString();
 		this.buff = buff;
 		this.intensity = intensity;
 		this.duration = duration;

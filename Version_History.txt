@@ -2,6 +2,30 @@
                                     ~ ~ ~ VERSION HISTORY ~ ~ ~
 ====================================================================================================
 
+July 29, 2015:
+	- Replaced level select screen with a centralized hub world:
+		+ Main menu's level select button replaced with possibly temporary "Play" button.
+		+ Upon level completion, "Next" returns you to the hub world.
+		+ Added portals to the existing levels to the hub world.
+	- Refactoring and back-end changes:
+		+ Added time management class that can perform actions after a set time has passed.
+		+ Replaced hard-coded game states with a "sequence" of events; presence/absence of game objects affects game flow.
+			* Consequently, debug menu can no longer control game states.
+			* For most levels, this is the current sequence (priority indicates ordering):
+				~ Pan screen activates (Priority 100)
+					> Deactivates when Space/Escape are pressed.
+				~ Main HUD is enabled (Priority 199)
+				~ Countdown begins (Priority 200)
+					> When countdown ends, marble is released and level timer starts.
+		+ Further split HUD/GUI elements so they handle tasks independently, and only if relevant game objects are present.
+			* Countdown is handled by own script and is triggered by the spawn pad.
+			* Win and death screens are now a unified Tint Screen that can be used to flexibly tint in many situations.
+		+ Marble now has functional potential to hold any number of buffs on backup. HUD does not yet reflect this functionality.
+		+ Added third-party Unique ID script in preparation for proper saving/loading of some level objects (namely balloons).
+		+ Charm Points have been renamed to "Charm Capacity", due to the former's offensive abbreviation.
+	- New issue to be addressed:
+		+ Pan cam behavior is inconsistent; sometimes it acts like it should, other times it doesn't.
+		
 June 29, 2015:
 	- Overhaul:
 		+ Updated project to Unity 5.1. You will need to update before opening Marballs.

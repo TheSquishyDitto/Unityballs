@@ -54,6 +54,11 @@ public class PauseMenu : MonoBehaviour {
 		gm.LoadLevel(0);
 	}
 
+	// Restart - Reloads the current level.
+	public void Restart (){
+		gm.LoadLevel(Application.loadedLevel);
+	}
+
 	// ResetMenu - Returns to initial pause menu state.
 	public void ResetMenu() {
 		pauseSet.SetActive(true);

@@ -9,6 +9,7 @@
 /// NOTES: - Handles only the ability box.
 /// 
 /// TO DO: - Tweak and make fancier. (Add swapping animation.)
+/// 	   - Replace usage of Update with a coroutine.
 /// 
 /// </summary>
 

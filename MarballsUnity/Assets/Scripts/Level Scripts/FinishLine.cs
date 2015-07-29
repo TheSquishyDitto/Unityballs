@@ -2,14 +2,13 @@
 /// FinishLine.cs
 /// Authors: Charlie Sun, Kyle Dawson, Chris Viqueira
 /// Date Created:  Feb. 13, 2015
-/// Last Revision: Jun. 25, 2015
+/// Last Revision: July 29, 2015
 /// 
 /// Class that lets the player win at the finish line.
 /// 
-/// NOTES: - Should tell the GameMaster the player has won.
+/// NOTES: - Should handle victory mostly by itself.
 /// 
 /// TO DO: - Tweak behavior until desired.
-/// 	   - Add gravity zone as an option for the victory animation!
 /// 
 /// </summary>
 
@@ -31,6 +30,7 @@ public class FinishLine : MonoBehaviour {
 	//public bool gravityFinish;		// Whether crazy Christmas swirl or a black hole-like thing is used.
 
 	Vector3 impactVelocity;			// Holds which direction the marble hit the finish line from.
+	public bool hasWon = false;		// Whether player has won or not.
 
 	#endregion
 
@@ -39,24 +39,15 @@ public class FinishLine : MonoBehaviour {
 		gm = GameMaster.CreateGM ();
 		settings = GameMaster.LoadSettings();
 		finish = transform;
-		//gm.finishLine = this.transform;
 	}
 
 	// OnEnable - Called when the object is enabled.
 	void OnEnable() {
-		GameMaster.start += FlameOff;
-		GameMaster.play += FlameOff;
-		GameMaster.win += FlameOn;
-
 		Messenger.AddListener("ToggleArrows", ToggleArrows);
 	}
 
 	// OnDisable - Called when the object is disabled.
 	void OnDisable() {
-		GameMaster.start -= FlameOff;
-		GameMaster.play -= FlameOff;
-		GameMaster.win -= FlameOn;
-
 		Messenger.RemoveListener("ToggleArrows", ToggleArrows);
 	}
 
@@ -68,12 +59,45 @@ public class FinishLine : MonoBehaviour {
 
 	// OnTriggerEnter - Called when an object enters the trigger collider.
 	void OnTriggerEnter (Collider other) {
-		if (other.CompareTag("Marble") && gm.state != GameMaster.GameState.Win) {
+		if (other.CompareTag("Marble") && !hasWon) {
 			impactVelocity = other.attachedRigidbody.velocity;	// Stores marble's velocity at the time of impact.
 			other.attachedRigidbody.isKinematic = (!settings.gravityFinish || settings.simpleAnim);	// Hands total control of marble position to scripts.
-			StartCoroutine("SwirlFinish");	// Starts the swirly animation.
-			gm.OnWin(); // When player gets to finish they win!
+			Win();	// The player wins!
 		}	
+	}
+
+	// Win - Handles what happens when the player wins.
+	public void Win() {
+		hasWon = true;
+		gm.settings.freezeTimer = true;
+		Time.timeScale = 0.5f;
+		FlameOn();
+		StartCoroutine("SwirlFinish");	// Starts the swirly animation.
+		Messenger.Broadcast("Victory");
+		UpdateHighScores();
+	}
+
+	// UpdateHighScores - Checks if new time is better and updates and saves if so.
+	public void UpdateHighScores() {
+		// If this is a legitimate level...
+		if (gm.levelData != null) {
+			// Keeps player's five best times.
+			for (int i = 0; i < settings.highScoreCount; i++) {
+				// Checks if there's a vacant slot or if the current slot is a worse time.
+				if (gm.levelData.bestTimes.Count == i || gm.levelData.bestTimes[i] > gm.timer) {
+					gm.levelData.bestTimes.Insert(i, gm.timer);	// If so, shoves it in.
+					
+					// Shaves off any times that go beyond the specified place.
+					if (gm.levelData.bestTimes.Count > settings.highScoreCount) {
+						gm.levelData.bestTimes.RemoveRange(settings.highScoreCount, gm.levelData.bestTimes.Count - settings.highScoreCount);
+					}
+					
+					gm.Save(); // Saves game.
+					
+					break; // Breaks out of for loop once the entry is added.
+				}
+			}
+		}
 	}
 
 	// ToggleArrows - Enables/disables helper arrows.

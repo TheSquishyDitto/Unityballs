@@ -2,13 +2,13 @@
 /// BuffBox.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Jun. 27, 2015
-/// Last Revision: Jun. 27, 2015
+/// Last Revision: July 19, 2015
 /// 
 /// Class that displays held and active buffs on the HUD.
 /// 
 /// NOTES: - Handles only the buff box.
 /// 
-/// TO DO: - Tweak.
+/// TO DO: - Replace Update function with coroutine for efficiency.
 /// 
 /// </summary>
 
@@ -53,9 +53,9 @@ public class BuffBox : MonoBehaviour {
 	// Update - Called once per frame.
 	void Update () {
 		// Updates fill amount of active buff.
-		if (!gm.paused && gm.state == GameMaster.GameState.Playing) {
-			if (buffBox.activeSelf)
-				activePowerup.fillAmount = (gm.marble.buffTimer != Mathf.Infinity)? gm.marble.buffTimer / gm.marble.buffs[0].duration : 1;
+		if (!gm.paused/*&& gm.state == GameMaster.GameState.Playing*/) {
+			if (buffBox.activeSelf && gm.marble != null)
+				activePowerup.fillAmount = (gm.marble.BuffTimer != Mathf.Infinity)? gm.marble.BuffTimer / gm.marble.buffs[0].duration : 1;
 		}
 	}
 

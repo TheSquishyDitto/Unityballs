@@ -2,13 +2,14 @@
 /// Settings.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Jun. 25, 2015
-/// Last Revision: Jun. 26, 2015
+/// Last Revision: July 22, 2015
 /// 
 /// Class for creating universal game settings assets.
 /// 
 /// NOTES: - One has already been created. If lost, create another from the asset menu after uncommenting [CreateAssetMenu].
 /// 
-/// TO DO: - Tweak until desired.
+/// TO DO: - Make actual use of settings saving/loading.
+/// 	   - Get InputManager to save key bindings as well.
 /// 
 /// </summary>
 
@@ -27,13 +28,17 @@ public class Settings : ScriptableObject {
 
 	[Header("Game Settings")]
 	[Range(1, 120)]
-	public int targetFPS;			// Preferred framerate. Useless with VSync active.
+	public int targetFPS;			// Preferred framerate. Useless if VSync is active.
 	public bool simpleAnim;			// Whether most animations should be simplified/skipped.
 	public bool gravityFinish;		// Whether the victory animation should be a black hole or not.
 	public bool guideArrows;		// Whether the arrow guides are enabled or not.
 	public bool useOnGrab;			// Whether powerups should be used on contact or not. May interfere with level completion.
 
-	[Header("Audio Settings")] // There is a built-in audio manager, but it doesn't differentiate music and sound effects.
+	[Header("Video Settings")]
+	[Range(30, 150)]
+	public int fov;					// Field of view for player's camera.
+
+	[Header("Audio Settings")] // There is a built-in audio manager in Unity, but it doesn't differentiate music and sound effects.
 	[Range(0, 1)]
 	public float masterVolume;		// Volume control that modifies the volume of all game sounds.
 	[Range(0, 1)]

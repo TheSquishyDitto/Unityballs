@@ -47,5 +47,6 @@ public class DashCharm : Charm {
 	// Dash - Makes the marble dash.
 	public void Dash() {
 		marble.marbody.AddForce(Vector3.Scale(marble.cam.forward, new Vector3(1, 0, 1)) * 50, ForceMode.VelocityChange);
+		Object.Destroy(Object.Instantiate(Resources.Load("Prefabs/Particle Prefabs/Dash"), marble.marform.position, Quaternion.identity), 2);
 	}
 }

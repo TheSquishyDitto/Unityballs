@@ -10,7 +10,7 @@
 /// 	   - IDamageable interface is at bottom of this class.
 /// 
 /// TO DO: - Add way to inflict piercing damage (ignores defense). Inherit from this class?
-/// 	   - Refine.
+/// 	   - Refine and extend. Take inspiration from Smash Bros. hit box types?
 /// 
 /// </summary>
 
@@ -20,6 +20,7 @@ using System.Collections;
 public class HitBox : MonoBehaviour {
 
 	public int damage = 1;	// How much damage this hitbox inflicts.
+	//public bool piercing = false; // Whether damage should ignore defense.
 
 	// OnTriggerEnter - Called when an object collides with the trigger.
 	void OnTriggerEnter(Collider other) {

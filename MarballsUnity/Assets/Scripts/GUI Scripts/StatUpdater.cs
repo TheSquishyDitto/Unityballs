@@ -2,7 +2,7 @@
 /// StatUpdater.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Jun. 27, 2015
-/// Last Revision: Jun. 29, 2015
+/// Last Revision: July 22, 2015
 /// 
 /// Class that updates status display.
 /// 
@@ -10,7 +10,7 @@
 /// 	   - Does not handle buff, ability, or tip boxes.
 /// 
 /// TO DO: - Add support for minor text components as they gain functionality.
-/// 	   - Figure out a nice way to prevent blinking on level start and/or respawn. Even more events maybe? Add a bool?
+/// 	   - Hide the statbar when actually doing things. Show when idle.
 /// 
 /// </summary>
 
@@ -37,6 +37,10 @@ public class StatUpdater : MonoBehaviour {
 	public Text surplus;
 	public Text best;
 	public Text rps;
+
+	// Routine References
+	Coroutine HPBlink;
+	Coroutine MPBlink;
 
 	#endregion
 
@@ -72,7 +76,7 @@ public class StatUpdater : MonoBehaviour {
 	// Update - Called once per frame.
 	void Update () {
 		// Update timer.
-		timer.text = (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Win)? gm.timer.ToString("F1") : "0";
+		timer.text = gm.timer.ToString("F1");
 		timer.text += " s";
 
 		// Speed gauge.
@@ -84,16 +88,16 @@ public class StatUpdater : MonoBehaviour {
 
 	// UpdateHealth - Does what it says.
 	void UpdateHealth(int hp, int maxHP) {
-		//StopCoroutine("Blink");
+		if (HPBlink != null) StopCoroutine(HPBlink);
 		health.text = hp + "/" + maxHP;
-		StartCoroutine("Blink", health.gameObject);
+		HPBlink = StartCoroutine("Blink", health.gameObject);
 	}
 
 	// UpdateMarpower - Does what it says.
 	void UpdateMarpower(int mp, int maxMP) {
-		//StopCoroutine("Blink");
+		if (MPBlink != null) StopCoroutine(MPBlink);
 		marpower.text = mp + "/" + maxMP;
-		StartCoroutine("Blink", marpower.gameObject);
+		MPBlink = StartCoroutine("Blink", marpower.gameObject);
 	}
 
 	// UpdateExp - Does what it says.

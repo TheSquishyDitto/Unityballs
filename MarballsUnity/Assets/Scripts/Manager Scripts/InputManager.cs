@@ -134,12 +134,12 @@ public class InputManager : MonoBehaviour {
 				CameraControls();
 	
 			// These controls are active during gameplay.
-			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
+			//if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
 				if (!gm.paused) {
 					MarbleSpecialControls();
 				}
 				MenuControls();
-			}
+			//}
 	
 			// These controls are suited to experimentation and have their own conditions.
 			DebugControls();
@@ -150,11 +150,11 @@ public class InputManager : MonoBehaviour {
 	void FixedUpdate() {
 		if (allowInput) {
 			// As long as the game isn't paused, these controls handle marble movement and positioning.
-			if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
+			//if (gm.state == GameMaster.GameState.Playing || gm.state == GameMaster.GameState.Start) {
 				if (!gm.paused && gm.marble) {
 					MarbleMoveControls();
 				}
-			}
+			//}
 		}
 	}
 

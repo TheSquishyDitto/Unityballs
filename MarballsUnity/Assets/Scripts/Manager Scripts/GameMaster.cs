@@ -2,13 +2,14 @@
 /// GameMaster.cs
 /// Authors: Kyle Dawson, Charlie Sun
 /// Date Created:  Feb. 11, 2015
-/// Last Revision: Jun. 25, 2015
+/// Last Revision: July 23, 2015
 /// 
 /// Unifying class that controls game conditions and allows some inter-object communications.
 /// 
 /// NOTES: - This is a singleton class so only one of it should ever exist, if you need a reference to it, call GameMaster.CreateGM()
+/// 	   - This class is mainly for handling game flow (level start events, level timer, etc.)
 /// 
-/// TO DO: - Add more events to subscribe to?
+/// TO DO: - Split saving/loading and level loading from this class.
 /// 
 /// </summary>
 
@@ -17,45 +18,48 @@ using UnityEngine.Events;
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
 public class GameMaster : MonoBehaviour {
 
 	// Enum for state of game.
-	public enum GameState {
+	/*public enum GameState {
 		Menu,		// State between or before levels.
 		Prestart,	// State where the camera pans around the level.
 		Start,		// The state immediately before the timer begins.
 		Playing,	// The part of the game where mechanics matter.
 		Win,		// State immediately after player wins a level.
 		//Sumo		// Multiplayer mode.
-	}
+	}*/
 
 	// Variables
 	#region Variables
-	[Header("References")]
 	public static GameMaster GM;		// Reference to singleton.
+
+	[Header("References")]
 	public Settings settings;			// Reference to most game settings.
-	
 	public Marble marble;				// Reference to currently active marble.
 	public InputManager input;			// Reference to input manager.
 	public ControlScript controlMenu;	// Reference to control menu.
 	public LevelDataObject levelData;	// Reference to information about current level.
-	public Camera panCam;				// Reference to pan cam.
+
+	public Transform guiContainer;		// Reference to parent of GUI objects.
 
 	[Header("Gameplay Variables")] 	// Some of these variables should be moved into getters/setters probably.
-	public GameState state;			// Current state of game.
+	//public GameState state;		// Current state of game.
 	public bool paused;				// True if game is paused, false otherwise.
 	public float timer = 0;			// How much time has elapsed since the start of a level.
 	public int buildLevelCap = 9;	// The last level accessible through standard progression.
-	
-	public bool levelSelect = false;// Done for win screen
 
-	// Events
-	public static event UnityAction pan;	// Container for actions before the game actually starts.
-	public static event UnityAction start;	// Container for actions when game starts. 
-	public static event UnityAction play;	// Container for actions when gameplay begins.
-	public static event UnityAction win;	// Container for actions when winning.
+	public bool levelSelect = false;// Done for win screen
+	
+	//public static event UnityAction pan;	// Container for actions before the game actually starts.
+	//public static event UnityAction start;	// Container for actions when game starts. 
+	//public static event UnityAction play;	// Container for actions when gameplay begins.
+	//public static event UnityAction win;	// Container for actions when winning.
+
+	public static Sequence sequence = new Sequence();	// Container for actions to perform at level start.
 
 	#endregion
 
@@ -66,8 +70,12 @@ public class GameMaster : MonoBehaviour {
 			if (GM == null)
 				Debug.LogWarning("(GameMaster.cs) Failed to create Game Master!");
 		}
+
 		return GM;
 	}
+
+	// Monobehaviour Functions
+	#region Monobehaviour Functions
 
 	// Awake - Called before anything else.
 	void Awake () {
@@ -78,19 +86,24 @@ public class GameMaster : MonoBehaviour {
 			DontDestroyOnLoad(this); // GameMaster should exist forever.
 		}
 
+		timer = 0;
 		settings = LoadSettings();
-		state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
+		guiContainer = GameObject.FindGameObjectWithTag("GUI").transform;
+		settings.freezeTimer = true;
+		//state = (Application.loadedLevel == 0)? GameState.Menu : state; // DEBUG
 		LoadLevelData();
 	}
 
 	// OnEnable - Called when enabled. Generally used to subscribe to events.
 	void OnEnable() {
 		Messenger.AddListener("Pause", TogglePause);
+		Messenger.AddListener("BeginTimer", BeginTimer);
 	}
 
 	// OnDisable - Called when disabled. Used to unsubscribe from events to prevent memory leaks.
 	void OnDisable() {
 		Messenger.RemoveListener("Pause", TogglePause);
+		Messenger.RemoveListener("BeginTimer", BeginTimer);
 	}
 
 	// Start - Use this for initialization.
@@ -102,30 +115,17 @@ public class GameMaster : MonoBehaviour {
 	
 	// Update - Called once per frame.
 	void Update () {
-		if (!settings.freezeTimer) {	// If the timer isn't frozen,
-			if (!paused) {	// and the game isn't paused,
-				if (state == GameState.Start && timer > 0) { // in the starting phase,
-					timer -= Time.deltaTime;	// the timer counts down to 0,
-					if (timer <= 0)	{ // and when it reaches 0, the gameplay begins.
-						OnPlay();
-					}
-
-				} else if(state == GameState.Playing) { // Here the timer serves a different purpose,
-					timer += Time.deltaTime;	// tracking the player's time since starting.
-				}
-			}
+		if (!settings.freezeTimer) {	// If the timer isn't frozen, increase it steadily.
+			timer += Time.deltaTime;
 		}
+	}
 
-		// TODO Change keys to player's actual keys and/or let InputManager handle this.
-		if (state == GameMaster.GameState.Prestart) {
-			if(Input.GetKeyDown(KeyCode.Space)) {
-				OnStart();
-			}
-			
-			if (Input.GetKeyDown(KeyCode.Escape)) {
-				LoadLevel(0);
-			}
-		}
+	#endregion
+
+	// BeginTimer - Starts up timer.
+	void BeginTimer() {
+		timer = 0;
+		settings.freezeTimer = false;
 	}
 
 	// TogglePause - Toggles game paused state.
@@ -153,16 +153,11 @@ public class GameMaster : MonoBehaviour {
 	// 		  - For references, objects that aren't destroyed should not be nulled out!
 	void ResetVariables() {
 		Time.timeScale = 1;
-		state = GameState.Menu;
+		//state = GameState.Menu;
 		timer = 0;
 		if (paused) { TogglePause(); }
 		marble = null;
 		
-	}
-
-	// LoadSettings - Easily loads game settings.
-	public static Settings LoadSettings() {
-		return Resources.Load("Data/GameSettings") as Settings;
 	}
 
 	// LoadLevel - Loads another level using that level's index.
@@ -181,6 +176,9 @@ public class GameMaster : MonoBehaviour {
 	void OnLevelWasLoaded(int level) {
 		LoadLevelData();
 
+		guiContainer = GameObject.FindGameObjectWithTag("GUI").transform;
+		settings.freezeTimer = true;
+
 		if(level == 0)	{
 			if(levelSelect)
 			{
@@ -188,6 +186,14 @@ public class GameMaster : MonoBehaviour {
 				levelSelect = false;
 			}	
 		}
+	}
+
+	// Saving/Loading Functions - Functions relevant to persisting game data.
+	#region Saving/Loading Functions
+
+	// LoadSettings - Easily loads game settings.
+	public static Settings LoadSettings() {
+		return Resources.Load("Data/GameSettings") as Settings;
 	}
 
 	// LoadLevelData - Loads the level-specific scriptable object for this level.
@@ -202,7 +208,7 @@ public class GameMaster : MonoBehaviour {
 	}
 
 	// Save - Saves the player's time.
-	void Save() {
+	public void Save() {
 		// Creates/overwrites file.
 		BinaryFormatter converter = new BinaryFormatter();
 		FileStream file = File.Create(GetFilePath());
@@ -245,10 +251,12 @@ public class GameMaster : MonoBehaviour {
 		return Application.persistentDataPath + "/" + Application.loadedLevelName + "Save.dat";
 	}
 
+	#endregion
+
 	// State Changers - Functions that change the game's conditions.
 	#region State Changers
 	// OnPreStart - Called before level starts.
-	public void OnPreStart(){
+	/*public void OnPreStart(){
 		if (levelData != null) levelData.firstTime = settings.debug;	// If we aren't testing the game, panning shouldn't always happen.
 		state = GameState.Prestart;
 
@@ -300,7 +308,53 @@ public class GameMaster : MonoBehaviour {
 				}
 			}
 		}
-	}
+	}*/
 
 	#endregion
 }
+
+/*[Serializable]
+// This class should be used to save and load marble's data.
+// NOTE: Any data that needs to persist across game sessions should be stored here.
+public class MarbleProfile {
+	int hp;		// Current health.
+	int maxHP;	// Max health.
+	int mp;		// Current marble power.
+	int maxMP;	// Maximum marble power.
+	int cc;		// Current charm capacity.
+	int maxCC;	// Maximum charm capacity.
+	int xp;		// Unspent gathered balloons.
+	int level;	// How many times balloons have been used to level up.
+
+	int defense;			// How much the marble resists damage.
+	float damageThreshold;	// Min. velocity for offense.
+	float damageInterval;	// Rate at which offense scales with velocity.
+	
+	//serializable list of gathered charms and whether they're equipped
+
+	// Constructor that rips all data from marble and stores it.
+	public MarbleProfile(Marble marble) {
+
+		// charms and their states should be saved here
+		// temporarily unequip all charms before saving data? not sure if that step would be necessary
+
+		hp = marble.HP;
+		maxHP = marble.maxHP;
+		mp = marble.MP;
+		maxMP = marble.maxMP;
+		cc = marble.CC;
+		maxCC = marble.maxCC;
+		xp = marble.XP;
+		level = marble.Level;
+
+		defense = marble.defense; // USE GETTER/SETTERS WHEN AVAILABLE
+		damageThreshold = marble.damageThreshold;
+		damageInterval = marble.damageInterval;
+
+		// re-equip charms if they were unequipped for saving
+	}
+
+
+
+
+}*/

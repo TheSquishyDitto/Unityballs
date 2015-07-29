@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// Charm.cs
 /// Authors: Kyle Dawson
 /// Date Created:  Jun. 27, 2015
@@ -48,12 +48,12 @@ public class Charm {
 	public void Equip() {
 		Marble marble = GameMaster.CreateGM().marble;
 
-		if (marble.charmPoints >= data.cost) {
+		if (marble.charmCapacity >= data.cost) {
 
 			if (equipped)
 				Debug.LogWarning(type + " charm was already equipped?");
 
-			marble.charmPoints -= data.cost;
+			marble.charmCapacity -= data.cost;
 			equipped = true;
 			Effect();
 		} else { 
@@ -67,7 +67,7 @@ public class Charm {
 			Marble marble = GameMaster.CreateGM().marble;
 			UnEffect();
 			equipped = false;
-			marble.charmPoints += data.cost;
+			marble.charmCapacity += data.cost;
 		} else {
 			Debug.Log("This charm was not equipped!");
 		}

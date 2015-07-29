@@ -8,6 +8,7 @@
 ///
 /// TO DO: - Add more spooky behaviors, such as allowing Jerry to cause damage.
 /// 	   - Finetune existing behavior maybe? The glitches are almost features though.
+/// 	   - Adopt start sequence; start moving with a low priority.
 /// 
 /// </summary>
 
@@ -61,7 +62,7 @@ public class HauntingEntity : Ghostable {
 	// Update - Called once per frame.
 	protected override void Update () {
 		// If visible and distant enough away...
-		if (gm.state == GameMaster.GameState.Playing && !((Renderer)appearances[0]).isVisible && Vector3.Distance(myTransform.position, destination.position) > 0) {
+		if (/*gm.state == GameMaster.GameState.Playing && */ !((Renderer)appearances[0]).isVisible && Vector3.Distance(myTransform.position, destination.position) > 0) {
 			myTransform.position = new Vector3(myTransform.position.x, destination.position.y + 2, myTransform.position.z); // Stay on player's y-level.
 			myTransform.position += (destination.position - myTransform.position).normalized * Time.deltaTime * (gm.timer / 60); // Move towards player, quickly as time goes on.
 			myTransform.LookAt(cam); // Face the camera.
